@@ -30,11 +30,11 @@ const ProductDetail = () => {
   if (!product) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center px-4">
-        <h1 className="text-2xl font-bold mb-4">Product not found</h1>
+        <h1 className="text-2xl font-bold mb-4">Produit introuvable</h1>
         <Link to="/">
           <Button>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Home
+            Retour à l'accueil
           </Button>
         </Link>
       </div>
@@ -57,7 +57,7 @@ const ProductDetail = () => {
     };
     
     addItem(cartItem);
-    toast.success("Added to cart", {
+    toast.success("Ajouté au panier", {
       description: product.title,
     });
   };
@@ -69,7 +69,7 @@ const ProductDetail = () => {
           <Link to="/">
             <Button variant="ghost" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
+              Retour
             </Button>
           </Link>
           <CartDrawer />
@@ -87,7 +87,7 @@ const ProductDetail = () => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                No image
+                Pas d'image
               </div>
             )}
           </div>
@@ -109,7 +109,7 @@ const ProductDetail = () => {
 
             {product.variants.edges.length > 1 && (
               <div>
-                <h2 className="text-lg font-semibold mb-3">Variants</h2>
+                <h2 className="text-lg font-semibold mb-3">Variantes</h2>
                 <div className="flex flex-wrap gap-2">
                   {product.variants.edges.map((variant, index) => (
                     <Button
@@ -131,7 +131,7 @@ const ProductDetail = () => {
               disabled={!selectedVariant?.availableForSale}
             >
               <ShoppingCart className="w-5 h-5 mr-2" />
-              {selectedVariant?.availableForSale ? 'Add to Cart' : 'Out of Stock'}
+              {selectedVariant?.availableForSale ? 'Ajouter au panier' : 'Rupture de stock'}
             </Button>
           </div>
         </div>
