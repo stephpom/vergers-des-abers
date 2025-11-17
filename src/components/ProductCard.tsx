@@ -31,7 +31,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
     };
     
     addItem(cartItem);
-    toast.success("Added to cart", {
+    toast.success("Ajouté au panier", {
       description: node.title,
     });
   };
@@ -52,7 +52,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
               />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                No image
+                Pas d'image
               </div>
             )}
           </div>
@@ -71,7 +71,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             size="lg"
           >
             <ShoppingCart className="w-4 h-4 mr-2" />
-            Add to Cart
+            Ajouter au panier
           </Button>
         </CardFooter>
       </Card>

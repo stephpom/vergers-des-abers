@@ -18,7 +18,7 @@ const Index = () => {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Apple className="w-8 h-8 text-primary" />
-            <span className="text-2xl font-bold text-primary">FreshJuice</span>
+            <span className="text-2xl font-bold text-primary">Jus de Pomme Bio</span>
           </div>
           <CartDrawer />
         </div>
@@ -38,14 +38,14 @@ const Index = () => {
         <div className="container mx-auto px-4 z-10">
           <div className="max-w-2xl">
             <h1 className="text-5xl md:text-6xl font-bold mb-6 text-foreground">
-              Pure, Fresh Apple Juice
+              Jus de Pomme Pur et Frais
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-muted-foreground">
-              Made from the finest organic apples. No additives, no preservatives. Just pure, delicious juice.
+              Fabriqué à partir des meilleures pommes biologiques. Sans additifs, sans conservateurs. Juste du jus pur et délicieux.
             </p>
             <a href="#products">
               <button className="px-8 py-4 bg-hero text-hero-foreground hover:bg-hero/90 rounded-lg font-semibold text-lg transition-colors">
-                Shop Now
+                Acheter Maintenant
               </button>
             </a>
           </div>
@@ -56,10 +56,10 @@ const Index = () => {
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Our Story</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Notre Histoire</h2>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              At FreshJuice, we believe in keeping things simple and natural. Our apple juice is made from handpicked organic apples, 
-              cold-pressed to preserve all the natural flavors and nutrients. Every bottle is a taste of pure orchard freshness.
+              Chez Jus de Pomme Bio, nous croyons en la simplicité et au naturel. Notre jus de pomme est fabriqué à partir de pommes biologiques cueillies à la main, 
+              pressées à froid pour préserver toutes les saveurs et nutriments naturels. Chaque bouteille est un goût de fraîcheur pure du verger.
             </p>
           </div>
         </div>
@@ -68,7 +68,7 @@ const Index = () => {
       {/* Products Section */}
       <section id="products" className="py-20">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Our Products</h2>
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Nos Produits</h2>
           
           {isLoading ? (
             <div className="flex items-center justify-center py-20">
@@ -83,12 +83,12 @@ const Index = () => {
           ) : (
             <div className="text-center py-20">
               <Apple className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-2xl font-semibold mb-2">No Products Yet</h3>
+              <h3 className="text-2xl font-semibold mb-2">Pas encore de produits</h3>
               <p className="text-muted-foreground mb-6">
-                We're still setting up our inventory. Please check back soon!
+                Nous préparons notre inventaire. Revenez bientôt !
               </p>
               <p className="text-sm text-muted-foreground">
-                Store owner: Tell me what product you'd like to add and I'll create it for you.
+                Propriétaire : Dites-moi quel produit vous souhaitez ajouter et je le créerai pour vous.
               </p>
             </div>
           )}
@@ -101,9 +101,9 @@ const Index = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-2">
               <Apple className="w-6 h-6 text-primary" />
-              <span className="text-xl font-bold text-primary">FreshJuice</span>
+              <span className="text-xl font-bold text-primary">Jus de Pomme Bio</span>
             </div>
-            <p className="text-muted-foreground">© 2024 FreshJuice. All rights reserved.</p>
+            <p className="text-muted-foreground">© 2024 Jus de Pomme Bio. Tous droits réservés.</p>
           </div>
         </div>
       </footer>
