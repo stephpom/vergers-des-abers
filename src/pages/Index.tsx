@@ -3,8 +3,21 @@ import { getProducts } from "@/lib/shopify";
 import { ProductCard } from "@/components/ProductCard";
 import { CartDrawer } from "@/components/CartDrawer";
 import { Loader2 } from "lucide-react";
-import heroImage from "@/assets/hero-juice.jpg";
+import heroImage from "@/assets/verger-pommiers.jpg";
 import logo from "@/assets/logo.svg";
+import vergerAllee from "@/assets/verger-allee.jpg";
+import recolteSol from "@/assets/recolte-sol.jpg";
+import seauxPommes from "@/assets/seaux-pommes.jpg";
+import producteur from "@/assets/producteur.jpg";
+import pommesBranche from "@/assets/pommes-branche.jpg";
+import vergerRangees from "@/assets/verger-rangees.jpg";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 const Index = () => {
   const { data: products, isLoading } = useQuery({
@@ -33,7 +46,7 @@ const Index = () => {
         <div className="absolute inset-0 z-0">
           <img
             src={heroImage}
-            alt="Fresh Apple Juice"
+            alt="Vergers Pom'Pom aux Abers - Pommeraies bretonnes"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-background/50" />
@@ -66,6 +79,92 @@ const Index = () => {
               pressées à froid pour préserver toutes les saveurs et vitamines naturelles. Chaque bouteille capture l'authenticité de notre région et le savoir-faire artisanal transmis de génération en génération.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Gallery Section */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-12 text-center">Nos Vergers en Images</h2>
+          
+          <Carousel className="w-full max-w-5xl mx-auto">
+            <CarouselContent>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={vergerAllee} 
+                      alt="Allée des vergers" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Nos pommiers en production</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={pommesBranche} 
+                      alt="Pommes sur branches" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Pommes mûres prêtes à récolter</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={recolteSol} 
+                      alt="Récolte au sol" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">La récolte traditionnelle</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={seauxPommes} 
+                      alt="Seaux de pommes" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Récolte des pommes</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={producteur} 
+                      alt="Producteur dans les vergers" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Le producteur passionné</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={vergerRangees} 
+                      alt="Rangées de pommiers" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Les rangées de nos vergers</p>
+                </div>
+              </CarouselItem>
+            </CarouselContent>
+            <CarouselPrevious />
+            <CarouselNext />
+          </Carousel>
         </div>
       </section>
 
