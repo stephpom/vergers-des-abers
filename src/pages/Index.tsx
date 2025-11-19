@@ -6,11 +6,15 @@ import { Loader2 } from "lucide-react";
 import heroImage from "@/assets/verger-pommiers.jpg";
 import logo from "@/assets/logo.svg";
 import vergerAllee from "@/assets/verger-allee.jpg";
+import vergerAllee2 from "@/assets/verger-allee2.jpg";
 import recolteSol from "@/assets/recolte-sol.jpg";
 import seauxPommes from "@/assets/seaux-pommes.jpg";
 import producteur from "@/assets/producteur.jpg";
 import pommesBranche from "@/assets/pommes-branche.jpg";
 import vergerRangees from "@/assets/verger-rangees.jpg";
+import filetsRecolte from "@/assets/filets-recolte.jpg";
+import sacsRecolte from "@/assets/sacs-recolte.jpg";
+import camionLivraison from "@/assets/camion-livraison.jpg";
 import {
   Carousel,
   CarouselContent,
@@ -159,6 +163,54 @@ const Index = () => {
                     />
                   </div>
                   <p className="text-sm text-center mt-2 text-muted-foreground">Les rangées de nos vergers</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={vergerAllee2} 
+                      alt="Allée ensoleillée entre les pommiers" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Au cœur de nos vergers</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={filetsRecolte} 
+                      alt="Filets de récolte dans le verger" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Filets de récolte</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={sacsRecolte} 
+                      alt="Grands sacs de pommes récoltées" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Récolte abondante</p>
+                </div>
+              </CarouselItem>
+              <CarouselItem className="md:basis-1/2 lg:basis-1/3">
+                <div className="p-1">
+                  <div className="aspect-square overflow-hidden rounded-lg">
+                    <img 
+                      src={camionLivraison} 
+                      alt="Livraison de la récolte" 
+                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                  <p className="text-sm text-center mt-2 text-muted-foreground">Acheminement vers le pressoir</p>
                 </div>
               </CarouselItem>
             </CarouselContent>
