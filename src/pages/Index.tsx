@@ -2,7 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/lib/shopify";
 import { ProductCard } from "@/components/ProductCard";
 import { CartDrawer } from "@/components/CartDrawer";
-import { Loader2 } from "lucide-react";
+import { Loader2, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import heroImage from "@/assets/verger-pommiers.jpg";
 import logo from "@/assets/logo.svg";
 import vergerAllee from "@/assets/verger-allee.jpg";
@@ -41,7 +43,15 @@ const Index = () => {
               <span className="text-xs md:text-sm text-muted-foreground">Vergers des Abers</span>
             </div>
           </div>
-          <CartDrawer />
+          <div className="flex items-center gap-2">
+            <Link to="/contact">
+              <Button variant="outline" size="sm">
+                <Phone className="h-4 w-4 mr-2" />
+                Contact
+              </Button>
+            </Link>
+            <CartDrawer />
+          </div>
         </div>
       </header>
 
