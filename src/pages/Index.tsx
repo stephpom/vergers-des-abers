@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getProducts } from "@/lib/shopify";
 import { ProductCard } from "@/components/ProductCard";
 import { CartDrawer } from "@/components/CartDrawer";
-import { Loader2, Phone } from "lucide-react";
+import { Loader2, Phone, TreeDeciduous, Scissors, Leaf, Hand, Apple, Wine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/verger-pommiers.jpg";
@@ -92,6 +92,84 @@ const Index = () => {
               Pom'Pom, c'est avant tout une histoire de passion pour la pomme et le terroir breton. Nos vergers situés aux Abers produisent des pommes de qualité, 
               pressées à froid pour préserver toutes les saveurs et vitamines naturelles. Chaque bouteille capture l'authenticité de notre région et le savoir-faire artisanal transmis de génération en génération.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Notre Savoir-Faire Section */}
+      <section className="py-20 bg-primary/5">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 text-center">Notre Savoir-Faire</h2>
+          <p className="text-lg text-muted-foreground text-center mb-12 max-w-2xl mx-auto">
+            Du verger à la bouteille, un processus artisanal respectueux de la nature
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            {/* Étape 1 */}
+            <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <TreeDeciduous className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Choix des Variétés</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Dès la plantation, nous sélectionnons avec soin les variétés de pommes adaptées à notre terroir breton, privilégiant le goût et la qualité naturelle des fruits.
+              </p>
+            </div>
+
+            {/* Étape 2 */}
+            <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Scissors className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Taille Douce</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Nous pratiquons une taille douce et respectueuse de l'arbre, favorisant son épanouissement naturel et une production de qualité sur le long terme.
+              </p>
+            </div>
+
+            {/* Étape 3 */}
+            <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Leaf className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Fauchage Tardif</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Le fauchage tardif de nos vergers préserve la biodiversité et favorise un équilibre naturel. Insectes auxiliaires et flore sauvage contribuent à la santé de nos pommiers.
+              </p>
+            </div>
+
+            {/* Étape 4 */}
+            <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Hand className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Ramassage à la Main</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Chaque pomme est cueillie et sélectionnée à la main, garantissant une récolte de fruits parfaitement mûrs et sans défauts pour un jus d'exception.
+              </p>
+            </div>
+
+            {/* Étape 5 */}
+            <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Apple className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Pressage à Froid</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Nos pommes sont pressées à froid pour préserver toutes les vitamines, enzymes et saveurs naturelles. Aucune chaleur ne vient altérer la qualité du jus.
+              </p>
+            </div>
+
+            {/* Étape 6 */}
+            <div className="bg-background rounded-xl p-6 shadow-sm border border-border/50 hover:shadow-md transition-shadow">
+              <div className="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+                <Wine className="w-7 h-7 text-primary" />
+              </div>
+              <h3 className="text-xl font-semibold mb-3">Mise en Bouteille</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Le jus est mis en bouteille sans additifs ni conservateurs, préservant ainsi toute l'authenticité et la fraîcheur de nos pommes bretonnes.
+              </p>
+            </div>
           </div>
         </div>
       </section>
