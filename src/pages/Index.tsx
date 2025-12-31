@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import heroImage from "@/assets/verger-pommiers.jpg";
 import logo from "@/assets/logo.svg";
+import labelAB from "@/assets/label-ab-officiel.jpg";
 import vergerAllee from "@/assets/verger-allee.jpg";
 import vergerAllee2 from "@/assets/verger-allee2.jpg";
 import recolteSol from "@/assets/recolte-sol.jpg";
@@ -45,9 +46,7 @@ const Index = () => {
             </div>
             {/* Label AB dans le header */}
             <div className="hidden md:flex items-center gap-2 ml-4 pl-4 border-l border-border">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-primary-foreground text-xs font-bold">AB</span>
-              </div>
+              <img src={labelAB} alt="Label Agriculture Biologique" className="h-10 w-auto" />
               <span className="text-xs text-muted-foreground">Certifié Bio</span>
             </div>
           </div>

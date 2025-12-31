@@ -9,7 +9,7 @@ const ABLabel = ({ className = "" }: { className?: string }) => {
         className="w-20 h-auto md:w-24"
       />
       <span className="text-xs text-muted-foreground mt-1">
-        Certifié depuis 3 ans
+        Certifié depuis 2023
       </span>
     </div>
   );
