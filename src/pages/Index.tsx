@@ -41,7 +41,7 @@ const Index = () => {
           <div className="flex items-center gap-3">
             <img src={logo} alt="Pom'Pom Logo" className="h-12 w-auto" />
             <div className="flex flex-col">
-              <span className="text-xl md:text-2xl font-bold text-primary leading-tight">Pom'Pom</span>
+              <span className="text-xl md:text-2xl font-bold text-primary leading-tight">PomPom</span>
               <span className="text-xs md:text-sm text-muted-foreground">Vergers des Abers</span>
             </div>
             {/* Label AB dans le header */}
