@@ -1,0 +1,69 @@
+# docker-compose.prod.yml — PROD (VPS OVH)
+#
+# Usage : docker compose -f docker-compose.prod.yml up -d --build
+# Reverse proxy HTTPS (Caddy) à installer en HOST sur le VPS, pas dans Compose.
+#
+# Configuration via .env OBLIGATOIRE à la racine — voir .env.example.
+# Toutes les variables sans default explicite (${VAR}) déclencheront une erreur
+# explicite au démarrage si manquantes — c'est volontaire.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: prod
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}?schema=public
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
+      PORT: 3001
+      HOST: 0.0.0.0
+      NODE_ENV: production
+      CORS_ORIGIN: ${CORS_ORIGIN}
+      UPLOAD_DIR: /app/uploads
+      MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-5}
+      ADMIN_EMAIL: ${ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - uploads:/app/uploads
+    command: sh -c "bun run prisma:migrate:deploy && bun run start"
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      target: prod
+      args:
+        VITE_API_URL: ${VITE_API_URL}
+        VITE_PUBLIC_SITE_URL: ${VITE_PUBLIC_SITE_URL}
+    restart: always
+    depends_on:
+      - api
+    ports:
+      - "127.0.0.1:5173:80"
+
+volumes:
+  pgdata:
+  uploads:

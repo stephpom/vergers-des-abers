@@ -12,6 +12,29 @@ dist
 dist-ssr
 *.local
 
+# Env files
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+apps/api/dist
+apps/web/dist
+
+# Uploads (local dev storage)
+apps/api/uploads/*
+!apps/api/uploads/.gitkeep
+
+# Uploads tests
+apps/api/uploads-test/
+
+# Database
+*.db
+*.sqlite
+
+# Coverage
+coverage/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
