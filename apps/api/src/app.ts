@@ -4,11 +4,13 @@ import cookie from '@fastify/cookie';
 import cors from '@fastify/cors';
 import helmet from '@fastify/helmet';
 import multipart from '@fastify/multipart';
+import rateLimit from '@fastify/rate-limit';
 import staticPlugin from '@fastify/static';
 import { config } from './config.js';
 import { authRoutes } from './routes/auth.routes.js';
 import { productsRoutes } from './routes/products.routes.js';
 import { adminRoutes } from './routes/admin.routes.js';
+import { contactRoutes } from './routes/contact.routes.js';
 import { sitemapRoutes } from './routes/sitemap.routes.js';
 
 export async function buildApp() {
@@ -34,6 +36,7 @@ export async function buildApp() {
     prefix: '/uploads/',
     decorateReply: false,
   });
+  await app.register(rateLimit, { global: false });
 
   app.get('/health', async () => ({ status: 'ok' }));
 
@@ -41,6 +44,7 @@ export async function buildApp() {
   await app.register(authRoutes, { prefix: '/api/auth' });
   await app.register(productsRoutes, { prefix: '/api/products' });
   await app.register(adminRoutes, { prefix: '/api/admin' });
+  await app.register(contactRoutes, { prefix: '/api/contact' });
 
   return app;
 }

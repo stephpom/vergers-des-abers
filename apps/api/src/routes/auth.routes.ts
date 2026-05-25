@@ -10,7 +10,12 @@ const loginBody = z.object({
 });
 
 export async function authRoutes(app: FastifyInstance) {
-  app.post('/login', async (req, reply) => {
+  const loginRateLimit = {
+    max: Number(process.env.AUTH_LOGIN_RATE_LIMIT_MAX ?? 5),
+    timeWindow: process.env.AUTH_LOGIN_RATE_LIMIT_WINDOW ?? '1 minute',
+  };
+
+  app.post('/login', { config: { rateLimit: loginRateLimit } }, async (req, reply) => {
     const parsed = loginBody.safeParse(req.body);
     if (!parsed.success) {
       return reply.code(400).send({ error: 'Invalid input', details: parsed.error.flatten() });

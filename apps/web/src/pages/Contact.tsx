@@ -12,6 +12,7 @@ import { MapPin, Phone, Mail } from "lucide-react";
 import { PublicHeader } from "@/components/PublicHeader";
 import { PublicFooter } from "@/components/PublicFooter";
 import { SEO } from "@/components/SEO";
+import { api } from "@/lib/api";
 
 const formSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
@@ -38,19 +39,22 @@ const Contact = () => {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
-    
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    console.log("Form data:", data);
-    
-    toast({
-      title: "Message envoyé !",
-      description: "Nous vous répondrons dans les plus brefs délais.",
-    });
-    
-    form.reset();
-    setIsSubmitting(false);
+    try {
+      await api("/api/contact", { method: "POST", body: data });
+      toast({
+        title: "Message envoyé !",
+        description: "Nous vous répondrons dans les plus brefs délais.",
+      });
+      form.reset();
+    } catch {
+      toast({
+        variant: "destructive",
+        title: "Erreur d'envoi",
+        description: "Impossible d'envoyer votre message. Réessayez dans quelques instants.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

@@ -16,6 +16,8 @@ export async function sitemapRoutes(app: FastifyInstance) {
     const urls = [
       { loc: `${base}/`, lastmod: today, changefreq: 'weekly', priority: '1.0' },
       { loc: `${base}/contact`, lastmod: today, changefreq: 'yearly', priority: '0.5' },
+      { loc: `${base}/mentions-legales`, lastmod: today, changefreq: 'yearly', priority: '0.3' },
+      { loc: `${base}/confidentialite`, lastmod: today, changefreq: 'yearly', priority: '0.3' },
       ...products.map((p) => ({
         loc: `${base}/produits/${p.slug}`,
         lastmod: p.updatedAt.toISOString().slice(0, 10),

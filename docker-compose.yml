@@ -62,6 +62,9 @@ services:
       MAX_UPLOAD_SIZE_MB: ${MAX_UPLOAD_SIZE_MB:-5}
       ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@pompom.fr}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-pompom_dev_admin}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      CONTACT_EMAIL_TO: ${CONTACT_EMAIL_TO:-pom-pom@mailo.com}
+      CONTACT_EMAIL_FROM: ${CONTACT_EMAIL_FROM:-contact@pompom.fr}
     ports:
       - "3001:3001"
     volumes:

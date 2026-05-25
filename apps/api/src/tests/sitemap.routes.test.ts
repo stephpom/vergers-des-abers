@@ -34,6 +34,14 @@ describe('GET /sitemap.xml', () => {
     expect(body).toContain('<changefreq>yearly</changefreq>');
   });
 
+  it('contient /mentions-legales et /confidentialite avec priority 0.3', async () => {
+    const res = await app.inject({ method: 'GET', url: '/sitemap.xml' });
+    const body = res.body;
+    expect(body).toContain('/mentions-legales</loc>');
+    expect(body).toContain('/confidentialite</loc>');
+    expect(body).toContain('<priority>0.3</priority>');
+  });
+
   it('contient une <url> par produit publié, pas pour les brouillons', async () => {
     await createTestProduct({ title: 'Publié 1', slug: 'publie-1', published: true });
     await createTestProduct({ title: 'Publié 2', slug: 'publie-2', published: true });

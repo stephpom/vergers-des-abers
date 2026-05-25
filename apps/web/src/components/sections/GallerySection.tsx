@@ -1,13 +1,13 @@
 import vergerAllee from "@/assets/verger-allee.jpg";
 import pommesBranche from "@/assets/pommes-branche.jpg";
-import recolteSol from "@/assets/recolte-sol.jpg";
+import recolteSol from "@/assets/recolte-sol.webp";
 import seauxPommes from "@/assets/seaux-pommes.jpg";
 import producteur from "@/assets/producteur.jpg";
 import vergerRangees from "@/assets/verger-rangees.jpg";
-import vergerAllee2 from "@/assets/verger-allee2.jpg";
-import filetsRecolte from "@/assets/filets-recolte.jpg";
-import sacsRecolte from "@/assets/sacs-recolte.jpg";
-import camionLivraison from "@/assets/camion-livraison.jpg";
+import vergerAllee2 from "@/assets/verger-allee2.webp";
+import filetsRecolte from "@/assets/filets-recolte.webp";
+import sacsRecolte from "@/assets/sacs-recolte.webp";
+import camionLivraison from "@/assets/camion-livraison.webp";
 import {
   Carousel,
   CarouselContent,

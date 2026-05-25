@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import logo from '@/assets/logo.svg';
 
 export const PublicFooter = () => (
@@ -14,6 +15,14 @@ export const PublicFooter = () => (
         <p className="text-muted-foreground mb-4">
           Jus de pomme artisanal 100% naturel
         </p>
+        <nav className="flex justify-center gap-6 text-sm text-muted-foreground mb-4">
+          <Link to="/mentions-legales" className="hover:text-primary transition-colors">
+            Mentions légales
+          </Link>
+          <Link to="/confidentialite" className="hover:text-primary transition-colors">
+            Politique de confidentialité
+          </Link>
+        </nav>
         <p className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} Pom'Pom - Vergers des Abers. Tous droits réservés.
         </p>
