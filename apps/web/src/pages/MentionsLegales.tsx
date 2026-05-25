@@ -103,8 +103,7 @@ const MentionsLegales = () => (
             <p>
               Photographies : <Placeholder>crédit photo (auteur, source)</Placeholder>
               <br />
-              Conception et développement :{" "}
-              <Placeholder>nom de l'agence / développeur</Placeholder>
+              Conception et développement : <Placeholder>nom de l'agence / développeur</Placeholder>
             </p>
           </section>
 
@@ -123,8 +122,8 @@ const MentionsLegales = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Contact</h2>
             <p>
-              Pour toute question concernant ces mentions légales ou le contenu du site, vous
-              pouvez nous écrire via notre{" "}
+              Pour toute question concernant ces mentions légales ou le contenu du site, vous pouvez
+              nous écrire via notre{" "}
               <Link to="/contact" className="text-primary hover:underline">
                 formulaire de contact
               </Link>

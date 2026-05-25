@@ -1,5 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-import { hashPassword } from '../src/lib/auth.js';
+import { PrismaClient } from "@prisma/client";
+import { hashPassword } from "../src/lib/auth.js";
 
 const prisma = new PrismaClient();
 
@@ -7,7 +7,7 @@ async function seedAdmin() {
   const email = process.env.ADMIN_EMAIL;
   const password = process.env.ADMIN_PASSWORD;
   if (!email || !password) {
-    console.log('[seed] ADMIN_EMAIL / ADMIN_PASSWORD non définis — skip création admin.');
+    console.log("[seed] ADMIN_EMAIL / ADMIN_PASSWORD non définis — skip création admin.");
     return;
   }
   const existing = await prisma.user.findUnique({ where: { email } });
@@ -26,7 +26,7 @@ async function main() {
 
 main()
   .catch((err) => {
-    console.error('[seed] FATAL:', err);
+    console.error("[seed] FATAL:", err);
     process.exit(1);
   })
   .finally(() => prisma.$disconnect());

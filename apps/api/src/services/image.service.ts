@@ -1,14 +1,14 @@
-import { randomBytes } from 'node:crypto';
-import { mkdir, unlink, writeFile } from 'node:fs/promises';
-import path from 'node:path';
-import { prisma } from '../lib/prisma.js';
-import { config } from '../config.js';
+import { randomBytes } from "node:crypto";
+import { mkdir, unlink, writeFile } from "node:fs/promises";
+import path from "node:path";
+import { prisma } from "../lib/prisma.js";
+import { config } from "../config.js";
 
-const ALLOWED_MIMES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const ALLOWED_MIMES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const MIME_TO_EXT: Record<string, string> = {
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/webp': '.webp',
+  "image/jpeg": ".jpg",
+  "image/png": ".png",
+  "image/webp": ".webp",
 };
 
 export interface UploadFile {
@@ -18,9 +18,12 @@ export interface UploadFile {
 }
 
 export class ImageError extends Error {
-  constructor(public statusCode: number, message: string) {
+  constructor(
+    public statusCode: number,
+    message: string,
+  ) {
     super(message);
-    this.name = 'ImageError';
+    this.name = "ImageError";
   }
 }
 
@@ -40,13 +43,13 @@ export async function addImageToProduct(productId: string, file: UploadFile, alt
   }
   const product = await prisma.product.findUnique({
     where: { id: productId },
-    include: { images: { orderBy: { position: 'desc' }, take: 1 } },
+    include: { images: { orderBy: { position: "desc" }, take: 1 } },
   });
-  if (!product) throw new ImageError(404, 'Product not found');
+  if (!product) throw new ImageError(404, "Product not found");
 
   const dir = await ensureUploadDir();
   const ext = MIME_TO_EXT[file.mimetype];
-  const filename = `${randomBytes(16).toString('hex')}${ext}`;
+  const filename = `${randomBytes(16).toString("hex")}${ext}`;
   await writeFile(path.join(dir, filename), file.buffer);
 
   const nextPosition = (product.images[0]?.position ?? -1) + 1;
@@ -63,7 +66,7 @@ export async function addImageToProduct(productId: string, file: UploadFile, alt
 
 export async function removeImage(imageId: string) {
   const image = await prisma.productImage.findUnique({ where: { id: imageId } });
-  if (!image) throw new ImageError(404, 'Image not found');
+  if (!image) throw new ImageError(404, "Image not found");
   const dir = await ensureUploadDir();
   try {
     await unlink(path.join(dir, image.filename));
@@ -81,13 +84,13 @@ export async function removeImage(imageId: string) {
 export async function reorderImages(productId: string, imageIds: string[]) {
   const product = await prisma.product.findUnique({
     where: { id: productId },
-    include: { images: { orderBy: { position: 'asc' } } },
+    include: { images: { orderBy: { position: "asc" } } },
   });
-  if (!product) throw new ImageError(404, 'Product not found');
+  if (!product) throw new ImageError(404, "Product not found");
 
   const currentIds = new Set(product.images.map((i) => i.id));
   if (imageIds.length !== currentIds.size) {
-    throw new ImageError(400, 'imageIds doit contenir toutes les images du produit');
+    throw new ImageError(400, "imageIds doit contenir toutes les images du produit");
   }
   for (const id of imageIds) {
     if (!currentIds.has(id)) {
@@ -103,7 +106,7 @@ export async function reorderImages(productId: string, imageIds: string[]) {
 
   return prisma.productImage.findMany({
     where: { productId },
-    orderBy: { position: 'asc' },
+    orderBy: { position: "asc" },
   });
 }
 
@@ -117,7 +120,7 @@ export async function importImageFromBuffer(
   if (!ALLOWED_MIMES.has(mimetype)) return null;
   const dir = await ensureUploadDir();
   const ext = MIME_TO_EXT[mimetype];
-  const filename = `${randomBytes(16).toString('hex')}${ext}`;
+  const filename = `${randomBytes(16).toString("hex")}${ext}`;
   await writeFile(path.join(dir, filename), buffer);
   return prisma.productImage.create({
     data: { productId, filename, alt, position },

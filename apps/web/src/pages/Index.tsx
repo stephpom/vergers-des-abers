@@ -13,34 +13,36 @@ import { getSiteUrl, absoluteUrl } from "@/lib/seo";
 
 const Index = () => {
   const { data, isLoading } = useQuery({
-    queryKey: ['products'],
-    queryFn: () => api<{ products: ApiProduct[] }>('/api/products'),
+    queryKey: ["products"],
+    queryFn: () => api<{ products: ApiProduct[] }>("/api/products"),
     retry: false,
   });
 
   return (
     <div className="min-h-screen bg-background">
       <SEO type="website">
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Organization",
-          name: "Pom'Pom — Vergers des Abers",
-          url: getSiteUrl(),
-          logo: absoluteUrl('/logo.svg'),
-          address: {
-            "@type": "PostalAddress",
-            streetAddress: "592 Lanvaon",
-            addressLocality: "Plouguerneau",
-            postalCode: "29880",
-            addressCountry: "FR",
-          },
-          contactPoint: {
-            "@type": "ContactPoint",
-            telephone: "+33644086073",
-            email: "pom-pom@mailo.com",
-            contactType: "customer service",
-          },
-        })}</script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            name: "Pom'Pom — Vergers des Abers",
+            url: getSiteUrl(),
+            logo: absoluteUrl("/logo.svg"),
+            address: {
+              "@type": "PostalAddress",
+              streetAddress: "592 Lanvaon",
+              addressLocality: "Plouguerneau",
+              postalCode: "29880",
+              addressCountry: "FR",
+            },
+            contactPoint: {
+              "@type": "ContactPoint",
+              telephone: "+33644086073",
+              email: "pom-pom@mailo.com",
+              contactType: "customer service",
+            },
+          })}
+        </script>
       </SEO>
       <PublicHeader />
       <HeroSection />

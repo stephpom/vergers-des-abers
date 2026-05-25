@@ -1,6 +1,6 @@
-import { Link } from 'react-router-dom';
-import { imageUrl, type ApiProduct } from '@/types/api';
-import { stripHtml, truncate } from '@/lib/seo';
+import { Link } from "react-router-dom";
+import { imageUrl, type ApiProduct } from "@/types/api";
+import { stripHtml, truncate } from "@/lib/seo";
 
 interface ProductCardProps {
   product: ApiProduct;
@@ -8,9 +8,7 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const cover = product.images[0];
-  const excerpt = product.description
-    ? truncate(stripHtml(product.description), 100)
-    : null;
+  const excerpt = product.description ? truncate(stripHtml(product.description), 100) : null;
 
   return (
     <Link to={`/produits/${product.slug}`} className="group block h-full">

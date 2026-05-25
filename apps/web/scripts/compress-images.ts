@@ -50,9 +50,7 @@ async function main(): Promise<void> {
 
     const newSize = (await stat(dstPath)).size;
     const ratio = ((1 - newSize / size) * 100).toFixed(0);
-    console.log(
-      `  ${name} (${formatKB(size)}) → ${dstName} (${formatKB(newSize)})  -${ratio}%`,
-    );
+    console.log(`  ${name} (${formatKB(size)}) → ${dstName} (${formatKB(newSize)})  -${ratio}%`);
   }
 
   console.log(

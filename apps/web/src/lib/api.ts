@@ -1,13 +1,17 @@
-const BASE = import.meta.env.VITE_API_URL || '';
+const BASE = import.meta.env.VITE_API_URL || "";
 
 export class ApiError extends Error {
-  constructor(public status: number, message: string, public details?: unknown) {
+  constructor(
+    public status: number,
+    message: string,
+    public details?: unknown,
+  ) {
     super(message);
-    this.name = 'ApiError';
+    this.name = "ApiError";
   }
 }
 
-interface RequestOptions extends Omit<RequestInit, 'body'> {
+interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
 }
 
@@ -18,7 +22,7 @@ export async function api<T = unknown>(path: string, opts: RequestOptions = {}):
     if (opts.body instanceof FormData) {
       body = opts.body;
     } else {
-      headers.set('Content-Type', 'application/json');
+      headers.set("Content-Type", "application/json");
       body = JSON.stringify(opts.body);
     }
   }
@@ -26,7 +30,7 @@ export async function api<T = unknown>(path: string, opts: RequestOptions = {}):
     ...opts,
     headers,
     body,
-    credentials: 'include',
+    credentials: "include",
   });
   if (res.status === 204) return undefined as T;
   const text = await res.text();

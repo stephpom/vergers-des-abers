@@ -1,22 +1,22 @@
-import { SEO } from '@/components/SEO';
-import { useEffect, useMemo, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { ArrowLeft, ImageIcon, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { RichTextEditor } from '@/components/admin/RichTextEditor';
-import AdminHeader from '@/components/admin/AdminHeader';
-import ProductImagesSection from '@/components/admin/ProductImagesSection';
-import { api, ApiError } from '@/lib/api';
-import { type ApiProduct, type ApiProductImage } from '@/types/api';
-import { toast } from 'sonner';
+import { SEO } from "@/components/SEO";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { ArrowLeft, ImageIcon, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import AdminHeader from "@/components/admin/AdminHeader";
+import ProductImagesSection from "@/components/admin/ProductImagesSection";
+import { api, ApiError } from "@/lib/api";
+import { type ApiProduct, type ApiProductImage } from "@/types/api";
+import { toast } from "sonner";
 
 const schema = z.object({
   title: z.string().min(1, "Titre requis").max(200),
@@ -35,7 +35,7 @@ const AdminProductForm = () => {
   const [uploading, setUploading] = useState(false);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin', 'product', id],
+    queryKey: ["admin", "product", id],
     queryFn: () => api<{ product: ApiProduct }>(`/api/admin/products/${id}`),
     enabled: isEdit,
   });
@@ -45,9 +45,9 @@ const AdminProductForm = () => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      title: '',
-      slug: '',
-      description: '',
+      title: "",
+      slug: "",
+      description: "",
       published: false,
     },
   });
@@ -68,18 +68,18 @@ const AdminProductForm = () => {
     mutationFn: async (values: FormValues) => {
       if (isEdit) {
         return api<{ product: ApiProduct }>(`/api/admin/products/${id}`, {
-          method: 'PATCH',
+          method: "PATCH",
           body: values,
         });
       }
       return api<{ product: ApiProduct }>(`/api/admin/products`, {
-        method: 'POST',
+        method: "POST",
         body: values,
       });
     },
     onSuccess: (result) => {
-      qc.invalidateQueries({ queryKey: ['admin', 'products'] });
-      qc.invalidateQueries({ queryKey: ['products'] });
+      qc.invalidateQueries({ queryKey: ["admin", "products"] });
+      qc.invalidateQueries({ queryKey: ["products"] });
       toast.success(isEdit ? "Produit mis à jour" : "Produit créé");
       if (!isEdit) navigate(`/admin/produits/${result.product.id}`, { replace: true });
     },
@@ -100,13 +100,13 @@ const AdminProductForm = () => {
     setUploading(true);
     try {
       const fd = new FormData();
-      fd.append('file', file);
-      fd.append('alt', form.getValues('title'));
+      fd.append("file", file);
+      fd.append("alt", form.getValues("title"));
       await api<{ image: ApiProductImage }>(`/api/admin/products/${id}/images`, {
-        method: 'POST',
+        method: "POST",
         body: fd,
       });
-      await qc.invalidateQueries({ queryKey: ['admin', 'product', id] });
+      await qc.invalidateQueries({ queryKey: ["admin", "product", id] });
       toast.success("Image ajoutée");
     } catch (err) {
       if (err instanceof ApiError) toast.error(err.message);
@@ -119,12 +119,12 @@ const AdminProductForm = () => {
   const reorderMutation = useMutation({
     mutationFn: (imageIds: string[]) =>
       api<{ images: ApiProductImage[] }>(`/api/admin/products/${id}/images/order`, {
-        method: 'PUT',
+        method: "PUT",
         body: { imageIds },
       }),
     onMutate: async (imageIds) => {
-      await qc.cancelQueries({ queryKey: ['admin', 'product', id] });
-      const previous = qc.getQueryData<{ product: ApiProduct }>(['admin', 'product', id]);
+      await qc.cancelQueries({ queryKey: ["admin", "product", id] });
+      const previous = qc.getQueryData<{ product: ApiProduct }>(["admin", "product", id]);
       if (previous) {
         const byId = new Map(previous.product.images.map((img) => [img.id, img]));
         const reordered = imageIds
@@ -133,18 +133,18 @@ const AdminProductForm = () => {
             return img ? { ...img, position } : null;
           })
           .filter((x): x is ApiProductImage => x !== null);
-        qc.setQueryData(['admin', 'product', id], {
+        qc.setQueryData(["admin", "product", id], {
           product: { ...previous.product, images: reordered },
         });
       }
       return { previous };
     },
     onError: (_err, _vars, ctx) => {
-      if (ctx?.previous) qc.setQueryData(['admin', 'product', id], ctx.previous);
+      if (ctx?.previous) qc.setQueryData(["admin", "product", id], ctx.previous);
       toast.error("Erreur lors de la réorganisation");
     },
     onSettled: () => {
-      qc.invalidateQueries({ queryKey: ['admin', 'product', id] });
+      qc.invalidateQueries({ queryKey: ["admin", "product", id] });
     },
   });
 
@@ -164,9 +164,9 @@ const AdminProductForm = () => {
 
   const deleteImageMutation = useMutation({
     mutationFn: (imageId: string) =>
-      api(`/api/admin/products/${id}/images/${imageId}`, { method: 'DELETE' }),
+      api(`/api/admin/products/${id}/images/${imageId}`, { method: "DELETE" }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['admin', 'product', id] });
+      qc.invalidateQueries({ queryKey: ["admin", "product", id] });
       toast.success("Image supprimée");
     },
     onError: () => toast.error("Erreur lors de la suppression"),
@@ -199,7 +199,7 @@ const AdminProductForm = () => {
         <form onSubmit={form.handleSubmit((v) => saveMutation.mutate(v))} className="space-y-6">
           <div className="space-y-2">
             <Label htmlFor="title">Titre</Label>
-            <Input id="title" {...form.register('title')} />
+            <Input id="title" {...form.register("title")} />
             {form.formState.errors.title && (
               <p className="text-sm text-destructive">{form.formState.errors.title.message}</p>
             )}
@@ -207,39 +207,32 @@ const AdminProductForm = () => {
 
           <div className="space-y-2">
             <Label htmlFor="slug">Slug (URL)</Label>
-            <Input
-              id="slug"
-              placeholder="auto-généré depuis le titre"
-              {...form.register('slug')}
-            />
+            <Input id="slug" placeholder="auto-généré depuis le titre" {...form.register("slug")} />
             <p className="text-xs text-muted-foreground">
-              Visible dans l'URL publique : /produits/<strong>{form.watch('slug') || 'auto-genere'}</strong>
+              Visible dans l'URL publique : /produits/
+              <strong>{form.watch("slug") || "auto-genere"}</strong>
             </p>
           </div>
 
           <div className="space-y-2">
             <Label>Description</Label>
             <RichTextEditor
-              value={form.watch('description')}
-              onChange={(html) => form.setValue('description', html, { shouldDirty: true })}
+              value={form.watch("description")}
+              onChange={(html) => form.setValue("description", html, { shouldDirty: true })}
             />
           </div>
 
           <div className="flex items-center gap-3">
             <Switch
               id="published"
-              checked={form.watch('published')}
-              onCheckedChange={(v) => form.setValue('published', v, { shouldDirty: true })}
+              checked={form.watch("published")}
+              onCheckedChange={(v) => form.setValue("published", v, { shouldDirty: true })}
             />
             <Label htmlFor="published">Publié (visible sur le site public)</Label>
           </div>
 
           <div className="flex gap-2 justify-end">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => navigate('/admin/produits')}
-            >
+            <Button type="button" variant="outline" onClick={() => navigate("/admin/produits")}>
               Annuler
             </Button>
             <Button type="submit" disabled={saveMutation.isPending}>

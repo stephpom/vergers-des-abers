@@ -11,32 +11,38 @@ const STEPS: Step[] = [
   {
     icon: TreeDeciduous,
     title: "Choix des Variétés",
-    description: "Dès la plantation, nous sélectionnons avec soin les variétés de pommes adaptées à notre terroir breton, privilégiant le goût et la qualité naturelle des fruits.",
+    description:
+      "Dès la plantation, nous sélectionnons avec soin les variétés de pommes adaptées à notre terroir breton, privilégiant le goût et la qualité naturelle des fruits.",
   },
   {
     icon: Scissors,
     title: "Taille Douce",
-    description: "Nous pratiquons une taille douce et respectueuse de l'arbre, favorisant son épanouissement naturel et une production de qualité sur le long terme.",
+    description:
+      "Nous pratiquons une taille douce et respectueuse de l'arbre, favorisant son épanouissement naturel et une production de qualité sur le long terme.",
   },
   {
     icon: Leaf,
     title: "Fauchage Tardif",
-    description: "Le fauchage tardif de nos vergers préserve la biodiversité et favorise un équilibre naturel. Insectes auxiliaires et flore sauvage contribuent à la santé de nos pommiers.",
+    description:
+      "Le fauchage tardif de nos vergers préserve la biodiversité et favorise un équilibre naturel. Insectes auxiliaires et flore sauvage contribuent à la santé de nos pommiers.",
   },
   {
     icon: Hand,
     title: "Ramassage à la Main",
-    description: "Chaque pomme est cueillie et sélectionnée à la main, garantissant une récolte de fruits parfaitement mûrs et sans défauts pour un jus d'exception.",
+    description:
+      "Chaque pomme est cueillie et sélectionnée à la main, garantissant une récolte de fruits parfaitement mûrs et sans défauts pour un jus d'exception.",
   },
   {
     icon: Apple,
     title: "Pressage à Froid",
-    description: "Nos pommes sont pressées à froid pour préserver toutes les vitamines, enzymes et saveurs naturelles. Aucune chaleur ne vient altérer la qualité du jus.",
+    description:
+      "Nos pommes sont pressées à froid pour préserver toutes les vitamines, enzymes et saveurs naturelles. Aucune chaleur ne vient altérer la qualité du jus.",
   },
   {
     icon: Wine,
     title: "Mise en Bouteille",
-    description: "Le jus est mis en bouteille sans additifs ni conservateurs, préservant ainsi toute l'authenticité et la fraîcheur de nos pommes bretonnes.",
+    description:
+      "Le jus est mis en bouteille sans additifs ni conservateurs, préservant ainsi toute l'authenticité et la fraîcheur de nos pommes bretonnes.",
   },
 ];
 

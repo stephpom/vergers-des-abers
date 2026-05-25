@@ -1,28 +1,28 @@
-import type { FastifyInstance } from 'fastify';
-import { prisma } from '../lib/prisma.js';
-import { config } from '../config.js';
+import type { FastifyInstance } from "fastify";
+import { prisma } from "../lib/prisma.js";
+import { config } from "../config.js";
 
 export async function sitemapRoutes(app: FastifyInstance) {
-  app.get('/sitemap.xml', async (_req, reply) => {
+  app.get("/sitemap.xml", async (_req, reply) => {
     const products = await prisma.product.findMany({
       where: { published: true },
       select: { slug: true, updatedAt: true },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { updatedAt: "desc" },
     });
 
-    const base = config.PUBLIC_SITE_URL.replace(/\/$/, '');
+    const base = config.PUBLIC_SITE_URL.replace(/\/$/, "");
     const today = new Date().toISOString().slice(0, 10);
 
     const urls = [
-      { loc: `${base}/`, lastmod: today, changefreq: 'weekly', priority: '1.0' },
-      { loc: `${base}/contact`, lastmod: today, changefreq: 'yearly', priority: '0.5' },
-      { loc: `${base}/mentions-legales`, lastmod: today, changefreq: 'yearly', priority: '0.3' },
-      { loc: `${base}/confidentialite`, lastmod: today, changefreq: 'yearly', priority: '0.3' },
+      { loc: `${base}/`, lastmod: today, changefreq: "weekly", priority: "1.0" },
+      { loc: `${base}/contact`, lastmod: today, changefreq: "yearly", priority: "0.5" },
+      { loc: `${base}/mentions-legales`, lastmod: today, changefreq: "yearly", priority: "0.3" },
+      { loc: `${base}/confidentialite`, lastmod: today, changefreq: "yearly", priority: "0.3" },
       ...products.map((p) => ({
         loc: `${base}/produits/${p.slug}`,
         lastmod: p.updatedAt.toISOString().slice(0, 10),
-        changefreq: 'monthly',
-        priority: '0.8',
+        changefreq: "monthly",
+        priority: "0.8",
       })),
     ];
 
@@ -37,9 +37,9 @@ ${urls
     <priority>${u.priority}</priority>
   </url>`,
   )
-  .join('\n')}
+  .join("\n")}
 </urlset>`;
 
-    reply.type('application/xml; charset=utf-8').send(xml);
+    reply.type("application/xml; charset=utf-8").send(xml);
   });
 }

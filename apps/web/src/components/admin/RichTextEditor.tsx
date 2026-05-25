@@ -1,7 +1,7 @@
-import { useEditor, EditorContent } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
-import Link from '@tiptap/extension-link';
-import { Button } from '@/components/ui/button';
+import { useEditor, EditorContent } from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import Link from "@tiptap/extension-link";
+import { Button } from "@/components/ui/button";
 import {
   Bold,
   Italic,
@@ -13,8 +13,8 @@ import {
   Heading3,
   Undo,
   Redo,
-} from 'lucide-react';
-import { useEffect } from 'react';
+} from "lucide-react";
+import { useEffect } from "react";
 
 interface RichTextEditorProps {
   value: string;
@@ -27,15 +27,14 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
       StarterKit,
       Link.configure({
         openOnClick: false,
-        HTMLAttributes: { rel: 'noopener noreferrer', target: '_blank' },
+        HTMLAttributes: { rel: "noopener noreferrer", target: "_blank" },
       }),
     ],
     content: value,
     onUpdate: ({ editor: e }) => onChange(e.getHTML()),
     editorProps: {
       attributes: {
-        class:
-          'prose prose-neutral max-w-none min-h-[200px] p-3 focus:outline-none',
+        class: "prose prose-neutral max-w-none min-h-[200px] p-3 focus:outline-none",
       },
     },
   });
@@ -50,48 +49,84 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
   if (!editor) return null;
 
   const setLink = () => {
-    const prev = editor.getAttributes('link').href as string | undefined;
-    const url = window.prompt('URL du lien', prev ?? 'https://');
+    const prev = editor.getAttributes("link").href as string | undefined;
+    const url = window.prompt("URL du lien", prev ?? "https://");
     if (url === null) return;
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+    if (url === "") {
+      editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
   };
 
   return (
     <div className="border rounded-md">
       <div className="flex flex-wrap gap-1 p-2 border-b bg-muted/30">
-        <ToolbarButton onClick={() => editor.chain().focus().toggleBold().run()} active={editor.isActive('bold')} label="Gras">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleBold().run()}
+          active={editor.isActive("bold")}
+          label="Gras"
+        >
           <Bold className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleItalic().run()} active={editor.isActive('italic')} label="Italique">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleItalic().run()}
+          active={editor.isActive("italic")}
+          label="Italique"
+        >
           <Italic className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()} active={editor.isActive('heading', { level: 2 })} label="Titre 2">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          active={editor.isActive("heading", { level: 2 })}
+          label="Titre 2"
+        >
           <Heading2 className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()} active={editor.isActive('heading', { level: 3 })} label="Titre 3">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          active={editor.isActive("heading", { level: 3 })}
+          label="Titre 3"
+        >
           <Heading3 className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleBulletList().run()} active={editor.isActive('bulletList')} label="Liste">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          active={editor.isActive("bulletList")}
+          label="Liste"
+        >
           <List className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleOrderedList().run()} active={editor.isActive('orderedList')} label="Liste numérotée">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          active={editor.isActive("orderedList")}
+          label="Liste numérotée"
+        >
           <ListOrdered className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().toggleBlockquote().run()} active={editor.isActive('blockquote')} label="Citation">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          active={editor.isActive("blockquote")}
+          label="Citation"
+        >
           <Quote className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={setLink} active={editor.isActive('link')} label="Lien">
+        <ToolbarButton onClick={setLink} active={editor.isActive("link")} label="Lien">
           <LinkIcon className="h-4 w-4" />
         </ToolbarButton>
         <div className="flex-1" />
-        <ToolbarButton onClick={() => editor.chain().focus().undo().run()} active={false} label="Annuler">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().undo().run()}
+          active={false}
+          label="Annuler"
+        >
           <Undo className="h-4 w-4" />
         </ToolbarButton>
-        <ToolbarButton onClick={() => editor.chain().focus().redo().run()} active={false} label="Refaire">
+        <ToolbarButton
+          onClick={() => editor.chain().focus().redo().run()}
+          active={false}
+          label="Refaire"
+        >
           <Redo className="h-4 w-4" />
         </ToolbarButton>
       </div>
@@ -112,7 +147,7 @@ function ToolbarButton({ onClick, active, label, children }: ToolbarButtonProps)
     <Button
       type="button"
       size="sm"
-      variant={active ? 'default' : 'ghost'}
+      variant={active ? "default" : "ghost"}
       onClick={onClick}
       aria-label={label}
       title={label}

@@ -1,26 +1,30 @@
-import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { Link } from "react-router-dom";
+import { FileQuestion } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { PublicHeader } from "@/components/PublicHeader";
+import { PublicFooter } from "@/components/PublicFooter";
 import { SEO } from "@/components/SEO";
 
-const NotFound = () => {
-  const location = useLocation();
+const NotFound = () => (
+  <div className="min-h-screen flex flex-col bg-background">
+    <SEO title="Page introuvable" noindex />
+    <PublicHeader />
 
-  useEffect(() => {
-    console.error("404 Error: User attempted to access non-existent route:", location.pathname);
-  }, [location.pathname]);
-
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-muted">
-      <SEO title="Page introuvable" noindex />
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">404</h1>
-        <p className="mb-4 text-xl text-muted-foreground">Oups ! Page introuvable</p>
-        <a href="/" className="text-primary underline hover:text-primary/90">
-          Retour à l'accueil
-        </a>
+    <main className="flex-1 flex items-center justify-center px-4 py-16">
+      <div className="text-center max-w-md">
+        <FileQuestion className="w-20 h-20 text-muted-foreground mx-auto mb-6" aria-hidden="true" />
+        <h1 className="text-6xl font-bold mb-4 text-foreground">404</h1>
+        <p className="text-xl text-muted-foreground mb-8">
+          Oups ! Cette page n'existe pas (ou plus).
+        </p>
+        <Button asChild size="lg">
+          <Link to="/">Retour à l'accueil</Link>
+        </Button>
       </div>
-    </div>
-  );
-};
+    </main>
+
+    <PublicFooter />
+  </div>
+);
 
 export default NotFound;

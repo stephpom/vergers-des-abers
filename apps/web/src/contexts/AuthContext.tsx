@@ -1,6 +1,14 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
-import { api, ApiError } from '@/lib/api';
-import type { ApiUser } from '@/types/api';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+import { api, ApiError } from "@/lib/api";
+import type { ApiUser } from "@/types/api";
 
 interface AuthContextValue {
   user: ApiUser | null;
@@ -19,11 +27,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let cancelled = false;
     (async () => {
       try {
-        const data = await api<{ user: ApiUser | null }>('/api/auth/me');
+        const data = await api<{ user: ApiUser | null }>("/api/auth/me");
         if (!cancelled) setUser(data.user);
       } catch (err) {
         if (!cancelled && !(err instanceof ApiError && err.status === 401)) {
-          console.error('[auth/me]', err);
+          console.error("[auth/me]", err);
         }
         if (!cancelled) setUser(null);
       } finally {
@@ -36,15 +44,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const data = await api<{ user: ApiUser }>('/api/auth/login', {
-      method: 'POST',
+    const data = await api<{ user: ApiUser }>("/api/auth/login", {
+      method: "POST",
       body: { email, password },
     });
     setUser(data.user);
   }, []);
 
   const logout = useCallback(async () => {
-    await api('/api/auth/logout', { method: 'POST' });
+    await api("/api/auth/logout", { method: "POST" });
     setUser(null);
   }, []);
 
@@ -54,6 +62,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
   return ctx;
 }

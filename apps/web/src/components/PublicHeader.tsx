@@ -1,8 +1,8 @@
-import { Link } from 'react-router-dom';
-import { Phone } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import logo from '@/assets/logo.svg';
-import labelAB from '@/assets/label-ab-officiel.jpg';
+import { Link } from "react-router-dom";
+import { Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import logo from "@/assets/logo.svg";
+import labelAB from "@/assets/label-ab-officiel.jpg";
 
 export const PublicHeader = () => (
   <header className="border-b bg-background/95 backdrop-blur sticky top-0 z-50">

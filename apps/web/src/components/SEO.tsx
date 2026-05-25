@@ -1,12 +1,12 @@
-import { Helmet } from 'react-helmet-async';
-import { useLocation } from 'react-router-dom';
-import { absoluteUrl } from '@/lib/seo';
+import { Helmet } from "react-helmet-async";
+import { useLocation } from "react-router-dom";
+import { absoluteUrl } from "@/lib/seo";
 
 interface SEOProps {
   title?: string;
   description?: string;
   image?: string;
-  type?: 'website' | 'product' | 'article';
+  type?: "website" | "product" | "article";
   noindex?: boolean;
   children?: React.ReactNode;
 }
@@ -19,7 +19,7 @@ export function SEO({
   title,
   description,
   image,
-  type = 'website',
+  type = "website",
   noindex = false,
   children,
 }: SEOProps) {
@@ -27,7 +27,7 @@ export function SEO({
   const fullTitle = title ? `${title} | ${SITE_NAME}` : SITE_NAME;
   const desc = description || DEFAULT_DESCRIPTION;
   const url = absoluteUrl(location.pathname);
-  const imageUrl = image ? absoluteUrl(image) : absoluteUrl('/og-image.jpg');
+  const imageUrl = image ? absoluteUrl(image) : absoluteUrl("/og-image.jpg");
 
   return (
     <Helmet>

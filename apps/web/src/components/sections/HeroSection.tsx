@@ -1,8 +1,12 @@
+import { Helmet } from "react-helmet-async";
 import heroImage from "@/assets/verger-pommiers.webp";
 
 export const HeroSection = () => {
   return (
     <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
+      <Helmet>
+        <link rel="preload" as="image" href={heroImage} fetchPriority="high" />
+      </Helmet>
       <div className="absolute inset-0 z-0">
         <img
           src={heroImage}
@@ -18,7 +22,8 @@ export const HeroSection = () => {
             Pur Jus de Pomme des Abers
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-muted-foreground">
-            Fabrication artisanale de jus de pomme 100% naturel. Sans additifs, sans conservateurs. Le goût authentique de nos vergers bretons.
+            Fabrication artisanale de jus de pomme 100% naturel. Sans additifs, sans conservateurs.
+            Le goût authentique de nos vergers bretons.
           </p>
           <a
             href="#products"

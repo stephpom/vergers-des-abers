@@ -1,8 +1,8 @@
-import { SEO } from '@/components/SEO';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Link, useNavigate } from 'react-router-dom';
-import { Loader2, Plus, Pencil, Trash2, LogOut } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { SEO } from "@/components/SEO";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "react-router-dom";
+import { Loader2, Plus, Pencil, Trash2, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,13 +13,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
-import { Badge } from '@/components/ui/badge';
-import { api } from '@/lib/api';
-import { imageUrl, type ApiProduct } from '@/types/api';
-import { useAuth } from '@/contexts/AuthContext';
-import { toast } from 'sonner';
-import AdminHeader from '@/components/admin/AdminHeader';
+} from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
+import { api } from "@/lib/api";
+import { imageUrl, type ApiProduct } from "@/types/api";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+import AdminHeader from "@/components/admin/AdminHeader";
 
 const AdminProducts = () => {
   const navigate = useNavigate();
@@ -27,15 +27,15 @@ const AdminProducts = () => {
   const qc = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['admin', 'products'],
-    queryFn: () => api<{ products: ApiProduct[] }>('/api/admin/products'),
+    queryKey: ["admin", "products"],
+    queryFn: () => api<{ products: ApiProduct[] }>("/api/admin/products"),
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => api(`/api/admin/products/${id}`, { method: 'DELETE' }),
+    mutationFn: (id: string) => api(`/api/admin/products/${id}`, { method: "DELETE" }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['admin', 'products'] });
-      qc.invalidateQueries({ queryKey: ['products'] });
+      qc.invalidateQueries({ queryKey: ["admin", "products"] });
+      qc.invalidateQueries({ queryKey: ["products"] });
       toast.success("Produit supprimé");
     },
     onError: () => toast.error("Erreur lors de la suppression"),
@@ -43,7 +43,7 @@ const AdminProducts = () => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/admin/login');
+    navigate("/admin/login");
   };
 
   return (

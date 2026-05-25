@@ -12,9 +12,28 @@
     "dev:api": "bun run --cwd apps/api dev",
     "build": "bun run --filter '*' build",
     "test": "bun run --filter '*' test",
-    "lint": "bun run --filter '*' lint"
+    "lint": "bun run --filter '*' lint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,yml,yaml,css}\"",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "apps/web/**/*.{ts,tsx,css}": [
+      "bun --cwd apps/web run lint",
+      "prettier --write"
+    ],
+    "apps/api/**/*.ts": [
+      "bun --cwd apps/api run lint",
+      "prettier --write"
+    ],
+    "**/*.{json,md,yml,yaml}": "prettier --write"
   },
   "trustedDependencies": [
     "@swc/core"
-  ]
+  ],
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.0.5",
+    "prettier": "^3.8.3"
+  }
 }

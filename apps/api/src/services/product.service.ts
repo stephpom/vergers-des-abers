@@ -1,18 +1,33 @@
-import sanitizeHtml from 'sanitize-html';
-import { prisma } from '../lib/prisma.js';
-import { slugify } from '../lib/slug.js';
+import sanitizeHtml from "sanitize-html";
+import { prisma } from "../lib/prisma.js";
+import { slugify } from "../lib/slug.js";
 
 const sanitizeOptions: sanitizeHtml.IOptions = {
   allowedTags: [
-    'p', 'br', 'strong', 'em', 'u', 's', 'ul', 'ol', 'li',
-    'h1', 'h2', 'h3', 'h4', 'blockquote', 'a', 'code', 'pre',
+    "p",
+    "br",
+    "strong",
+    "em",
+    "u",
+    "s",
+    "ul",
+    "ol",
+    "li",
+    "h1",
+    "h2",
+    "h3",
+    "h4",
+    "blockquote",
+    "a",
+    "code",
+    "pre",
   ],
   allowedAttributes: {
-    a: ['href', 'target', 'rel'],
+    a: ["href", "target", "rel"],
   },
-  allowedSchemes: ['http', 'https', 'mailto'],
+  allowedSchemes: ["http", "https", "mailto"],
   transformTags: {
-    a: sanitizeHtml.simpleTransform('a', { rel: 'noopener noreferrer', target: '_blank' }),
+    a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer", target: "_blank" }),
   },
 };
 
@@ -22,7 +37,7 @@ function sanitizeDescription(html: string): string {
 
 async function uniqueSlug(base: string, ignoreProductId?: string): Promise<string> {
   let slug = slugify(base);
-  if (!slug) slug = 'produit';
+  if (!slug) slug = "produit";
   let candidate = slug;
   let n = 1;
   while (true) {
@@ -36,9 +51,9 @@ async function uniqueSlug(base: string, ignoreProductId?: string): Promise<strin
 export async function listPublishedProducts() {
   return prisma.product.findMany({
     where: { published: true },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     include: {
-      images: { orderBy: { position: 'asc' } },
+      images: { orderBy: { position: "asc" } },
     },
   });
 }
@@ -47,16 +62,16 @@ export async function getPublishedProductBySlug(slug: string) {
   return prisma.product.findFirst({
     where: { slug, published: true },
     include: {
-      images: { orderBy: { position: 'asc' } },
+      images: { orderBy: { position: "asc" } },
     },
   });
 }
 
 export async function listAllProducts() {
   return prisma.product.findMany({
-    orderBy: { createdAt: 'desc' },
+    orderBy: { createdAt: "desc" },
     include: {
-      images: { orderBy: { position: 'asc' } },
+      images: { orderBy: { position: "asc" } },
     },
   });
 }
@@ -65,7 +80,7 @@ export async function getProductById(id: string) {
   return prisma.product.findUnique({
     where: { id },
     include: {
-      images: { orderBy: { position: 'asc' } },
+      images: { orderBy: { position: "asc" } },
     },
   });
 }
@@ -83,7 +98,7 @@ export async function createProduct(input: CreateProductInput) {
     data: {
       title: input.title,
       slug,
-      description: sanitizeDescription(input.description ?? ''),
+      description: sanitizeDescription(input.description ?? ""),
       published: input.published ?? false,
     },
     include: { images: true },
@@ -108,7 +123,7 @@ export async function updateProduct(id: string, input: UpdateProductInput) {
   return prisma.product.update({
     where: { id },
     data,
-    include: { images: { orderBy: { position: 'asc' } } },
+    include: { images: { orderBy: { position: "asc" } } },
   });
 }
 

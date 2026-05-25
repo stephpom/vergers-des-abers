@@ -19,9 +19,7 @@ const Confidentialite = () => (
 
     <main className="container mx-auto px-4 py-12">
       <article className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold mb-2 text-foreground">
-          Politique de confidentialité
-        </h1>
+        <h1 className="text-4xl font-bold mb-2 text-foreground">Politique de confidentialité</h1>
         <p className="text-sm text-muted-foreground mb-10">
           Dernière mise à jour : <Placeholder>date de mise en ligne</Placeholder>
         </p>
@@ -30,10 +28,10 @@ const Confidentialite = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Préambule</h2>
             <p>
-              La présente politique de confidentialité décrit la manière dont Pom'Pom — Vergers
-              des Abers (ci-après « nous ») collecte, utilise et protège vos données personnelles
-              dans le cadre de l'utilisation du site, conformément au Règlement Général sur la
-              Protection des Données (RGPD) et à la loi Informatique et Libertés.
+              La présente politique de confidentialité décrit la manière dont Pom'Pom — Vergers des
+              Abers (ci-après « nous ») collecte, utilise et protège vos données personnelles dans
+              le cadre de l'utilisation du site, conformément au Règlement Général sur la Protection
+              des Données (RGPD) et à la loi Informatique et Libertés.
             </p>
           </section>
 
@@ -70,9 +68,9 @@ const Confidentialite = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Finalité du traitement</h2>
             <p>
-              Les données collectées via le formulaire de contact sont utilisées exclusivement
-              pour répondre à votre demande. Elles ne font l'objet d'aucune prospection commerciale
-              et ne sont jamais cédées à des tiers.
+              Les données collectées via le formulaire de contact sont utilisées exclusivement pour
+              répondre à votre demande. Elles ne font l'objet d'aucune prospection commerciale et ne
+              sont jamais cédées à des tiers.
             </p>
           </section>
 
@@ -88,8 +86,8 @@ const Confidentialite = () => (
             <h2 className="text-2xl font-semibold mb-3">Durée de conservation</h2>
             <p>
               Les messages reçus via le formulaire de contact sont conservés pendant{" "}
-              <Placeholder>ex. 3 ans</Placeholder> à compter du dernier échange, à des fins de
-              suivi de la relation. Passé ce délai, ils sont supprimés.
+              <Placeholder>ex. 3 ans</Placeholder> à compter du dernier échange, à des fins de suivi
+              de la relation. Passé ce délai, ils sont supprimés.
             </p>
           </section>
 
@@ -137,10 +135,7 @@ const Confidentialite = () => (
             </ul>
             <p className="mt-3">
               Pour exercer ces droits, contactez-nous à l'adresse{" "}
-              <a
-                href="mailto:pom-pom@mailo.com"
-                className="text-primary hover:underline"
-              >
+              <a href="mailto:pom-pom@mailo.com" className="text-primary hover:underline">
                 pom-pom@mailo.com
               </a>{" "}
               ou via notre{" "}
@@ -188,8 +183,8 @@ const Confidentialite = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Modifications</h2>
             <p>
-              Cette politique peut être amenée à évoluer. La date de dernière mise à jour figure
-              en haut de cette page.
+              Cette politique peut être amenée à évoluer. La date de dernière mise à jour figure en
+              haut de cette page.
             </p>
           </section>
         </div>

@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { MapPin, Phone, Mail } from "lucide-react";
 import { PublicHeader } from "@/components/PublicHeader";
@@ -17,7 +24,13 @@ import { api } from "@/lib/api";
 const formSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caractères").max(100),
   email: z.string().email("Email invalide").max(255),
-  phone: z.string().min(10, "Numéro de téléphone invalide").max(20),
+  phone: z
+    .string()
+    .max(20, "Numéro trop long")
+    .refine(
+      (val) => val === "" || val.length >= 10,
+      "Numéro de téléphone invalide (au moins 10 chiffres)",
+    ),
   message: z.string().min(10, "Le message doit contenir au moins 10 caractères").max(1000),
 });
 
@@ -26,7 +39,7 @@ type FormData = z.infer<typeof formSchema>;
 const Contact = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -39,8 +52,10 @@ const Contact = () => {
 
   const onSubmit = async (data: FormData) => {
     setIsSubmitting(true);
+    const { phone, ...rest } = data;
+    const body = phone ? { ...rest, phone } : rest;
     try {
-      await api("/api/contact", { method: "POST", body: data });
+      await api("/api/contact", { method: "POST", body });
       toast({
         title: "Message envoyé !",
         description: "Nous vous répondrons dans les plus brefs délais.",
@@ -59,7 +74,10 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO title="Contact" description="Contactez Pom'Pom — Vergers des Abers à Plouguerneau pour toute question sur nos jus de pomme artisanaux." />
+      <SEO
+        title="Contact"
+        description="Contactez Pom'Pom — Vergers des Abers à Plouguerneau pour toute question sur nos jus de pomme artisanaux."
+      />
       <PublicHeader />
 
       <main className="container mx-auto px-4 py-12">
@@ -96,7 +114,7 @@ const Contact = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="email"
@@ -110,13 +128,13 @@ const Contact = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="phone"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Téléphone</FormLabel>
+                          <FormLabel>Téléphone (facultatif)</FormLabel>
                           <FormControl>
                             <Input type="tel" placeholder="06 44 08 60 73" {...field} />
                           </FormControl>
@@ -124,7 +142,7 @@ const Contact = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <FormField
                       control={form.control}
                       name="message"
@@ -132,7 +150,7 @@ const Contact = () => {
                         <FormItem>
                           <FormLabel>Message</FormLabel>
                           <FormControl>
-                            <Textarea 
+                            <Textarea
                               placeholder="Votre message..."
                               className="min-h-[120px]"
                               {...field}
@@ -142,7 +160,7 @@ const Contact = () => {
                         </FormItem>
                       )}
                     />
-                    
+
                     <Button type="submit" className="w-full" disabled={isSubmitting}>
                       {isSubmitting ? "Envoi en cours..." : "Envoyer le message"}
                     </Button>
@@ -163,32 +181,34 @@ const Contact = () => {
                     <div>
                       <p className="font-semibold">Adresse</p>
                       <p className="text-sm text-muted-foreground">
-                        Pom'Pom - Vergers des Abers<br />
-                        592 Lanvaon<br />
+                        Pom'Pom - Vergers des Abers
+                        <br />
+                        592 Lanvaon
+                        <br />
                         29880 Plouguerneau
                       </p>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <Phone className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-semibold">Téléphone</p>
-                      <a 
-                        href="tel:0644086073" 
+                      <a
+                        href="tel:0644086073"
                         className="text-sm text-muted-foreground hover:text-primary transition-colors"
                       >
                         06 44 08 60 73
                       </a>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-start gap-3">
                     <Mail className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
                     <div>
                       <p className="font-semibold">Email</p>
-                      <a 
-                        href="mailto:pom-pom@mailo.com" 
+                      <a
+                        href="mailto:pom-pom@mailo.com"
                         className="text-sm text-muted-foreground hover:text-primary transition-colors"
                       >
                         pom-pom@mailo.com

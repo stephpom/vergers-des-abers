@@ -30,57 +30,54 @@ const queryClient = new QueryClient({
 
 const App = () => (
   <HelmetProvider>
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-        <AuthProvider>
-          <Suspense fallback={<PageLoader />}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/produits/:slug" element={<ProductDetail />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/mentions-legales" element={<MentionsLegales />} />
-              <Route path="/confidentialite" element={<Confidentialite />} />
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+          <AuthProvider>
+            <Suspense fallback={<PageLoader />}>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/produits/:slug" element={<ProductDetail />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/mentions-legales" element={<MentionsLegales />} />
+                <Route path="/confidentialite" element={<Confidentialite />} />
 
-              <Route path="/admin/login" element={<AdminLogin />} />
-              <Route
-                path="/admin"
-                element={<Navigate to="/admin/produits" replace />}
-              />
-              <Route
-                path="/admin/produits"
-                element={
-                  <PrivateRoute>
-                    <AdminProducts />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/admin/produits/nouveau"
-                element={
-                  <PrivateRoute>
-                    <AdminProductForm />
-                  </PrivateRoute>
-                }
-              />
-              <Route
-                path="/admin/produits/:id"
-                element={
-                  <PrivateRoute>
-                    <AdminProductForm />
-                  </PrivateRoute>
-                }
-              />
+                <Route path="/admin/login" element={<AdminLogin />} />
+                <Route path="/admin" element={<Navigate to="/admin/produits" replace />} />
+                <Route
+                  path="/admin/produits"
+                  element={
+                    <PrivateRoute>
+                      <AdminProducts />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/admin/produits/nouveau"
+                  element={
+                    <PrivateRoute>
+                      <AdminProductForm />
+                    </PrivateRoute>
+                  }
+                />
+                <Route
+                  path="/admin/produits/:id"
+                  element={
+                    <PrivateRoute>
+                      <AdminProductForm />
+                    </PrivateRoute>
+                  }
+                />
 
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </AuthProvider>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
   </HelmetProvider>
 );
 

@@ -1,0 +1,10 @@
+**/dist/
+**/node_modules/
+**/coverage/
+bun.lockb
+*.lockb
+apps/api/uploads/
+apps/api/uploads-test/
+apps/web/src/assets/
+apps/web/public/
+apps/api/prisma/migrations/

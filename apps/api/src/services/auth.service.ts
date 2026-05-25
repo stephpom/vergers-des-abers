@@ -1,5 +1,5 @@
-import { prisma } from '../lib/prisma.js';
-import { verifyPassword } from '../lib/auth.js';
+import { prisma } from "../lib/prisma.js";
+import { verifyPassword } from "../lib/auth.js";
 
 export async function authenticateUser(email: string, password: string) {
   const user = await prisma.user.findUnique({ where: { email } });

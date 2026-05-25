@@ -5,9 +5,10 @@ React + Fastify + Postgres, déployable en Docker Compose sur un VPS OVH.
 
 ## Stack
 
-- **Front** (`apps/web`) : React 18 · Vite 6 · TypeScript · Tailwind · shadcn/ui · TanStack Query · TipTap (WYSIWYG)
-- **API** (`apps/api`) : Fastify 5 · Prisma · PostgreSQL 16 · argon2 · JWT (cookie httpOnly) · sanitize-html
-- **Outils** : Bun (package manager + runtime) · Docker Compose · npm workspaces
+- **Front** (`apps/web`) : React 18 · Vite 6 · TypeScript (strict) · Tailwind · shadcn/ui · TanStack Query · TipTap (WYSIWYG) · `React.lazy` code-splitting par route
+- **API** (`apps/api`) : Fastify 5 · Prisma · PostgreSQL 16 · argon2 · JWT (cookie httpOnly) · sanitize-html · `@fastify/rate-limit` (anti brute-force login) · `@fastify/helmet` (CSP en prod)
+- **Email transactionnel** : Resend (formulaire de contact, `apps/api/src/emails/`)
+- **Outils** : Bun (package manager + runtime) · Docker Compose · Bun workspaces · Husky + lint-staged + Prettier · GitHub Actions CI
 
 ## Prérequis
 
@@ -39,12 +40,26 @@ Pour les **migrations suivantes** (modifs du `schema.prisma`), utilise simplemen
 ### Identifiants admin
 
 Sans `.env` racine, défauts du `docker-compose.yml` :
+
 - email : `admin@pompom.fr`
 - password : `pompom_dev_admin`
 
 Avec un `.env` racine, ce sont les valeurs `ADMIN_EMAIL` / `ADMIN_PASSWORD` du `.env` qui s'appliquent (override des défauts compose).
 
 > ⚠️ **Piège `.env`** : un `#` dans une valeur sans quotes est interprété comme début de commentaire et tronque la valeur. Si ton `ADMIN_PASSWORD=mon#password`, mets-le entre guillemets : `ADMIN_PASSWORD="mon#password"`. Sinon l'API plante au démarrage avec `String must contain at least 8 character(s)`.
+
+### Formulaire de contact (Resend)
+
+Le formulaire `/contact` envoie un email via [Resend](https://resend.com). En dev, l'API boot **même sans `RESEND_API_KEY`** (le client n'est instancié qu'à l'appel), mais une soumission renverra alors `500`. Pour tester localement de bout en bout :
+
+```bash
+# Dans le .env racine :
+RESEND_API_KEY=re_xxx          # clé Resend (créer un compte gratuit)
+CONTACT_EMAIL_TO=ton@email.fr  # destinataire
+CONTACT_EMAIL_FROM=noreply@<domaine-vérifié-dans-resend>
+```
+
+Variables aussi documentées dans `.env.example`.
 
 ## Démarrage en local (sans Docker)
 
@@ -128,6 +143,10 @@ docker compose exec web bun remove <pkg>
 # Idem côté API
 docker compose exec api bun add <pkg>
 
+# Format Prettier sur tout le monorepo (à la racine, hors container)
+bun run format         # reformate
+bun run format:check   # check uniquement (utilisé en CI éventuellement)
+
 # Front (toujours dans le container)
 docker compose exec web bun run build             # bundle prod
 docker compose exec web bun run lint
@@ -144,6 +163,33 @@ docker compose exec api bun run test
 
 Après un `bun add` qui ajoute un import dans le code source, Vite/Bun détectent automatiquement le changement et reloadent. Si Vite affiche "Failed to resolve import", relance simplement le container : `docker compose restart web` (le volume `node_modules` du container est mis à jour par le `bun add`).
 
+## Qualité — CI et pre-commit
+
+**CI** : `.github/workflows/ci.yml` lance 2 jobs en parallèle sur chaque PR (et sur push `main`) :
+
+- `api` — service Postgres 16, `bun install` → `bun audit` (non bloquant) → `prisma generate` → lint → tests vitest → build TS
+- `web` — `bun install` → `bun audit` (non bloquant) → lint → tests vitest → build (`tsc + vite build`)
+
+Un `concurrency` group annule les runs précédents en cas de re-push sur la même branche.
+
+**Pre-commit** : Husky lance `bunx lint-staged` au `git commit`. Selon les fichiers staged :
+
+- `apps/web/**/*.{ts,tsx,css}` → `eslint` + `prettier --write`
+- `apps/api/**/*.ts` → `eslint` + `prettier --write`
+- `**/*.{json,md,yml,yaml}` → `prettier --write`
+
+L'install Husky est automatique via le script `prepare` au `bun install` racine.
+
+## Compression d'images
+
+Script ponctuel pour convertir les `.jpg` lourds en `.webp` :
+
+```bash
+bun run --cwd apps/web scripts/compress-images.ts
+```
+
+Paramètres dans le script (`apps/web/scripts/compress-images.ts`) : `MAX_WIDTH=1440`, `QUALITY=72`. Cibles : assets > 800 Ko. Sortie WebP à côté du source, .jpg sources à supprimer manuellement après vérification visuelle.
+
 ## Déploiement sur VPS OVH
 
 1. **Provisionner** un VPS (Debian 12 ou Ubuntu 24.04 minimum).
@@ -158,8 +204,11 @@ Après un `bun add` qui ajoute un import dans le code source, Vite/Bun détecten
 4. **Configurer** les variables d'env :
    ```bash
    cp .env.example .env
-   # éditer .env : POSTGRES_*, JWT_SECRET (openssl rand -base64 48),
-   #                CORS_ORIGIN, VITE_API_URL, ADMIN_EMAIL, ADMIN_PASSWORD
+   # éditer .env :
+   #   POSTGRES_*, JWT_SECRET (openssl rand -base64 48),
+   #   CORS_ORIGIN, VITE_API_URL, ADMIN_EMAIL, ADMIN_PASSWORD,
+   #   RESEND_API_KEY (formulaire de contact), CONTACT_EMAIL_TO, CONTACT_EMAIL_FROM,
+   #   AUTH_LOGIN_RATE_LIMIT_MAX (défaut : 5 essais / minute / IP)
    ```
 5. **Démarrer** la stack :
    ```bash
@@ -203,14 +252,17 @@ bun run --cwd apps/api test:watch
 ### `Container is restarting, wait until the container is running`
 
 L'API crashe au démarrage et compose la redémarre en boucle. Vérifie les logs :
+
 ```bash
 docker compose logs api --tail 30
 ```
+
 Cause fréquente : variable d'env mal formée dans le `.env` racine (voir le piège `#` ci-dessus).
 
 ### `Can't reach database server at db:5432`
 
 Le hostname `db` ne résout plus depuis le container API → network Docker corrompu (état orphelin après une session interrompue). Recrée tout proprement (le volume `pgdata` est nommé, les données persistent) :
+
 ```bash
 docker compose down
 docker compose up -d
@@ -219,6 +271,7 @@ docker compose up -d
 ### `P1002 timed out` / `pg_advisory_lock` bloqué
 
 Un précédent `prisma migrate` a planté en laissant un lock advisory. Restart `db` (libère les locks) et `api` (libère les connexions Prisma actives) :
+
 ```bash
 docker compose restart db api
 ```
@@ -226,6 +279,16 @@ docker compose restart db api
 ### `bun install` échoue avec `EEXIST: failed to link package` pendant le build Docker
 
 Bug connu de Bun avec les hardlinks sur overlayfs Docker. Les Dockerfiles utilisent déjà `bun install --frozen-lockfile --backend=copyfile` qui force la copie. Si l'erreur revient malgré tout : `docker compose build --no-cache`.
+
+### `Cannot find module '@fastify/<plugin>'` au démarrage du container API
+
+Tu as ajouté une dépendance côté host (`bun add` local) sans rebuild le container. Le volume nommé `api_node_modules` ne se synchronise pas automatiquement :
+
+```bash
+docker compose exec api bun install   # rapide
+# ou
+docker compose up -d --build api      # si l'install in-place plante
+```
 
 ## TODO MEP
 

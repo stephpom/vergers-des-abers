@@ -1,17 +1,17 @@
-import { SEO } from '@/components/SEO';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useState } from 'react';
-import { Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useAuth } from '@/contexts/AuthContext';
-import { ApiError } from '@/lib/api';
-import { toast } from 'sonner';
+import { SEO } from "@/components/SEO";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
+import { ApiError } from "@/lib/api";
+import { toast } from "sonner";
 
 const schema = z.object({
   email: z.string().email("Email invalide"),
@@ -32,11 +32,11 @@ const AdminLogin = () => {
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { email: '', password: '' },
+    defaultValues: { email: "", password: "" },
   });
 
   if (user) {
-    navigate('/admin/produits', { replace: true });
+    navigate("/admin/produits", { replace: true });
     return null;
   }
 
@@ -45,7 +45,7 @@ const AdminLogin = () => {
     try {
       await login(values.email, values.password);
       const from = (location.state as LocationState | null)?.from?.pathname;
-      navigate(from && from.startsWith('/admin') ? from : '/admin/produits', { replace: true });
+      navigate(from && from.startsWith("/admin") ? from : "/admin/produits", { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         toast.error("Identifiants invalides");
@@ -68,12 +68,7 @@ const AdminLogin = () => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                autoComplete="email"
-                {...form.register('email')}
-              />
+              <Input id="email" type="email" autoComplete="email" {...form.register("email")} />
               {form.formState.errors.email && (
                 <p className="text-sm text-destructive">{form.formState.errors.email.message}</p>
               )}
@@ -84,7 +79,7 @@ const AdminLogin = () => {
                 id="password"
                 type="password"
                 autoComplete="current-password"
-                {...form.register('password')}
+                {...form.register("password")}
               />
               {form.formState.errors.password && (
                 <p className="text-sm text-destructive">{form.formState.errors.password.message}</p>

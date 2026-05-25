@@ -1,22 +1,22 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { ArrowLeft, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { PublicHeader } from '@/components/PublicHeader';
-import { PublicFooter } from '@/components/PublicFooter';
-import { SEO } from '@/components/SEO';
-import { api } from '@/lib/api';
-import { imageUrl, type ApiProduct } from '@/types/api';
-import { absoluteUrl, stripHtml, truncate } from '@/lib/seo';
+import { useState } from "react";
+import { useParams, Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { PublicHeader } from "@/components/PublicHeader";
+import { PublicFooter } from "@/components/PublicFooter";
+import { SEO } from "@/components/SEO";
+import { api } from "@/lib/api";
+import { imageUrl, type ApiProduct } from "@/types/api";
+import { absoluteUrl, stripHtml, truncate } from "@/lib/seo";
 
 const ProductDetail = () => {
   const { slug } = useParams<{ slug: string }>();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['product', slug],
+    queryKey: ["product", slug],
     queryFn: () => api<{ product: ApiProduct }>(`/api/products/${slug}`),
     enabled: !!slug,
     retry: false,
@@ -69,15 +69,17 @@ const ProductDetail = () => {
         image={product.images[0] ? imageUrl(product.images[0].filename) : undefined}
         type="product"
       >
-        <script type="application/ld+json">{JSON.stringify({
-          "@context": "https://schema.org",
-          "@type": "Product",
-          name: product.title,
-          description: truncate(stripHtml(product.description), 300),
-          url: absoluteUrl(`/produits/${product.slug}`),
-          image: product.images.map((img) => absoluteUrl(imageUrl(img.filename))),
-          brand: { "@type": "Brand", name: "Pom'Pom" },
-        })}</script>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Product",
+            name: product.title,
+            description: truncate(stripHtml(product.description), 300),
+            url: absoluteUrl(`/produits/${product.slug}`),
+            image: product.images.map((img) => absoluteUrl(imageUrl(img.filename))),
+            brand: { "@type": "Brand", name: "Pom'Pom" },
+          })}
+        </script>
       </SEO>
 
       <PublicHeader />
@@ -119,8 +121,8 @@ const ProductDetail = () => {
                       aria-current={isActive}
                       className={`aspect-square overflow-hidden rounded-md bg-muted transition-all ${
                         isActive
-                          ? 'ring-2 ring-primary'
-                          : 'opacity-70 hover:opacity-100 hover:ring-1 hover:ring-border'
+                          ? "ring-2 ring-primary"
+                          : "opacity-70 hover:opacity-100 hover:ring-1 hover:ring-border"
                       }`}
                     >
                       <img

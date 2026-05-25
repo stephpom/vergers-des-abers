@@ -1,13 +1,13 @@
-import '@testing-library/jest-dom/vitest';
-import { beforeAll, afterEach, afterAll } from 'vitest';
-import { server } from './mocks/server';
+import "@testing-library/jest-dom/vitest";
+import { beforeAll, afterEach, afterAll } from "vitest";
+import { server } from "./mocks/server";
 
-beforeAll(() => server.listen({ onUnhandledRequest: 'warn' }));
+beforeAll(() => server.listen({ onUnhandledRequest: "warn" }));
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 // Mock window.matchMedia (utilisé par next-themes et Radix)
-Object.defineProperty(window, 'matchMedia', {
+Object.defineProperty(window, "matchMedia", {
   writable: true,
   value: (query: string) => ({
     matches: false,
@@ -34,10 +34,12 @@ document.execCommand = () => false;
 // Mock IntersectionObserver (utilisé par embla-carousel / shadcn Carousel)
 global.IntersectionObserver = class IntersectionObserver {
   root = null;
-  rootMargin = '';
+  rootMargin = "";
   thresholds = [];
   observe() {}
   unobserve() {}
   disconnect() {}
-  takeRecords() { return []; }
+  takeRecords() {
+    return [];
+  }
 };

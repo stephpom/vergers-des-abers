@@ -1,8 +1,8 @@
-import { useRef } from 'react';
-import { ChevronDown, ChevronUp, Loader2, Star, Trash2, Upload } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { imageUrl, type ApiProductImage } from '@/types/api';
+import { useRef } from "react";
+import { ChevronDown, ChevronUp, Loader2, Star, Trash2, Upload } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { imageUrl, type ApiProductImage } from "@/types/api";
 
 interface ProductImagesSectionProps {
   images: ApiProductImage[];
@@ -53,7 +53,7 @@ const ProductImagesSection = ({
                   src={imageUrl(img.filename)}
                   alt={img.alt}
                   className={`w-full aspect-square object-cover rounded-md border ${
-                    isMain ? 'ring-2 ring-primary' : ''
+                    isMain ? "ring-2 ring-primary" : ""
                   }`}
                 />
                 {isMain && (
@@ -126,12 +126,7 @@ const ProductImagesSection = ({
           if (file && onUploadFile) void onUploadFile(file);
         }}
       />
-      <Button
-        type="button"
-        variant="outline"
-        onClick={handleUploadClick}
-        disabled={uploading}
-      >
+      <Button type="button" variant="outline" onClick={handleUploadClick} disabled={uploading}>
         {uploading ? (
           <Loader2 className="w-4 h-4 mr-2 animate-spin" />
         ) : (
@@ -139,9 +134,7 @@ const ProductImagesSection = ({
         )}
         Ajouter une image
       </Button>
-      <p className="text-xs text-muted-foreground mt-2">
-        JPEG / PNG / WebP, 5 Mo max.
-      </p>
+      <p className="text-xs text-muted-foreground mt-2">JPEG / PNG / WebP, 5 Mo max.</p>
     </section>
   );
 };
