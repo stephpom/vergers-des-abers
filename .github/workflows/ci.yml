@@ -108,3 +108,43 @@ jobs:
       - name: Build (tsc + vite)
         working-directory: apps/web
         run: bun run build
+
+  deploy:
+    name: Deploy MEP (Ansible)
+    runs-on: ubuntu-latest
+    needs: [api, web]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python (pour ansible-core)
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Ansible
+        run: pip install ansible-core
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_SSH_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "${{ secrets.DEPLOY_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Write Vault password
+        run: echo "${{ secrets.ANSIBLE_VAULT_PASSWORD }}" > ~/.vault_password
+
+      - name: Run Ansible deploy playbook
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          ANSIBLE_HOST_KEY_CHECKING: "False"
+        run: |
+          ansible-playbook -i ansible/inventory.yml ansible/deploy.yml \
+            --private-key ~/.ssh/deploy_key \
+            --vault-password-file ~/.vault_password
+
+      - name: Cleanup secrets
+        if: always()
+        run: rm -f ~/.ssh/deploy_key ~/.vault_password

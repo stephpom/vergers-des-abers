@@ -1,0 +1,220 @@
+---
+# Provisioning initial du VPS pour pompom-shop.
+# À lancer UNE SEULE FOIS, manuellement depuis ton poste, en root SSH :
+#
+#   ansible-playbook -i ansible/inventory.yml ansible/setup.yml \
+#     --user root --ask-vault-password
+#
+# Pré-requis avant exécution :
+#   - VPS provisionné (Debian 12 ou Ubuntu 24.04), accessible en SSH root
+#   - DNS A record domain → IP du VPS (Caddy en a besoin pour Let's Encrypt)
+#   - ansible/files/github_deploy_key généré + pubkey ajoutée dans GH > Deploy keys
+#   - ansible/group_vars/pompom_vps_vault.yml chiffré avec env_production
+#
+# Après exécution :
+#   - User 'deploy' créé avec accès Docker + sudo NOPASSWD limité
+#   - Docker + Caddy + UFW configurés
+#   - Repo cloné dans /opt/pompom, .env de prod en place
+#   - App buildée et démarrée, base migrée, admin seedé
+
+- name: Provisionner le VPS pour pompom-shop
+  hosts: pompom_vps
+  become: true
+  vars_files:
+    - group_vars/pompom_vps_vault.yml
+
+  tasks:
+    # ---------- Système ----------
+    - name: Mise à jour apt cache
+      ansible.builtin.apt:
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Paquets de base
+      ansible.builtin.apt:
+        name:
+          - curl
+          - git
+          - ufw
+          - ca-certificates
+          - python3
+          - debian-keyring
+          - debian-archive-keyring
+          - apt-transport-https
+        state: present
+
+    # ---------- User deploy ----------
+    - name: Créer user deploy
+      ansible.builtin.user:
+        name: "{{ app_user }}"
+        shell: /bin/bash
+        create_home: true
+
+    - name: Sudoers NOPASSWD pour deploy (limité)
+      ansible.builtin.copy:
+        dest: /etc/sudoers.d/deploy-app
+        content: |
+          {{ app_user }} ALL=(ALL) NOPASSWD: /usr/bin/docker, /usr/bin/docker-compose, /usr/bin/systemctl restart caddy, /usr/bin/systemctl reload caddy
+        mode: "0440"
+        validate: visudo -cf %s
+
+    # ---------- Docker ----------
+    - name: Vérifier si Docker est déjà installé
+      ansible.builtin.stat:
+        path: /usr/bin/docker
+      register: docker_bin
+
+    - name: Installer Docker via script officiel
+      ansible.builtin.shell: curl -fsSL https://get.docker.com | sh
+      when: not docker_bin.stat.exists
+      changed_when: true
+
+    - name: Ajouter deploy au groupe docker
+      ansible.builtin.user:
+        name: "{{ app_user }}"
+        groups: docker
+        append: true
+
+    - name: Activer + démarrer Docker
+      ansible.builtin.systemd:
+        name: docker
+        state: started
+        enabled: true
+
+    # ---------- Caddy ----------
+    - name: Ajouter clé GPG Caddy (cloudsmith)
+      ansible.builtin.get_url:
+        url: https://dl.cloudsmith.io/public/caddy/stable/gpg.key
+        dest: /usr/share/keyrings/caddy-stable-archive-keyring.asc
+        mode: "0644"
+
+    - name: Ajouter repo apt Caddy
+      ansible.builtin.copy:
+        dest: /etc/apt/sources.list.d/caddy-stable.list
+        content: |
+          deb [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.asc] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
+          deb-src [signed-by=/usr/share/keyrings/caddy-stable-archive-keyring.asc] https://dl.cloudsmith.io/public/caddy/stable/deb/debian any-version main
+        mode: "0644"
+      register: caddy_repo
+
+    - name: apt update après ajout du repo Caddy
+      ansible.builtin.apt:
+        update_cache: true
+      when: caddy_repo.changed
+
+    - name: Installer Caddy
+      ansible.builtin.apt:
+        name: caddy
+        state: present
+
+    - name: Configurer Caddyfile
+      ansible.builtin.template:
+        src: templates/Caddyfile.j2
+        dest: /etc/caddy/Caddyfile
+        owner: root
+        mode: "0644"
+      notify: restart caddy
+
+    # ---------- Firewall ----------
+    - name: UFW autoriser SSH/HTTP/HTTPS
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop: ["22", "80", "443"]
+
+    - name: UFW deny incoming par défaut + enable
+      community.general.ufw:
+        state: enabled
+        policy: deny
+        direction: incoming
+
+    # ---------- App ----------
+    - name: Créer dossier /opt/pompom
+      ansible.builtin.file:
+        path: "{{ app_dir }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0755"
+
+    - name: Créer ~deploy/.ssh
+      ansible.builtin.file:
+        path: "/home/{{ app_user }}/.ssh"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0700"
+
+    - name: Déployer la deploy key SSH GitHub
+      ansible.builtin.copy:
+        src: files/github_deploy_key
+        dest: "{{ github_deploy_key_dest }}"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0600"
+
+    - name: Config SSH pour github.com (utiliser la deploy key)
+      ansible.builtin.copy:
+        dest: "/home/{{ app_user }}/.ssh/config"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0600"
+        content: |
+          Host github.com
+            HostName github.com
+            User git
+            IdentityFile {{ github_deploy_key_dest }}
+            StrictHostKeyChecking accept-new
+
+    - name: Cloner le repo (initial)
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ git_branch }}"
+        accept_hostkey: true
+      become_user: "{{ app_user }}"
+      become: true
+
+    - name: Écrire .env de prod depuis le Vault
+      ansible.builtin.copy:
+        content: "{{ env_production }}"
+        dest: "{{ app_dir }}/.env"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0600"
+
+    # ---------- Premier démarrage ----------
+    - name: Premier build + up docker compose
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.prod.yml up -d --build
+        chdir: "{{ app_dir }}"
+      changed_when: true
+
+    - name: Migration Prisma (deploy)
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.prod.yml exec -T api bun run prisma:migrate:deploy
+        chdir: "{{ app_dir }}"
+      changed_when: true
+
+    - name: Seed admin initial
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.prod.yml exec -T api bun run prisma:seed
+        chdir: "{{ app_dir }}"
+      changed_when: true
+      failed_when: false # seed peut throw si déjà exécuté, non bloquant
+
+    - name: Health check API
+      ansible.builtin.uri:
+        url: "{{ health_check_url }}"
+        status_code: 200
+      register: health
+      retries: "{{ health_check_retries }}"
+      delay: "{{ health_check_delay }}"
+      until: health.status == 200
+
+  handlers:
+    - name: restart caddy
+      ansible.builtin.systemd:
+        name: caddy
+        state: restarted
