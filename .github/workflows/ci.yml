@@ -3,7 +3,12 @@ name: CI
 on:
   pull_request:
   push:
-    branches: [main, develop]
+    branches: [main]
+
+# Annule le run précédent si un nouveau push arrive sur la même réf (économise des minutes en cas de force-push successifs).
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   api:
@@ -24,6 +29,25 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
+    # Equivalent de apps/api/.env.test (gitignored). Valeurs de test sans données sensibles.
+    env:
+      DATABASE_URL: postgresql://pompom:pompom@localhost:5433/pompom_test?schema=public
+      JWT_SECRET: test_secret_at_least_32_chars_long_for_tests
+      JWT_EXPIRES_IN: 1h
+      PORT: 3002
+      HOST: 0.0.0.0
+      NODE_ENV: test
+      CORS_ORIGIN: http://localhost:5173
+      UPLOAD_DIR: ./uploads-test
+      MAX_UPLOAD_SIZE_MB: 5
+      ADMIN_EMAIL: admin@test.local
+      ADMIN_PASSWORD: test_password_123
+      PUBLIC_SITE_URL: http://localhost:5173
+      RESEND_API_KEY: test_dummy_key_intercepted_by_vi_mock
+      CONTACT_EMAIL_TO: test-contact@pompom.local
+      CONTACT_EMAIL_FROM: test-noreply@pompom.local
+      AUTH_LOGIN_RATE_LIMIT_MAX: 1000
 
     steps:
       - name: Checkout
