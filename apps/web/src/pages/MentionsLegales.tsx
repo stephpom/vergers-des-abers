@@ -17,7 +17,7 @@ const MentionsLegales = () => (
     />
     <PublicHeader />
 
-    <main className="container mx-auto px-4 py-12">
+    <main id="main-content" className="container mx-auto px-4 py-12">
       <article className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold mb-2 text-foreground">Mentions légales</h1>
         <p className="text-sm text-muted-foreground mb-10">

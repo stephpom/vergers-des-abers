@@ -84,7 +84,7 @@ const ProductDetail = () => {
 
       <PublicHeader />
 
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-12 md:py-20">
+      <main id="main-content" className="flex-1 max-w-6xl mx-auto w-full px-4 py-12 md:py-20">
         <Link
           to="/#products"
           className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-6"

@@ -27,7 +27,7 @@ export const HeroSection = () => {
           </p>
           <a
             href="#products"
-            className="inline-block px-8 py-4 bg-hero text-hero-foreground hover:bg-hero/90 rounded-lg font-semibold text-lg transition-colors"
+            className="inline-block px-8 py-4 bg-hero text-hero-foreground hover:bg-hero/90 rounded-lg font-semibold text-lg transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >
             Voir nos produits
           </a>

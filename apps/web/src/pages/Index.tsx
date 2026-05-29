@@ -12,7 +12,7 @@ import { SEO } from "@/components/SEO";
 import { getSiteUrl, absoluteUrl } from "@/lib/seo";
 
 const Index = () => {
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["products"],
     queryFn: () => api<{ products: ApiProduct[] }>("/api/products"),
     retry: false,
@@ -45,11 +45,13 @@ const Index = () => {
         </script>
       </SEO>
       <PublicHeader />
-      <HeroSection />
-      <AboutSection />
-      <SavoirFaireSection />
-      <GallerySection />
-      <ProductsSection products={data?.products ?? []} isLoading={isLoading} />
+      <main id="main-content">
+        <HeroSection />
+        <AboutSection />
+        <SavoirFaireSection />
+        <GallerySection />
+        <ProductsSection products={data?.products ?? []} isLoading={isLoading} isError={isError} />
+      </main>
       <PublicFooter />
     </div>
   );

@@ -30,6 +30,19 @@ describe("Page Index", () => {
       expect(link).toBeInTheDocument();
       expect(link).toHaveAttribute("href", "/contact");
     });
+
+    it('contient un skip link "Aller au contenu principal" vers #main-content', () => {
+      renderIndex();
+      const skip = screen.getByRole("link", { name: /aller au contenu principal/i });
+      expect(skip).toHaveAttribute("href", "#main-content");
+    });
+
+    it('enveloppe le contenu dans un <main id="main-content">', () => {
+      renderIndex();
+      const main = document.getElementById("main-content");
+      expect(main).not.toBeNull();
+      expect(main?.tagName).toBe("MAIN");
+    });
   });
 
   describe("Section Hero", () => {
@@ -38,6 +51,12 @@ describe("Page Index", () => {
       const cta = screen.getByRole("link", { name: /voir nos produits/i });
       expect(cta).toBeInTheDocument();
       expect(cta).toHaveAttribute("href", "#products");
+    });
+
+    it("le CTA Hero a un focus visible (focus-visible:ring-2)", () => {
+      renderIndex();
+      const cta = screen.getByRole("link", { name: /voir nos produits/i });
+      expect(cta).toHaveClass("focus-visible:ring-2");
     });
   });
 
@@ -70,7 +89,7 @@ describe("Page Index", () => {
   });
 
   describe("Section produits", () => {
-    it("affiche un loader pendant le fetch", async () => {
+    it("affiche des skeletons pendant le fetch", async () => {
       server.use(
         http.get("/api/products", async () => {
           await new Promise((r) => setTimeout(r, 200));
@@ -78,7 +97,7 @@ describe("Page Index", () => {
         }),
       );
       renderIndex();
-      expect(document.querySelector(".animate-spin")).toBeInTheDocument();
+      expect(document.querySelector(".animate-pulse")).toBeInTheDocument();
     });
 
     it('affiche "Pas encore de produits" quand la liste est vide', async () => {
@@ -125,12 +144,13 @@ describe("Page Index", () => {
       });
     });
 
-    it('affiche "Pas encore de produits" en cas d\'erreur 500 (pas de crash)', async () => {
+    it("affiche un message d'erreur réseau si l'API est indisponible (500)", async () => {
       server.use(http.get("/api/products", () => new HttpResponse(null, { status: 500 })));
       renderIndex();
       await waitFor(() => {
-        expect(screen.getByText(/pas encore de produits/i)).toBeInTheDocument();
+        expect(screen.getByText(/impossible de charger les produits/i)).toBeInTheDocument();
       });
+      expect(screen.queryByText(/pas encore de produits/i)).not.toBeInTheDocument();
     });
   });
 

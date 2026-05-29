@@ -14,10 +14,16 @@ export const PublicFooter = () => (
         </div>
         <p className="text-muted-foreground mb-4">Jus de pomme artisanal 100% naturel</p>
         <nav className="flex justify-center gap-6 text-sm text-muted-foreground mb-4">
-          <Link to="/mentions-legales" className="hover:text-primary transition-colors">
+          <Link
+            to="/mentions-legales"
+            className="rounded-sm hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
             Mentions légales
           </Link>
-          <Link to="/confidentialite" className="hover:text-primary transition-colors">
+          <Link
+            to="/confidentialite"
+            className="rounded-sm hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
             Politique de confidentialité
           </Link>
         </nav>

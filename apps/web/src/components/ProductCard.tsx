@@ -11,7 +11,10 @@ export const ProductCard = ({ product }: ProductCardProps) => {
   const excerpt = product.description ? truncate(stripHtml(product.description), 100) : null;
 
   return (
-    <Link to={`/produits/${product.slug}`} className="group block h-full">
+    <Link
+      to={`/produits/${product.slug}`}
+      className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+    >
       <div className="bg-background rounded-xl shadow-sm border border-border/50 hover:shadow-md transition-shadow h-full flex flex-col overflow-hidden">
         <div className="aspect-square overflow-hidden rounded-t-xl bg-muted">
           {cover ? (

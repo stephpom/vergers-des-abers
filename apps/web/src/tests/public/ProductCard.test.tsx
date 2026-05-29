@@ -40,6 +40,11 @@ describe("Composant ProductCard", () => {
     expect(link).toHaveAttribute("href", "/produits/jus-de-pomme");
   });
 
+  it("le lien a un focus visible (focus-visible:ring-2)", () => {
+    renderWithProviders(<ProductCard product={makeProduct()} />);
+    expect(screen.getByRole("link")).toHaveClass("focus-visible:ring-2");
+  });
+
   it("affiche le titre du produit", () => {
     renderWithProviders(<ProductCard product={makeProduct()} />);
     expect(screen.getByRole("heading", { name: "Jus de Pomme" })).toBeInTheDocument();

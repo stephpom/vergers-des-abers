@@ -136,7 +136,7 @@ Conventions de sévérité :
 - [x] **P2** — Hero préchargé : `<link rel="preload" as="image" fetchPriority="high">` injecté via Helmet dans `HeroSection.tsx` + attribut `fetchPriority="high"` sur le `<img>`. Combinaison qui force le navigateur à le télécharger en Highest Priority pour optimiser le LCP.
 - [x] **P3** — `GallerySection.tsx` : `loading={index === 0 ? "eager" : "lazy"}` sur les `<img>` du carousel. La 1re slide (potentiel LCP du carousel) reste eager, les 9 autres deviennent lazy.
 - [x] **P4** — `React.lazy()` + `<Suspense>` sur les 9 pages dans `App.tsx` + `PageLoader.tsx` extrait du pattern `PrivateRoute`. **Bundle principal : 885 Ko / 278 Ko gzip → 335 Ko / 108 Ko gzip** (-62%). Pages admin (ProductForm 348 Ko avec TipTap) sorties du bundle public. Warning Vite "chunk > 500 kB" disparu.
-- [~] **P5** — OG image : balise `<meta og:image>` posée dynamiquement par `<SEO>` (point vers `/og-image.jpg`). **À créer** : le vrai fichier `apps/web/public/og-image.jpg` (1200×630 px) avec branding Pom'Pom
+- [x] **P5** — OG image : balise `<meta og:image>` posée dynamiquement par `<SEO>` (point vers `/og-image.jpg`) + fichier `apps/web/public/og-image.jpg` (1200×630) généré par `scripts/generate-og-image.ts` (sharp : photo verger + dégradé + branding Pom'Pom). Script `bun run generate:og`. 2 tests (existence + dimensions) dans `og-image.test.ts`.
 - [x] **P6** — `<link rel="canonical">` + `og:url` posés dynamiquement par `<SEO>` à partir de `VITE_PUBLIC_SITE_URL`
 - [x] **P7** — `<html lang="en">` → `<html lang="fr">` corrigé dans `apps/web/index.html`
 - [x] **SEO** — `react-helmet-async` + `<SEO>` réutilisable + JSON-LD Organization (home) + JSON-LD Product (fiche produit) + noindex sur `/admin/*` + `<title>` dynamique par page
@@ -155,11 +155,11 @@ Conventions de sévérité :
 ## 🟠 Accessibilité (a11y)
 
 - [x] **A1** — `HeroSection.tsx:23-27` utilise un `<a class="...">` direct, plus de `<button>` imbriqué.
-- [ ] **A2** — Ajouter skip link « Aller au contenu principal » en début de body
+- [x] **A2** — Skip link « Aller au contenu principal » dans `PublicHeader` (visible au focus clavier), ciblant `#main-content`. `<main id="main-content">` ajouté sur Index + id posé sur les `<main>` existants (Contact, ProductDetail, MentionsLegales, Confidentialite). 2 tests dans `Index.test.tsx`.
 - [x] **A3** — `aria-label` sur boutons icônes-seules dans l'admin (modifier, supprimer, supprimer image, etc.) — déjà fait dans `Products.tsx` et `ProductForm.tsx`
 - [ ] **A4** — Vérifier contrastes Tailwind avec axe DevTools (WCAG AA)
 - [ ] **A5** — Navigation clavier complète (Tab, Enter, Esc) testée sur toutes les pages
-- [ ] **A6** — Focus visible sur tous les éléments interactifs (`focus-visible:ring`)
+- [x] **A6** — `focus-visible:ring` ajouté aux interactifs custom qui n'en avaient pas : logo + CTA Hero + ProductCard + liens footer (les `Button` shadcn l'avaient déjà). 2 tests (`Index.test.tsx`, `ProductCard.test.tsx`). Reste A4/A5 à vérifier au navigateur.
 
 ---
 
@@ -208,9 +208,9 @@ Conventions de sévérité :
 ## 🟠 UX / responsive
 
 - [x] **U1** — `NotFound.tsx` refondue : layout cohérent avec les autres pages publiques (`PublicHeader` + `main` centré + `PublicFooter`), icône `FileQuestion` (lucide), `h1 404` + `Button asChild>Link` shadcn. SEO `noindex` préservé. +1 test « inclut PublicHeader + PublicFooter », -1 test obsolète.
-- [ ] **U2** — États de chargement : skeleton sur la liste produits (pas spinner)
+- [x] **U2** — Skeleton (grille de 4 cartes `animate-pulse`) à la place du spinner `Loader2` pendant le fetch produits (`ProductsSection.tsx`). Test loader mis à jour dans `Index.test.tsx`.
 - [x] **U3** — État vide explicite si aucun produit publié (déjà dans `Index.tsx`)
-- [ ] **U4** — Message d'erreur réseau explicite si l'API est indisponible (errorBoundary)
+- [x] **U4** — Message d'erreur réseau explicite + bouton « Réessayer » si l'API est indisponible (`isError` remonté de `useQuery` dans `Index` → branche dédiée dans `ProductsSection`), au lieu du fallback « Pas encore de produits » silencieux. Test erreur 500 réécrit dans `Index.test.tsx`.
 - [x] **U5** — `apps/web/public/favicon.svg` custom (9.1K, = logo Pom'Pom). Plus aucun `favicon.ico` Vite par défaut.
 - [ ] **U6** — Tester responsive sur iPhone SE (375px), iPad (768px), desktop 1440px et 1920px
 
@@ -245,18 +245,26 @@ docker compose -f docker-compose.prod.yml exec api bun run prisma:seed
 
 ## 📈 Récapitulatif d'avancement
 
+Comptage : **Faits** = items `[x]` (terminés) + `[N/A]` (sans objet). **Restants** = items `[ ]` ou `[~]` (partiels), ventilés par la sévérité de leur section. Les totaux portent sur les items codés (S1-S16, Q1-Q11, etc.).
+
 | Catégorie         |   Total |  Faits | Restants 🔴 bloquants | Restants 🟠+🟡 |
 | ----------------- | ------: | -----: | --------------------: | -------------: |
-| Refonte technique |      22 |     22 |                     0 |              0 |
-| Sécurité          |      16 |      6 |                     6 |              4 |
-| Qualité code      |      11 |      3 |                     5 |              3 |
-| Perf / SEO        |      11 |      2 |                     5 |              4 |
-| Accessibilité     |       6 |      1 |                     0 |              5 |
-| Données / contenu |       5 |      1 |                     3 |              1 |
-| Légal             |       4 |      0 |                     4 |              0 |
-| Infra OVH         |      15 |      4 |                     9 |              2 |
-| UX                |       6 |      1 |                     0 |              5 |
+| Refonte technique |      22 |     19 |                     3 |              0 |
+| Sécurité          |      16 |     12 |                     2 |              2 |
+| Qualité code      |      11 |     11 |                     0 |              0 |
+| Perf / SEO        |      11 |      9 |                     1 |              1 |
+| Accessibilité     |       6 |      4 |                     0 |              2 |
+| Données / contenu |       5 |      4 |                     1 |              0 |
+| Légal             |       4 |      2 |                     2 |              0 |
+| Infra OVH         |      15 |      8 |                     7 |              0 |
+| UX                |       6 |      5 |                     0 |              1 |
 | Tests             |       4 |      0 |                     0 |              4 |
-| **TOTAL**         | **100** | **40** |             **32** 🔴 |   **28** 🟠+🟡 |
+| **TOTAL**         | **100** | **74** |             **16** 🔴 |   **10** 🟠+🟡 |
 
-**Verdict** : la base technique est prête (code + tests + Docker). Il reste **32 bloquants MEP** à traiter, dont les plus critiques sont les **pages légales** (L1, L2), le **branchement réel du formulaire de contact** (D1), la **provision VPS OVH + HTTPS** (I1-I4, I7) et la **purge du token Shopify de l'historique git** (S1).
+**Verdict** : la base technique est prête (code + tests + Docker + CI verte) et l'essentiel des bloquants logiciels est traité. Restent **16 bloquants MEP**, en grande majorité opérationnels ou liés au contenu plutôt qu'au code :
+
+- **Pages légales** (L1, L2) : remplir les placeholders `[À COMPLÉTER]` (SIRET, raison sociale, DPO, durée de conservation…) — **infos client**.
+- **Coordonnées** (D4) : confirmer téléphone / email / adresse — **infos client**.
+- **Secrets de prod** : S2 (`JWT_SECRET` aléatoire ≥ 48 chars), S3 (`CORS_ORIGIN` strict).
+- **Infra / déploiement OVH** (I1-I5, I7, I9) + **premier démarrage** (`docker compose up`, seed admin, changer `ADMIN_PASSWORD`).
+- **Perf** (P1) : recompression optionnelle de 3 images, seulement si l'audit Lighthouse (P11) le réclame.
