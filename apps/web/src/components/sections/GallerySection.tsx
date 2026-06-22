@@ -27,7 +27,7 @@ const GALLERY_ITEMS: GalleryItem[] = [
   { src: pommesBranche, alt: "Pommes sur branches", caption: "Pommes mûres prêtes à récolter" },
   { src: recolteSol, alt: "Récolte au sol", caption: "La récolte traditionnelle" },
   { src: seauxPommes, alt: "Seaux de pommes", caption: "Récolte des pommes" },
-  { src: producteur, alt: "Producteur dans les vergers", caption: "Le producteur passionné" },
+  { src: producteur, alt: "Producteur dans les vergers", caption: "2 pommiers" },
   { src: vergerRangees, alt: "Rangées de pommiers", caption: "Les rangées de nos vergers" },
   {
     src: vergerAllee2,
@@ -35,12 +35,12 @@ const GALLERY_ITEMS: GalleryItem[] = [
     caption: "Au cœur de nos vergers",
   },
   { src: filetsRecolte, alt: "Filets de récolte dans le verger", caption: "Filets de récolte" },
-  { src: sacsRecolte, alt: "Grands sacs de pommes récoltées", caption: "Récolte abondante" },
-  {
-    src: camionLivraison,
-    alt: "Livraison de la récolte",
-    caption: "Acheminement vers le pressoir",
-  },
+  { src: sacsRecolte, alt: "Grands sacs de pommes récoltées", caption: "En attente du pressage" },
+  // {
+  //   src: camionLivraison,
+  //   alt: "Livraison de la récolte",
+  //   caption: "Acheminement vers le pressoir",
+  // },
 ];
 
 export const GallerySection = () => {

@@ -1,5 +1,6 @@
 import { Helmet } from "react-helmet-async";
-import heroImage from "@/assets/verger-pommiers.webp";
+//import heroImage from "@/assets/verger-pommiers.webp";
+import heroImage from "@/assets/PomPomVergers-11.jpg";
 
 export const HeroSection = () => {
   return (
@@ -13,7 +14,7 @@ export const HeroSection = () => {
           alt="Vergers Pom'Pom aux Abers - Pommeraies bretonnes"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-background/50" />
+        <div className="absolute inset-0 bg-gradient-to-r from-background/90 to-background/0" />
       </div>
 
       <div className="container mx-auto px-4 z-10">
@@ -25,8 +26,7 @@ export const HeroSection = () => {
             Au cœur des Abers, nos vergers donnent naissance à des jus élaborés avec patience et simplicité.
           </p>
             <p className="text-lg md:text-xl mb-8 text-muted-foreground">
-Chaque récolte suit le rythme des saisons. <br/>
-            Chaque bouteille exprime le caractère du fruit, la fraîcheur du verger et le savoir-faire artisanal.
+            Chaque bouteille est le produit de la sélection de nos fruits, selon leur caractère et leur fraîcheur et de notre savoir-faire artisanal.
           </p>
           <a
             href="#products"

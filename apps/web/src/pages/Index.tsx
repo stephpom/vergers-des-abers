@@ -7,6 +7,7 @@ import { HeroSection } from "@/components/sections/HeroSection";
 import { AboutSection } from "@/components/sections/AboutSection";
 import { SavoirFaireSection } from "@/components/sections/SavoirFaireSection";
 import { GallerySection } from "@/components/sections/GallerySection";
+import { CarteVenteSection } from "@/components/sections/CarteVenteSection";
 import { ProductsSection } from "@/components/sections/ProductsSection";
 import { SEO } from "@/components/SEO";
 import { getSiteUrl, absoluteUrl } from "@/lib/seo";
@@ -51,6 +52,7 @@ const Index = () => {
         <SavoirFaireSection />
         <GallerySection />
         <ProductsSection products={data?.products ?? []} isLoading={isLoading} isError={isError} />
+        <CarteVenteSection />
       </main>
       <PublicFooter />
     </div>
