@@ -35,6 +35,11 @@ apps/api/uploads-test/
 # Coverage
 coverage/
 
+# Ansible secrets (jamais commit)
+ansible/files/github_deploy_key
+ansible/group_vars/pompom_vps_vault.yml
+ansible/*.retry
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

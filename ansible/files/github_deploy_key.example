@@ -1,0 +1,12 @@
+Placeholder — remplacé par la vraie deploy key SSH GitHub (private), gitignored.
+
+Générer la paire localement :
+    ssh-keygen -t ed25519 -f ansible/files/github_deploy_key -C "github-pompom-deploy"
+
+Puis :
+    1. Copier le contenu de ansible/files/github_deploy_key.pub
+    2. Le coller dans GitHub > Settings du repo > Deploy keys > Add deploy key
+       (laisser "Allow write access" décoché : read-only suffit pour git pull)
+    3. La clé privée (ansible/files/github_deploy_key, sans extension) sera
+       déployée par setup.yml dans ~deploy/.ssh/github_deploy_key sur le VPS.
+    4. NE PAS commit la clé privée — elle est dans .gitignore.

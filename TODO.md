@@ -186,14 +186,14 @@ Conventions de sévérité :
 
 - [ ] **I1** — Acheter / configurer domaine + DNS (pointer A record vers IP VPS OVH)
 - [ ] **I2** — Provisionner VPS OVH (recommandation : VPS Comfort minimum, Debian 12 ou Ubuntu 24.04)
-- [ ] **I3** — Reverse proxy HTTPS (Caddy recommandé : Let's Encrypt auto, config 10 lignes — cf. README § Déploiement OVH)
-- [ ] **I4** — Installation Docker + Docker Compose sur le VPS
+- [~] **I3** — Caddy installé + configuré automatiquement par `ansible/setup.yml` (apt repo cloudsmith, Caddyfile templated depuis `ansible/templates/Caddyfile.j2` avec HSTS, reverse proxy front:5173 + api:3001). Let's Encrypt auto. **Exécution effective à faire par l'utilisateur** quand le VPS est provisionné.
+- [~] **I4** — Docker installé automatiquement par `ansible/setup.yml` (script officiel get.docker.com, ajout `deploy` au groupe docker, systemd enable). **Exécution effective à faire par l'utilisateur** au premier `ansible-playbook setup.yml`.
 - [ ] **I5** — Volume persistant pour `apps/api/uploads/` (volume nommé Docker `uploads` déjà défini dans `docker-compose.prod.yml`)
 - [x] **I6** — Volume persistant pour PostgreSQL (`pgdata` défini dans `docker-compose.prod.yml`)
 - [ ] **I7** — Variables d'env de prod dans `.env` sur le VPS (jamais committé, cf. `.env.example` à la racine)
 - [x] **I8** — Migration Prisma au démarrage de prod (`prisma migrate deploy` lancé via `command:` du service api dans `docker-compose.prod.yml`)
 - [ ] **I9** — Seed admin initial sur le VPS (à exécuter manuellement : `docker compose exec api bun run prisma:seed`)
-- [x] **I10** — `.github/workflows/ci.yml` opérationnel et **CI vert validé sur GitHub**. 2 jobs parallèles : `api` (service Postgres 16-alpine port 5433, `bun install` → `prisma:generate` → lint → tests vitest → `tsc build`, env vars de test inline car `.env.test` gitignored) et `web` (`bun install` → lint → tests vitest → `tsc + vite build`). Trigger : `pull_request` + `push` sur `main` uniquement (évite double-run PR+push). `concurrency` group annule les runs précédents en cas de re-push.
+- [x] **I10** — `.github/workflows/ci.yml` opérationnel et **CI vert validé sur GitHub**. 2 jobs parallèles : `api` (service Postgres 16-alpine port 5433, `bun install` → `prisma:generate` → lint → tests vitest → `tsc build`, env vars de test inline car `.env.test` gitignored) et `web` (`bun install` → lint → tests vitest → `tsc + vite build`). Trigger : `pull_request` + `push` sur `main` uniquement (évite double-run PR+push). `concurrency` group annule les runs précédents en cas de re-push. **3e job `deploy` ajouté** (conditionnel `push main` + `needs: [api, web]`) : installe Ansible, configure SSH + Vault, lance `ansible-playbook deploy.yml` → VPS OVH.
 
 ## 🟠 Infra
 
@@ -213,6 +213,21 @@ Conventions de sévérité :
 - [x] **U4** — Message d'erreur réseau explicite + bouton « Réessayer » si l'API est indisponible (`isError` remonté de `useQuery` dans `Index` → branche dédiée dans `ProductsSection`), au lieu du fallback « Pas encore de produits » silencieux. Test erreur 500 réécrit dans `Index.test.tsx`.
 - [x] **U5** — `apps/web/public/favicon.svg` custom (9.1K, = logo Pom'Pom). Plus aucun `favicon.ico` Vite par défaut.
 - [ ] **U6** — Tester responsive sur iPhone SE (375px), iPad (768px), desktop 1440px et 1920px
+
+---
+
+## 🚀 MEP automatisée — Ansible + GitHub Actions
+
+`ansible/` contient :
+
+- `setup.yml` : provisioning initial (lancé 1× depuis poste local, en root SSH)
+- `deploy.yml` : deploy app (lancé par CI sur push `main`, ou en manuel)
+- `group_vars/pompom_vps.yml` : vars publiques (paths, repo, domaine)
+- `group_vars/pompom_vps_vault.yml.example` : template du Vault chiffré (env prod)
+- `templates/Caddyfile.j2` : config reverse proxy templated
+- `files/github_deploy_key.example` : placeholder deploy key SSH (vraie clé gitignorée)
+
+Procédure complète documentée dans le `README.md` section « Déploiement automatisé (Ansible + GitHub Actions) ». 3 secrets GH requis : `DEPLOY_SSH_KEY`, `DEPLOY_HOST`, `ANSIBLE_VAULT_PASSWORD`.
 
 ---
 

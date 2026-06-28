@@ -190,40 +190,84 @@ bun run --cwd apps/web scripts/compress-images.ts
 
 Paramètres dans le script (`apps/web/scripts/compress-images.ts`) : `MAX_WIDTH=1440`, `QUALITY=72`. Cibles : assets > 800 Ko. Sortie WebP à côté du source, .jpg sources à supprimer manuellement après vérification visuelle.
 
-## Déploiement sur VPS OVH
+## Déploiement automatisé (Ansible + GitHub Actions)
 
-1. **Provisionner** un VPS (Debian 12 ou Ubuntu 24.04 minimum).
-2. **Installer** Docker + Docker Compose v2 :
+**Flux** : push sur `main` → CI vert (api + web) → job `deploy` GH Actions → `ansible-playbook deploy.yml` → VPS OVH mis à jour + health check.
+
+### Pré-requis (à faire UNE fois)
+
+1. **Domaine** acheté + record DNS A pointant sur l'IP du VPS (Caddy en a besoin pour Let's Encrypt). Adapter `domain` dans `ansible/group_vars/pompom_vps.yml` si autre que `pompom.fr`.
+2. **VPS OVH** provisionné (Debian 12 ou Ubuntu 24.04), accessible en SSH **root** au premier setup.
+3. **Clés SSH** générées localement :
+
    ```bash
-   curl -fsSL https://get.docker.com | sh
+   # Clé pour github.com (deploy key read-only sur le repo)
+   ssh-keygen -t ed25519 -f ansible/files/github_deploy_key -C "github-pompom-deploy"
+   # → cat ansible/files/github_deploy_key.pub puis copier dans :
+   #   GitHub > Settings du repo > Deploy keys > Add deploy key (Allow write access : NON)
+
+   # Clé pour le runner GH Actions (SSH au VPS)
+   ssh-keygen -t ed25519 -f ~/.ssh/pompom_deploy -C "github-actions-deploy"
+   # → cat ~/.ssh/pompom_deploy.pub puis ajouter dans ~deploy/.ssh/authorized_keys sur le VPS
    ```
-3. **Cloner** le repo sur le VPS :
+
+4. **Vault Ansible** créé et chiffré :
    ```bash
-   git clone <repo> /opt/pompom && cd /opt/pompom
+   cp ansible/group_vars/pompom_vps_vault.yml.example ansible/group_vars/pompom_vps_vault.yml
+   # éditer pompom_vps_vault.yml : remplir POSTGRES_PASSWORD, JWT_SECRET (openssl rand -base64 48),
+   # ADMIN_PASSWORD, RESEND_API_KEY, etc.
+   ansible-vault encrypt ansible/group_vars/pompom_vps_vault.yml
    ```
-4. **Configurer** les variables d'env :
-   ```bash
-   cp .env.example .env
-   # éditer .env :
-   #   POSTGRES_*, JWT_SECRET (openssl rand -base64 48),
-   #   CORS_ORIGIN, VITE_API_URL, ADMIN_EMAIL, ADMIN_PASSWORD,
-   #   RESEND_API_KEY (formulaire de contact), CONTACT_EMAIL_TO, CONTACT_EMAIL_FROM,
-   #   AUTH_LOGIN_RATE_LIMIT_MAX (défaut : 5 essais / minute / IP)
-   ```
-5. **Démarrer** la stack :
-   ```bash
-   docker compose -f docker-compose.prod.yml up -d --build
-   docker compose -f docker-compose.prod.yml exec api bun run prisma:seed
-   ```
-6. **Reverse proxy HTTPS** — installer Caddy en host (hors Compose) :
-   ```bash
-   apt install -y caddy
-   # /etc/caddy/Caddyfile :
-   # pompom.fr        { reverse_proxy 127.0.0.1:5173 }
-   # api.pompom.fr    { reverse_proxy 127.0.0.1:3001 }
-   systemctl restart caddy
-   ```
-   Caddy gère automatiquement Let's Encrypt + renouvellement SSL.
+5. **Secrets GitHub** (Settings > Secrets and variables > Actions > New repository secret) :
+   - `DEPLOY_SSH_KEY` : contenu privé de `~/.ssh/pompom_deploy` (la clé runner, pas celle GitHub)
+   - `DEPLOY_HOST` : IP ou domaine du VPS (ex. `pompom.fr` ou `51.x.x.x`)
+   - `ANSIBLE_VAULT_PASSWORD` : mot de passe choisi à l'`ansible-vault encrypt`
+
+### Premier provisioning (manuel, une seule fois)
+
+Depuis ton poste local, avec le VPS accessible en SSH root :
+
+```bash
+DEPLOY_HOST=<ip-vps> ansible-playbook -i ansible/inventory.yml ansible/setup.yml \
+  --user root --ask-vault-password
+```
+
+Le playbook installe Docker, Caddy, configure UFW, crée le user `deploy`, clone le repo, écrit le `.env` depuis le Vault, démarre la stack, migre la DB et seed l'admin. Idempotent — relançable sans casser.
+
+### Déploiement continu (auto sur push main)
+
+```bash
+git push origin main      # → CI tourne (api + web) → si vert, job deploy → ansible deploy.yml
+```
+
+Tu peux aussi le déclencher manuellement depuis l'onglet Actions GitHub (`workflow_dispatch` à ajouter dans `ci.yml` si besoin) ou depuis ton poste :
+
+```bash
+DEPLOY_HOST=<ip-vps> ansible-playbook -i ansible/inventory.yml ansible/deploy.yml --ask-vault-password
+```
+
+### Rollback
+
+Pas de rollback auto. En cas de souci, SSH au VPS en `deploy` :
+
+```bash
+ssh deploy@<vps>
+cd /opt/pompom
+git log --oneline -10        # repérer le dernier SHA stable
+git reset --hard <sha>
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+### Déploiement manuel (fallback sans Ansible)
+
+Si tu veux bypasser Ansible (debug, premier setup en pur shell) — la procédure manuelle reste valide :
+
+1. SSH root sur le VPS, `curl -fsSL https://get.docker.com | sh`
+2. `git clone <repo> /opt/pompom && cd /opt/pompom`
+3. `cp .env.example .env` puis éditer (POSTGRES*\*, JWT_SECRET, RESEND_API_KEY, CORS_ORIGIN, VITE_API_URL, ADMIN*\*, AUTH_LOGIN_RATE_LIMIT_MAX)
+4. `docker compose -f docker-compose.prod.yml up -d --build`
+5. `docker compose exec api bun run prisma:seed`
+6. `apt install -y caddy` + Caddyfile manuel + `systemctl restart caddy`
 
 ## Tests
 
