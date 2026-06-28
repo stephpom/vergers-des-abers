@@ -12,6 +12,34 @@ dist
 dist-ssr
 *.local
 
+# Env files
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+apps/api/dist
+apps/web/dist
+
+# Uploads (local dev storage)
+apps/api/uploads/*
+!apps/api/uploads/.gitkeep
+
+# Uploads tests
+apps/api/uploads-test/
+
+# Database
+*.db
+*.sqlite
+
+# Coverage
+coverage/
+
+# Ansible secrets (jamais commit)
+ansible/files/github_deploy_key
+ansible/group_vars/pompom_vps_vault.yml
+ansible/*.retry
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

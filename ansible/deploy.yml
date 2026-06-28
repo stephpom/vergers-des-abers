@@ -1,0 +1,52 @@
+---
+# Deploy de pompom-shop sur le VPS.
+# Lancé automatiquement par GitHub Actions sur push main (cf. .github/workflows/ci.yml).
+# Peut aussi être lancé manuellement depuis ton poste :
+#
+#   ansible-playbook -i ansible/inventory.yml ansible/deploy.yml --ask-vault-password
+#
+# Pré-requis : setup.yml exécuté au moins une fois (provisioning effectif).
+
+- name: Déployer pompom-shop
+  hosts: pompom_vps
+  become: false
+  vars_files:
+    - group_vars/pompom_vps_vault.yml
+
+  tasks:
+    - name: Pull dernière version main
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ git_branch }}"
+        force: true
+        accept_hostkey: true
+
+    - name: Mettre à jour .env (au cas où rotation de clés dans le Vault)
+      ansible.builtin.copy:
+        content: "{{ env_production }}"
+        dest: "{{ app_dir }}/.env"
+        mode: "0600"
+
+    - name: Build + restart docker compose (rolling)
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.prod.yml up -d --build
+        chdir: "{{ app_dir }}"
+      become: true
+      changed_when: true
+
+    - name: Migration Prisma (deploy)
+      ansible.builtin.command:
+        cmd: docker compose -f docker-compose.prod.yml exec -T api bun run prisma:migrate:deploy
+        chdir: "{{ app_dir }}"
+      become: true
+      changed_when: true
+
+    - name: Health check API (retry)
+      ansible.builtin.uri:
+        url: "{{ health_check_url }}"
+        status_code: 200
+      register: health
+      retries: "{{ health_check_retries }}"
+      delay: "{{ health_check_delay }}"
+      until: health.status == 200

@@ -1,0 +1,20 @@
+# Caddyfile généré par Ansible — NE PAS éditer manuellement sur le VPS.
+# Source : ansible/templates/Caddyfile.j2
+
+{{ domain }} {
+    reverse_proxy 127.0.0.1:5173
+
+    # Headers de sécurité ajoutés au niveau du reverse proxy
+    # (le nginx interne au container web pose aussi X-Frame-Options, etc.)
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    }
+}
+
+{{ api_subdomain }}.{{ domain }} {
+    reverse_proxy 127.0.0.1:3001
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+    }
+}
