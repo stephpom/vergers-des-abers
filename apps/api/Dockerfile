@@ -34,10 +34,17 @@ RUN bun run build
 # ----- prod -----
 FROM base AS prod
 ENV NODE_ENV=production
-COPY --from=build /app/apps/api/node_modules ./node_modules
-COPY --from=build /app/apps/api/dist ./dist
-COPY --from=build /app/apps/api/prisma ./prisma
-COPY --from=build /app/apps/api/package.json ./package.json
+WORKDIR /app
+# Reproduire l'arbre workspace du stage build : le store réel des deps vit dans
+# le node_modules RACINE (/app/node_modules/.bun/...), celui de l'api n'est que
+# des symlinks vers lui. Copier uniquement apps/api/node_modules laissait tous
+# les symlinks orphelins (prisma, @prisma/client, fastify... introuvables).
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=build /app/apps/api/dist ./apps/api/dist
+COPY --from=build /app/apps/api/prisma ./apps/api/prisma
+COPY --from=build /app/apps/api/package.json ./apps/api/package.json
+WORKDIR /app/apps/api
 RUN mkdir -p /app/uploads
 EXPOSE 3001
 CMD ["bun", "run", "start"]
