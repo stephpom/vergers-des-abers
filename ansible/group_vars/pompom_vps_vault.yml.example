@@ -13,28 +13,28 @@
 env_production: |
   # ---------- PostgreSQL ----------
   POSTGRES_USER=pompom
-  POSTGRES_PASSWORD=CHANGEME_strong_random_password
+  POSTGRES_PASSWORD=cdDSVg165YgbBHb9ncfbz9gVJcHKLw7MGLF2/C2jbJc=
   POSTGRES_DB=pompom
 
   # ---------- API ----------
-  JWT_SECRET=CHANGEME_48_chars_random_base64_openssl_rand_base64_48
+  JWT_SECRET=Hxbj2VyGWSmrSaKxpbaMCchYRXK5qL9Fbu62jQ/RFS/ErsNOrfXnYHCUOEeoDxE6
   JWT_EXPIRES_IN=7d
-  CORS_ORIGIN=https://pompom.fr
+  CORS_ORIGIN=https://vergersdesabers.fr
   MAX_UPLOAD_SIZE_MB=5
 
   # ---------- Admin initial ----------
-  ADMIN_EMAIL=admin@pompom.fr
-  ADMIN_PASSWORD=CHANGEME_strong_admin_password
+  ADMIN_EMAIL=admin@vergersdesabers.fr
+  ADMIN_PASSWORD=ipWYhX6jcqzRXAf0RMxNBgWnBLkMZsUlPYCV+xdD6OE=
 
   # ---------- Email transactionnel (Resend) ----------
-  RESEND_API_KEY=re_CHANGEME
+  RESEND_API_KEY=re_Zd5yYWTL_JauUSCEPyFoCVZHQtfUuY44K
   CONTACT_EMAIL_TO=pom-pom@mailo.com
-  CONTACT_EMAIL_FROM=contact@pompom.fr
+  CONTACT_EMAIL_FROM=contact@vergersdesabers.fr
 
   # ---------- Rate limiting ----------
   AUTH_LOGIN_RATE_LIMIT_MAX=5
   AUTH_LOGIN_RATE_LIMIT_WINDOW=1 minute
 
   # ---------- Front (build args Vite) ----------
-  VITE_API_URL=https://api.pompom.fr
-  VITE_PUBLIC_SITE_URL=https://pompom.fr
+  VITE_API_URL=https://api.vergersdesabers.fr
+  VITE_PUBLIC_SITE_URL=https://vergersdesabers.fr

@@ -21,7 +21,7 @@ const MentionsLegales = () => (
       <article className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold mb-2 text-foreground">Mentions légales</h1>
         <p className="text-sm text-muted-foreground mb-10">
-          Dernière mise à jour : <Placeholder>date de mise en ligne</Placeholder>
+          Dernière mise à jour : <Placeholder>01/07/2026</Placeholder>
         </p>
 
         <div className="space-y-10 text-foreground leading-relaxed">
@@ -29,12 +29,12 @@ const MentionsLegales = () => (
             <h2 className="text-2xl font-semibold mb-3">Éditeur du site</h2>
             <p>
               <strong>Raison sociale :</strong>{" "}
-              <Placeholder>raison sociale / nom commercial</Placeholder>
+              <Placeholder>Stéphane Pommier - Terre de jeux</Placeholder>
               <br />
               <strong>Forme juridique :</strong>{" "}
-              <Placeholder>EI / EURL / SARL / SAS / etc.</Placeholder>
+              <Placeholder>Entreprise Individuelle</Placeholder>
               <br />
-              <strong>SIRET :</strong> <Placeholder>numéro SIRET 14 chiffres</Placeholder>
+              <strong>SIRET :</strong> <Placeholder>90501504600014</Placeholder>
               <br />
               <strong>Adresse :</strong> 592 Lanvaon, 29880 Plouguerneau, France
               <br />
@@ -49,14 +49,14 @@ const MentionsLegales = () => (
               </a>
               <br />
               <strong>TVA intracommunautaire :</strong>{" "}
-              <Placeholder>FRxx xxxxxxxxx (ou « non applicable, art. 293 B du CGI »)</Placeholder>
+              <Placeholder>FR18 905015046</Placeholder>
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-3">Directeur de publication</h2>
             <p>
-              <Placeholder>Nom et prénom du directeur de publication</Placeholder>
+              <Placeholder>Stéphane Pommier</Placeholder>
             </p>
           </section>
 
@@ -82,9 +82,6 @@ const MentionsLegales = () => (
                 ovhcloud.com
               </a>
             </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              <Placeholder>à confirmer / remplacer si autre hébergeur</Placeholder>
-            </p>
           </section>
 
           <section>
@@ -101,9 +98,9 @@ const MentionsLegales = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Crédits</h2>
             <p>
-              Photographies : <Placeholder>crédit photo (auteur, source)</Placeholder>
+              Photographies : <Placeholder>crédit photos Stéphane Pommier, CC BY 4.0</Placeholder>
               <br />
-              Conception et développement : <Placeholder>nom de l'agence / développeur</Placeholder>
+              Conception et développement : <Placeholder>Stéphane Pommier, François Bouyer</Placeholder>
             </p>
           </section>
 

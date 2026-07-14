@@ -9,7 +9,7 @@ git_branch: main
 
 # Domaine principal (à adapter au moment de l'achat du domaine).
 # Peut aussi être overridé via la variable d'env DEPLOY_HOST côté CI.
-domain: pompom.fr
+domain: vergersdesabers.fr
 api_subdomain: api
 
 # Chemin de la deploy key SSH GitHub côté VPS (déposée par setup.yml).

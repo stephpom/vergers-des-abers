@@ -21,7 +21,7 @@ const Confidentialite = () => (
       <article className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold mb-2 text-foreground">Politique de confidentialité</h1>
         <p className="text-sm text-muted-foreground mb-10">
-          Dernière mise à jour : <Placeholder>date de mise en ligne</Placeholder>
+          Dernière mise à jour : <Placeholder>01/07/2026</Placeholder>
         </p>
 
         <div className="space-y-10 text-foreground leading-relaxed">
@@ -38,7 +38,7 @@ const Confidentialite = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Responsable du traitement</h2>
             <p>
-              <Placeholder>raison sociale / nom commercial</Placeholder>, dont les coordonnées
+              <Placeholder>Stéphane Pommier - Terre de jeux</Placeholder>, dont les coordonnées
               complètes figurent dans les{" "}
               <Link to="/mentions-legales" className="text-primary hover:underline">
                 mentions légales
@@ -86,7 +86,7 @@ const Confidentialite = () => (
             <h2 className="text-2xl font-semibold mb-3">Durée de conservation</h2>
             <p>
               Les messages reçus via le formulaire de contact sont conservés pendant{" "}
-              <Placeholder>ex. 3 ans</Placeholder> à compter du dernier échange, à des fins de suivi
+              <Placeholder>3 ans</Placeholder> à compter du dernier échange, à des fins de suivi
               de la relation. Passé ce délai, ils sont supprimés.
             </p>
           </section>
@@ -95,7 +95,7 @@ const Confidentialite = () => (
             <h2 className="text-2xl font-semibold mb-3">Destinataires des données</h2>
             <p>
               Vos données sont accessibles uniquement par{" "}
-              <Placeholder>responsable / personne en charge des réponses</Placeholder>. Elles sont
+              <Placeholder>Stéphane Pommier</Placeholder>. Elles sont
               transmises à notre prestataire d'envoi d'emails transactionnels{" "}
               <strong>Resend</strong> (
               <a
@@ -150,8 +150,7 @@ const Confidentialite = () => (
             <h2 className="text-2xl font-semibold mb-3">Délégué à la protection des données</h2>
             <p>
               <Placeholder>
-                indiquer si un DPO a été désigné — sinon mentionner « non désigné, contact direct
-                via l'éditeur »
+                « non désigné, contact direct via l'éditeur »
               </Placeholder>
             </p>
           </section>
@@ -163,11 +162,6 @@ const Confidentialite = () => (
               jour. Seuls les cookies strictement nécessaires au fonctionnement du site
               (authentification administrateur) sont déposés et ne nécessitent pas votre
               consentement.
-            </p>
-            <p className="mt-2 text-sm text-muted-foreground">
-              <Placeholder>
-                mettre à jour cette section si des analytics (Plausible, Matomo) sont ajoutées
-              </Placeholder>
             </p>
           </section>
 
