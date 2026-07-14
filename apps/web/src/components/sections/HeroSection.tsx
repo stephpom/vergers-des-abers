@@ -1,13 +1,10 @@
-import { Helmet } from "react-helmet-async";
 //import heroImage from "@/assets/verger-pommiers.webp";
 import heroImage from "@/assets/PomPomVergers-11.jpg";
 
 export const HeroSection = () => {
   return (
     <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
-      <Helmet>
-        <link rel="preload" as="image" href={heroImage} fetchPriority="high" />
-      </Helmet>
+      <link rel="preload" as="image" href={heroImage} fetchPriority="high" />
       <div className="absolute inset-0 z-0">
         <img
           src={heroImage}
@@ -23,10 +20,12 @@ export const HeroSection = () => {
             Des boissons vivantes et authentiques
           </h1>
           <p className="text-xl md:text-2xl mb-8 text-muted-foreground">
-            Au cœur des Abers, nos vergers donnent naissance à des jus élaborés avec patience et simplicité.
+            Au cœur des Abers, nos vergers donnent naissance à des jus élaborés avec patience et
+            simplicité.
           </p>
-            <p className="text-lg md:text-xl mb-8 text-muted-foreground">
-            Chaque bouteille est le produit de la sélection de nos fruits, selon leur caractère et leur fraîcheur et de notre savoir-faire artisanal.
+          <p className="text-lg md:text-xl mb-8 text-muted-foreground">
+            Chaque bouteille est le produit de la sélection de nos fruits, selon leur caractère et
+            leur fraîcheur et de notre savoir-faire artisanal.
           </p>
           <a
             href="#products"

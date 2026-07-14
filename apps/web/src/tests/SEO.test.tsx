@@ -1,16 +1,13 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { render, waitFor } from "@testing-library/react";
-import { HelmetProvider } from "react-helmet-async";
 import { MemoryRouter } from "react-router-dom";
 import { SEO } from "@/components/SEO";
 
 function renderSEO(props: React.ComponentProps<typeof SEO> = {}) {
   return render(
-    <HelmetProvider>
-      <MemoryRouter initialEntries={["/"]}>
-        <SEO {...props} />
-      </MemoryRouter>
-    </HelmetProvider>,
+    <MemoryRouter initialEntries={["/"]}>
+      <SEO {...props} />
+    </MemoryRouter>,
   );
 }
 

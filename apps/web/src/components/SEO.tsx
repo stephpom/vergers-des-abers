@@ -1,4 +1,3 @@
-import { Helmet } from "react-helmet-async";
 import { useLocation } from "react-router-dom";
 import { absoluteUrl } from "@/lib/seo";
 
@@ -30,7 +29,7 @@ export function SEO({
   const imageUrl = image ? absoluteUrl(image) : absoluteUrl("/og-image.jpg");
 
   return (
-    <Helmet>
+    <>
       <title>{fullTitle}</title>
       <meta name="description" content={desc} />
       <link rel="canonical" href={url} />
@@ -49,6 +48,6 @@ export function SEO({
       <meta name="twitter:image" content={imageUrl} />
 
       {children}
-    </Helmet>
+    </>
   );
 }

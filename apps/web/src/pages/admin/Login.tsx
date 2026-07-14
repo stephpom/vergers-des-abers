@@ -2,7 +2,7 @@ import { SEO } from "@/components/SEO";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,17 +35,21 @@ const AdminLogin = () => {
     defaultValues: { email: "", password: "" },
   });
 
+  const from = (location.state as LocationState | null)?.from?.pathname;
+  const redirectTo = from && from.startsWith("/admin") ? from : "/admin/produits";
+
+  // Redirection déclarative : navigate() pendant le render est un anti-pattern
+  // (cassé par React 19, qui déclenchait la redirection par défaut avant celle
+  // du submit vers `from`).
   if (user) {
-    navigate("/admin/produits", { replace: true });
-    return null;
+    return <Navigate to={redirectTo} replace />;
   }
 
   const onSubmit = async (values: FormValues) => {
     setSubmitting(true);
     try {
       await login(values.email, values.password);
-      const from = (location.state as LocationState | null)?.from?.pathname;
-      navigate(from && from.startsWith("/admin") ? from : "/admin/produits", { replace: true });
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
         toast.error("Identifiants invalides");
