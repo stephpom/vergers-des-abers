@@ -81,6 +81,23 @@
         state: started
         enabled: true
 
+    # ---------- Reverse-proxy conflictuel ----------
+    # Certaines images Ubuntu (OVH) embarquent un nginx hôte qui écoute sur
+    # 80/443 et empêche Caddy de binder ces ports. Caddy est notre unique
+    # reverse-proxy : on retire tout nginx installé au niveau système.
+    # (Le nginx du container web est interne et n'est pas concerné.)
+    - name: Détecter un nginx hôte
+      ansible.builtin.stat:
+        path: /usr/sbin/nginx
+      register: host_nginx
+
+    - name: Neutraliser le nginx hôte (conflit ports 80/443 avec Caddy)
+      ansible.builtin.systemd:
+        name: nginx
+        state: stopped
+        enabled: false
+      when: host_nginx.stat.exists
+
     # ---------- Caddy ----------
     - name: Ajouter clé GPG Caddy (cloudsmith)
       ansible.builtin.get_url:
