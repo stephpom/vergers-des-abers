@@ -163,6 +163,20 @@
         group: "{{ app_user }}"
         mode: "0700"
 
+    # Clé publique du runner GitHub Actions (correspond à la clé privée du
+    # secret DEPLOY_SSH_KEY) → permet à la CI de se connecter en deploy@VPS.
+    # Défini dans group_vars/pompom_vps.yml (deploy_authorized_key) ; tâche
+    # ignorée si la variable n'est pas fournie.
+    - name: Autoriser la clé publique du runner CI pour deploy
+      ansible.builtin.lineinfile:
+        path: "/home/{{ app_user }}/.ssh/authorized_keys"
+        line: "{{ deploy_authorized_key }}"
+        create: true
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: "0600"
+      when: deploy_authorized_key is defined and deploy_authorized_key | length > 0
+
     - name: Déployer la deploy key SSH GitHub
       ansible.builtin.copy:
         src: files/github_deploy_key

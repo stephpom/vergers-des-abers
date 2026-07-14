@@ -1,15 +1,15 @@
 ---
 # Inventaire YAML (supporte Jinja2 dans les valeurs).
 # ansible_host est résolu depuis la variable d'env DEPLOY_HOST (CI ou local).
-# Défaut : domaine 'pompom.fr' (à adapter quand le domaine final est en place).
+# La clé SSH privée est fournie via --private-key (CI: ~/.ssh/deploy_key ;
+# local: la clé de l'opérateur), PAS figée ici, pour rester cohérent partout.
 
 all:
   children:
     pompom_vps:
       hosts:
         prod:
-          ansible_host: "{{ lookup('env', 'DEPLOY_HOST') | default('pompom.fr', true) }}"
+          ansible_host: "{{ lookup('env', 'DEPLOY_HOST') | default('vergersdesabers.fr', true) }}"
           ansible_user: deploy
-          ansible_ssh_private_key_file: ~/.ssh/pompom_deploy
       vars:
         ansible_python_interpreter: /usr/bin/python3
