@@ -1,7 +1,7 @@
 # Caddyfile généré par Ansible — NE PAS éditer manuellement sur le VPS.
 # Source : ansible/templates/Caddyfile.j2
 
-{{ domain }} {
+{{ domain }}, www.{{ domain }} {
     reverse_proxy 127.0.0.1:5173
 
     # Headers de sécurité ajoutés au niveau du reverse proxy
