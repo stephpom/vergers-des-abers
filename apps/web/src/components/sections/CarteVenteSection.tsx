@@ -27,12 +27,6 @@ const PLACES: Place[] = [
     address: "16 Hent Treaz, 29880 Plouguerneau",
     description: "L'épicerie de Lilia où découvrir notre gamme de jus artisanaux.",
   },
-  {
-    icon: Store,
-    name: "Le Hangar",
-    address: "29870 Lannilis",
-    description: "test",
-  },
 ];
 
 const mapQuery = encodeURIComponent(
