@@ -20,6 +20,7 @@ dist-ssr
 # Build artifacts
 apps/api/dist
 apps/web/dist
+*.tsbuildinfo
 
 # Uploads (local dev storage)
 apps/api/uploads/*
