@@ -13,7 +13,11 @@
 env_production: |
   # ---------- PostgreSQL ----------
   POSTGRES_USER=pompom
-  POSTGRES_PASSWORD=cdDSVg165YgbBHb9ncfbz9gVJcHKLw7MGLF2/C2jbJc=
+  # IMPORTANT : POSTGRES_PASSWORD doit être URL-safe (pas de / + = : @ espace).
+  # Il est interpolé BRUT dans DATABASE_URL (postgresql://user:PASS@db:5432/...)
+  # côté docker-compose.prod.yml : un caractère spécial casse le parsing
+  # (Prisma P1013 "invalid port number"). Générer avec : openssl rand -hex 24
+  POSTGRES_PASSWORD=REMPLACER_PAR_UN_MDP_HEX_URL_SAFE_openssl_rand_hex_24
   POSTGRES_DB=pompom
 
   # ---------- API ----------
