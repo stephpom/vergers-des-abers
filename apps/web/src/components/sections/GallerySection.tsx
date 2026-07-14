@@ -7,7 +7,6 @@ import vergerRangees from "@/assets/verger-rangees.jpg";
 import vergerAllee2 from "@/assets/verger-allee2.webp";
 import filetsRecolte from "@/assets/filets-recolte.webp";
 import sacsRecolte from "@/assets/sacs-recolte.webp";
-import camionLivraison from "@/assets/camion-livraison.webp";
 import {
   Carousel,
   CarouselContent,

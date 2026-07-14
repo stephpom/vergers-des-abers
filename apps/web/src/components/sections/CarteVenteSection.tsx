@@ -1,4 +1,4 @@
-import { Globe2, MapPin, Store } from "lucide-react";
+import { Globe2, Store } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface Place {
@@ -35,17 +35,20 @@ const PLACES: Place[] = [
   },
 ];
 
-const mapQuery = encodeURIComponent(PLACES.map((place) => `${place.name} ${place.address}`).join(" | "));
+const mapQuery = encodeURIComponent(
+  PLACES.map((place) => `${place.name} ${place.address}`).join(" | "),
+);
 const mapSrc = `https://maps.google.com/maps?q=${mapQuery}&hl=fr&z=10&output=embed`;
 
 export const CarteVenteSection = () => {
   return (
     <section className="py-20 bg-slate-50">
-       <div className="container mx-auto px-4">
-       <div className="max-w-4xl mx-auto text-center mb-12">
+      <div className="container mx-auto px-4">
+        <div className="max-w-4xl mx-auto text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold">Où trouver nos produits ?</h2>
           <p className="text-lg text-muted-foreground mt-4">
-            Retrouvez tous les points de vente où nos produits sont disponibles en Bretagne. La carte ci-dessous vous aide à localiser nos partenaires et points de retrait.
+            Retrouvez tous les points de vente où nos produits sont disponibles en Bretagne. La
+            carte ci-dessous vous aide à localiser nos partenaires et points de retrait.
           </p>
         </div>
 
@@ -64,7 +67,10 @@ export const CarteVenteSection = () => {
             {PLACES.map((place) => {
               const Icon = place.icon;
               return (
-                <div key={place.name} className="rounded-3xl border border-border/70 bg-white p-6 shadow-sm">
+                <div
+                  key={place.name}
+                  className="rounded-3xl border border-border/70 bg-white p-6 shadow-sm"
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
                       <Icon className="w-6 h-6" />
@@ -84,7 +90,8 @@ export const CarteVenteSection = () => {
                 <p className="font-semibold">Besoin d&apos;aide pour trouver un point de vente ?</p>
               </div>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Contactez-nous pour obtenir l&apos;adresse exacte de nos prochaines distributions ou pour ajouter un point de vente près de chez vous.
+                Contactez-nous pour obtenir l&apos;adresse exacte de nos prochaines distributions ou
+                pour ajouter un point de vente près de chez vous.
               </p>
             </div>
           </div>
