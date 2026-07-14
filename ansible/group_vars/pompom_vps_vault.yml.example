@@ -21,18 +21,20 @@ env_production: |
   POSTGRES_DB=pompom
 
   # ---------- API ----------
-  JWT_SECRET=Hxbj2VyGWSmrSaKxpbaMCchYRXK5qL9Fbu62jQ/RFS/ErsNOrfXnYHCUOEeoDxE6
+  # JWT_SECRET : >= 48 caractères aléatoires — générer : openssl rand -base64 48
+  JWT_SECRET=REMPLACER_openssl_rand_base64_48
   JWT_EXPIRES_IN=7d
-  CORS_ORIGIN=https://vergersdesabers.fr
+  # CORS_ORIGIN : origines autorisées, séparées par des virgules (apex + www)
+  CORS_ORIGIN=https://vergersdesabers.fr,https://www.vergersdesabers.fr
   MAX_UPLOAD_SIZE_MB=5
 
   # ---------- Admin initial ----------
   ADMIN_EMAIL=admin@vergersdesabers.fr
-  ADMIN_PASSWORD=ipWYhX6jcqzRXAf0RMxNBgWnBLkMZsUlPYCV+xdD6OE=
-
+  ADMIN_PASSWORD=REMPLACER_mot_de_passe_admin_fort
   # ---------- Email transactionnel (Resend) ----------
-  RESEND_API_KEY=re_Zd5yYWTL_JauUSCEPyFoCVZHQtfUuY44K
-  CONTACT_EMAIL_TO=pom-pom@mailo.com
+  # Clé API depuis resend.com/api-keys (NE JAMAIS committer la vraie valeur)
+  RESEND_API_KEY=re_REMPLACER_par_la_cle_resend
+  CONTACT_EMAIL_TO=REMPLACER@exemple.fr
   CONTACT_EMAIL_FROM=contact@vergersdesabers.fr
 
   # ---------- Rate limiting ----------
