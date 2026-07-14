@@ -38,8 +38,9 @@ coverage/
 
 # Ansible secrets (jamais commit)
 ansible/files/github_deploy_key
-ansible/group_vars/pompom_vps_vault.yml
 ansible/*.retry
+# NB : pompom_vps_vault.yml est CHIFFRÉ (ansible-vault) et committé volontairement
+#      (la CI deploy.yml doit pouvoir le lire). Ne jamais committer une version en clair.
 
 # Editor directories and files
 .vscode/*

@@ -7,8 +7,9 @@
 # Éditer après chiffrement :
 #   ansible-vault edit ansible/group_vars/pompom_vps_vault.yml
 #
-# Le fichier déchiffré (pompom_vps_vault.yml) est gitignored.
-# Seul ce .example est committé.
+# Le vrai fichier pompom_vps_vault.yml est CHIFFRÉ puis committé (la CI en a
+# besoin). Ne jamais y mettre de valeurs en clair non chiffrées. Ce .example
+# ne sert que de gabarit documentaire (placeholders).
 
 env_production: |
   # ---------- PostgreSQL ----------
