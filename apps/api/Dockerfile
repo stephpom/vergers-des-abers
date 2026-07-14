@@ -44,6 +44,9 @@ COPY --from=build /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=build /app/apps/api/dist ./apps/api/dist
 COPY --from=build /app/apps/api/prisma ./apps/api/prisma
 COPY --from=build /app/apps/api/package.json ./apps/api/package.json
+# src/ requis uniquement pour le seed one-shot (prisma/seed.ts importe
+# ../src/lib/auth.js) ; le serveur, lui, tourne sur dist/.
+COPY --from=build /app/apps/api/src ./apps/api/src
 WORKDIR /app/apps/api
 RUN mkdir -p /app/uploads
 EXPOSE 3001
