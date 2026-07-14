@@ -9,7 +9,7 @@ all:
     pompom_vps:
       hosts:
         prod:
-          ansible_host: "{{ lookup('env', 'DEPLOY_HOST') | default('vergersdesabers.fr', true) }}"
+          ansible_host: "{{ lookup('env', 'DEPLOY_HOST') | default('51.210.45.183', true) }}"
           ansible_user: deploy
       vars:
         ansible_python_interpreter: /usr/bin/python3

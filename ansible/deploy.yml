@@ -7,6 +7,28 @@
 #
 # Pré-requis : setup.yml exécuté au moins une fois (provisioning effectif).
 
+# Play 1 : matérialise la clé SSH privée du runner (stockée dans le Vault
+# chiffré) dans ~/.ssh/deploy_key, utilisée ensuite via --private-key.
+# Évite d'avoir un secret GitHub DEPLOY_SSH_KEY : seul ANSIBLE_VAULT_PASSWORD suffit.
+- name: Préparer la clé SSH de déploiement (depuis le Vault)
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars_files:
+    - group_vars/pompom_vps_vault.yml
+  tasks:
+    - name: S'assurer que ~/.ssh existe
+      ansible.builtin.file:
+        path: "{{ lookup('env', 'HOME') }}/.ssh"
+        state: directory
+        mode: "0700"
+
+    - name: Écrire la clé privée du runner (CI → deploy@VPS)
+      ansible.builtin.copy:
+        content: "{{ deploy_ssh_private_key }}"
+        dest: "{{ lookup('env', 'HOME') }}/.ssh/deploy_key"
+        mode: "0600"
+
 - name: Déployer pompom-shop
   hosts: pompom_vps
   become: false
@@ -32,14 +54,12 @@
       ansible.builtin.command:
         cmd: docker compose -f docker-compose.prod.yml up -d --build
         chdir: "{{ app_dir }}"
-      become: true
       changed_when: true
 
     - name: Migration Prisma (deploy)
       ansible.builtin.command:
         cmd: docker compose -f docker-compose.prod.yml exec -T api bun run prisma:migrate:deploy
         chdir: "{{ app_dir }}"
-      become: true
       changed_when: true
 
     - name: Health check API (retry)

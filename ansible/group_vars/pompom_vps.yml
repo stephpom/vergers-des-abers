@@ -15,10 +15,9 @@ api_subdomain: api
 # Chemin de la deploy key SSH GitHub côté VPS (déposée par setup.yml).
 github_deploy_key_dest: "/home/{{ app_user }}/.ssh/github_deploy_key"
 
-# Clé PUBLIQUE du runner GitHub Actions (paire du secret DEPLOY_SSH_KEY).
-# À renseigner par l'admin pour activer le déploiement auto (CI → deploy@VPS).
-# Ex : deploy_authorized_key: "ssh-ed25519 AAAA... github-actions-pompom"
-# deploy_authorized_key: ""
+# Clé PUBLIQUE du runner GitHub Actions (la clé PRIVÉE est dans le Vault :
+# deploy_ssh_private_key). Installée dans authorized_keys de deploy par setup.yml.
+deploy_authorized_key: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK1+TpcH9SXY1YMdorBbqvzeFxthxS2AGJqa4BN5+2sI github-actions-pompom-ci"
 
 # Health check après deploy
 health_check_url: "https://{{ api_subdomain }}.{{ domain }}/health"
