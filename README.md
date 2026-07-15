@@ -161,7 +161,7 @@ docker compose exec api bun run prisma:studio                   # GUI base (port
 docker compose exec api bun run test
 ```
 
-Après un `bun add` qui ajoute un import dans le code source, Vite/Bun détectent automatiquement le changement et reloadent. Si Vite affiche "Failed to resolve import", relance simplement le container : `docker compose restart web` (le volume `node_modules` du container est mis à jour par le `bun add`).
+Après un `bun add` qui ajoute un import dans le code source, Vite/Bun détectent automatiquement le changement et reloadent. Si Vite affiche "Failed to resolve import", relance simplement le container : `docker compose restart web` (les containers relancent `bun install` au démarrage pour resynchroniser les `node_modules` avec le lockfile).
 
 ## Qualité — CI et pre-commit
 

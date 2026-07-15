@@ -50,8 +50,12 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      db_test:
+        condition: service_healthy
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-pompom}:${POSTGRES_PASSWORD:-pompom}@db:5432/${POSTGRES_DB:-pompom}?schema=public
+      # URL test utilisée par vitest dans le container (voir apps/api/src/tests/setup.ts)
+      TEST_DATABASE_URL: postgresql://pompom:pompom@db_test:5432/pompom_test?schema=public
       JWT_SECRET: ${JWT_SECRET:-dev_secret_not_for_prod_at_least_32_chars}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-7d}
       PORT: 3001
@@ -76,6 +80,11 @@ services:
       - ./bun.lockb:/app/bun.lockb
       # Volumes nommés (priorité sur le bind du parent) pour isoler node_modules
       - api_node_modules:/app/apps/api/node_modules
+    command: >
+      sh -c "cd /app && bun install --frozen-lockfile &&
+      cd /app/apps/api &&
+      bun run prisma:generate &&
+      bun --watch run src/server.ts"
 
   web:
     build:
@@ -101,6 +110,10 @@ services:
       - ./package.json:/app/package.json
       - ./bun.lockb:/app/bun.lockb
       - web_node_modules:/app/apps/web/node_modules
+    command: >
+      sh -c "cd /app && bun install --frozen-lockfile &&
+      cd /app/apps/web &&
+      bun run dev -- --host 0.0.0.0"
 
 volumes:
   pgdata:

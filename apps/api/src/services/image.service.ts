@@ -27,6 +27,17 @@ export class ImageError extends Error {
   }
 }
 
+/** Vitest+Bun en Docker duplique parfois le module : instanceof échoue. */
+export function isImageError(err: unknown): err is ImageError {
+  return (
+    err instanceof ImageError ||
+    (typeof err === "object" &&
+      err !== null &&
+      (err as ImageError).name === "ImageError" &&
+      typeof (err as ImageError).statusCode === "number")
+  );
+}
+
 async function ensureUploadDir(): Promise<string> {
   const dir = path.resolve(config.UPLOAD_DIR);
   await mkdir(dir, { recursive: true });

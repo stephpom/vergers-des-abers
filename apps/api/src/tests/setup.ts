@@ -4,7 +4,18 @@ import path from "node:path";
 import dotenv from "dotenv";
 
 // Charger .env.test AVANT tout import qui lit process.env (config.ts, prisma.ts…)
-dotenv.config({ path: path.resolve(import.meta.dirname, "../../.env.test") });
+dotenv.config({
+  path: path.resolve(import.meta.dirname, "../../.env.test"),
+  override: true,
+});
+
+// Dans Docker, Compose injecte DATABASE_URL (DB dev) avant dotenv ; .env.test pointe
+// vers localhost:5433 (hôte). TEST_DATABASE_URL cible db_test sur le réseau compose.
+if (process.env.TEST_DATABASE_URL) {
+  process.env.DATABASE_URL = process.env.TEST_DATABASE_URL;
+}
+
+process.env.NODE_ENV = "test";
 
 // Créer le dossier uploads-test avant que @fastify/static ne le réclame
 const apiRoot = path.resolve(import.meta.dirname, "../../");
