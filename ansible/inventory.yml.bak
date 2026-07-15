@@ -1,0 +1,16 @@
+---
+# Inventaire YAML (supporte Jinja2 dans les valeurs).
+# ansible_host est résolu depuis la variable d'env DEPLOY_HOST (CI ou local).
+# Défaut : domaine 'pompom.fr' (à adapter quand le domaine final est en place).
+
+all:
+  children:
+    pompom_vps:
+      hosts:
+        prod:
+          ansible_host: "{{ lookup('env', 'DEPLOY_HOST') | default('pompom.fr', true) }}"
+          ansible_port: "{{ lookup('env', 'DEPLOY_PORT') | default(22, true) }}"
+          ansible_user: ubuntu
+          ansible_ssh_private_key_file: ~/.ssh/pompom_deploy
+      vars:
+        ansible_python_interpreter: /usr/bin/python3

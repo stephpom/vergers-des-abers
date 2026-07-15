@@ -1,0 +1,21 @@
+---
+# Variables publiques (non sensibles, committées en clair).
+# Les valeurs sensibles vont dans pompom_vps_vault.yml (chiffré).
+
+app_user: ubuntu
+app_dir: /opt/pompom
+repo_url: "git@github.com:stephpom/happy-apple-shop.git"
+git_branch: main
+
+# Domaine principal (à adapter au moment de l'achat du domaine).
+# Peut aussi être overridé via la variable d'env DEPLOY_HOST côté CI.
+domain: vergersdesabers.fr
+api_subdomain: api
+
+# Chemin de la deploy key SSH GitHub côté VPS (déposée par setup.yml).
+github_deploy_key_dest: "/home/{{ app_user }}/.ssh/github_deploy_key"
+
+# Health check après deploy
+health_check_url: "https://{{ api_subdomain }}.{{ domain }}/health"
+health_check_retries: 15
+health_check_delay: 3
