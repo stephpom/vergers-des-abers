@@ -3,12 +3,6 @@ import { PublicHeader } from "@/components/PublicHeader";
 import { PublicFooter } from "@/components/PublicFooter";
 import { SEO } from "@/components/SEO";
 
-const Placeholder = ({ children }: { children: string }) => (
-  <span className="bg-yellow-100 text-yellow-900 px-1 rounded font-mono text-sm">
-    [À COMPLÉTER: {children}]
-  </span>
-);
-
 const Confidentialite = () => (
   <div className="min-h-screen bg-background">
     <SEO
@@ -20,9 +14,7 @@ const Confidentialite = () => (
     <main id="main-content" className="container mx-auto px-4 py-12">
       <article className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold mb-2 text-foreground">Politique de confidentialité</h1>
-        <p className="text-sm text-muted-foreground mb-10">
-          Dernière mise à jour : <Placeholder>01/07/2026</Placeholder>
-        </p>
+        <p className="text-sm text-muted-foreground mb-10">Dernière mise à jour : 01/07/2026</p>
 
         <div className="space-y-10 text-foreground leading-relaxed">
           <section>
@@ -38,8 +30,7 @@ const Confidentialite = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Responsable du traitement</h2>
             <p>
-              <Placeholder>Stéphane Pommier - Terre de jeux</Placeholder>, dont les coordonnées
-              complètes figurent dans les{" "}
+              Stéphane Pommier - Terre de jeux, dont les coordonnées complètes figurent dans les{" "}
               <Link to="/mentions-legales" className="text-primary hover:underline">
                 mentions légales
               </Link>
@@ -85,19 +76,17 @@ const Confidentialite = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Durée de conservation</h2>
             <p>
-              Les messages reçus via le formulaire de contact sont conservés pendant{" "}
-              <Placeholder>3 ans</Placeholder> à compter du dernier échange, à des fins de suivi
-              de la relation. Passé ce délai, ils sont supprimés.
+              Les messages reçus via le formulaire de contact sont conservés pendant 3 ans à compter
+              du dernier échange, à des fins de suivi de la relation. Passé ce délai, ils sont
+              supprimés.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-3">Destinataires des données</h2>
             <p>
-              Vos données sont accessibles uniquement par{" "}
-              <Placeholder>Stéphane Pommier</Placeholder>. Elles sont
-              transmises à notre prestataire d'envoi d'emails transactionnels{" "}
-              <strong>Resend</strong> (
+              Vos données sont accessibles uniquement par Stéphane Pommier. Elles sont transmises à
+              notre prestataire d'envoi d'emails transactionnels <strong>Resend</strong> (
               <a
                 href="https://resend.com/legal/privacy-policy"
                 className="text-primary hover:underline"
@@ -148,11 +137,7 @@ const Confidentialite = () => (
 
           <section>
             <h2 className="text-2xl font-semibold mb-3">Délégué à la protection des données</h2>
-            <p>
-              <Placeholder>
-                « non désigné, contact direct via l'éditeur »
-              </Placeholder>
-            </p>
+            <p>« non désigné, contact direct via l'éditeur »</p>
           </section>
 
           <section>

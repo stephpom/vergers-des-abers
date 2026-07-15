@@ -19,8 +19,9 @@ describe("Page MentionsLegales", () => {
     expect(screen.getByRole("heading", { name: /contact/i })).toBeInTheDocument();
   });
 
-  it("rend les placeholders [À COMPLÉTER] pour rappeler les infos à fournir", () => {
+  it("affiche les informations légales", () => {
     renderWithProviders(<MentionsLegales />, { initialEntries: ["/mentions-legales"] });
-    expect(screen.getAllByText(/à compléter/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/90501504600014/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /pom-pom@mailo\.com/i })).toBeInTheDocument();
   });
 });

@@ -175,7 +175,7 @@ Conventions de sévérité :
 
 ## 🔴 Légal — e-commerce / vitrine FR (bloquants MEP)
 
-- [~] **L1** — Page `/mentions-legales` créée (`MentionsLegales.tsx`) avec rubriques éditeur, directeur de publication, hébergeur (OVH par défaut), propriété intellectuelle, crédits, données personnelles, contact. **Placeholders `[À COMPLÉTER]` à remplir** : SIRET, raison sociale, forme juridique, TVA, directeur de publication, crédit photo, agence/dev. Lien dans `PublicFooter`, entrée sitemap, test rendu vert (3 tests).
+- [x] **L1** — Page `/mentions-legales` créée (`MentionsLegales.tsx`) avec rubriques éditeur, directeur de publication, hébergeur (OVH par défaut), propriété intellectuelle, crédits, données personnelles, contact. **Placeholders `[À COMPLÉTER]` à remplir** : SIRET, raison sociale, forme juridique, TVA, directeur de publication, crédit photo, agence/dev. Lien dans `PublicFooter`, entrée sitemap, test rendu vert (3 tests).
 - [~] **L2** — Page `/confidentialite` créée (`Confidentialite.tsx`) avec rubriques RGPD complètes (préambule, responsable, données collectées, finalité, base légale, durée, destinataires Resend, droits, DPO, cookies, sécurité, modifications). **Placeholders `[À COMPLÉTER]` à remplir** : durée de conservation, DPO, raison sociale, responsable des réponses. Lien dans `PublicFooter`, entrée sitemap, test rendu vert (3 tests).
 - [N/A] **L3** — Bannière cookies : non applicable. Aucune analytics prévue (cf. I12 abandonné). À réévaluer si un jour ajout Plausible/Matomo/GA.
 - [N/A] **L4** — CGV : non applicable. Pas de vente en ligne prévue (site vitrine pur). À réévaluer si activation d'un panier.

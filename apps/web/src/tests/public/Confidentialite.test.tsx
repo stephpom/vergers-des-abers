@@ -20,8 +20,9 @@ describe("Page Confidentialite", () => {
     expect(screen.getByRole("heading", { name: /cookies/i })).toBeInTheDocument();
   });
 
-  it("rend les placeholders [À COMPLÉTER] pour les valeurs à fournir", () => {
+  it("affiche les informations légales", () => {
     renderWithProviders(<Confidentialite />, { initialEntries: ["/confidentialite"] });
-    expect(screen.getAllByText(/à compléter/i).length).toBeGreaterThan(0);
+    expect(screen.getByText(/Stéphane Pommier - Terre de jeux/i)).toBeInTheDocument();
+    expect(screen.getByText(/3 ans à compter du dernier échange/i)).toBeInTheDocument();
   });
 });

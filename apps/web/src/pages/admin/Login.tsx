@@ -1,7 +1,7 @@
 import { SEO } from "@/components/SEO";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import * as z from "zod";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";

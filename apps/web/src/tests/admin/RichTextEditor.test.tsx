@@ -2,6 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { render } from "@testing-library/react";
+import type { Editor } from "@tiptap/react";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 
 describe("RichTextEditor", () => {
@@ -63,19 +64,15 @@ describe("RichTextEditor", () => {
     expect(screen.getByRole("button", { name: "Gras" })).toBeInTheDocument();
   });
 
-  // Pour tester cela il faut Playwright/E2E avec un vrai navigateur :
-  // userEvent.keyboard ne déclenche pas onUpdate de TipTap, et ProseMirror dans jsdom
-  // ne simule pas correctement la frappe clavier.
-  it.skip("onChange appelé quand on tape du texte — limite jsdom/ProseMirror", async () => {
-    const user = userEvent.setup();
+  it("onChange appelé quand on tape du texte", async () => {
     const onChange = vi.fn();
-    render(<RichTextEditor value="" onChange={onChange} />);
+    const editorRef = { current: null as Editor | null };
+    render(<RichTextEditor value="" onChange={onChange} editorRef={editorRef} />);
     await waitFor(() => {
-      expect(document.querySelector(".ProseMirror")).toBeInTheDocument();
+      expect(editorRef.current).not.toBeNull();
     });
-    const editor = document.querySelector(".ProseMirror") as HTMLElement;
-    editor.focus();
-    await user.keyboard("Hello");
+    editorRef.current!.chain().focus().insertContent("Hello").run();
     expect(onChange).toHaveBeenCalled();
+    expect(onChange.mock.calls.at(-1)?.[0]).toContain("Hello");
   });
 });

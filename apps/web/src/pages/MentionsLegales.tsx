@@ -3,12 +3,6 @@ import { PublicHeader } from "@/components/PublicHeader";
 import { PublicFooter } from "@/components/PublicFooter";
 import { SEO } from "@/components/SEO";
 
-const Placeholder = ({ children }: { children: string }) => (
-  <span className="bg-yellow-100 text-yellow-900 px-1 rounded font-mono text-sm">
-    [À COMPLÉTER: {children}]
-  </span>
-);
-
 const MentionsLegales = () => (
   <div className="min-h-screen bg-background">
     <SEO
@@ -20,21 +14,17 @@ const MentionsLegales = () => (
     <main id="main-content" className="container mx-auto px-4 py-12">
       <article className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold mb-2 text-foreground">Mentions légales</h1>
-        <p className="text-sm text-muted-foreground mb-10">
-          Dernière mise à jour : <Placeholder>01/07/2026</Placeholder>
-        </p>
+        <p className="text-sm text-muted-foreground mb-10">Dernière mise à jour : 01/07/2026</p>
 
         <div className="space-y-10 text-foreground leading-relaxed">
           <section>
             <h2 className="text-2xl font-semibold mb-3">Éditeur du site</h2>
             <p>
-              <strong>Raison sociale :</strong>{" "}
-              <Placeholder>Stéphane Pommier - Terre de jeux</Placeholder>
+              <strong>Raison sociale :</strong> Stéphane Pommier - Terre de jeux
               <br />
-              <strong>Forme juridique :</strong>{" "}
-              <Placeholder>Entreprise Individuelle</Placeholder>
+              <strong>Forme juridique :</strong> Entreprise Individuelle
               <br />
-              <strong>SIRET :</strong> <Placeholder>90501504600014</Placeholder>
+              <strong>SIRET :</strong> 90501504600014
               <br />
               <strong>Adresse :</strong> 592 Lanvaon, 29880 Plouguerneau, France
               <br />
@@ -48,16 +38,13 @@ const MentionsLegales = () => (
                 pom-pom@mailo.com
               </a>
               <br />
-              <strong>TVA intracommunautaire :</strong>{" "}
-              <Placeholder>FR18 905015046</Placeholder>
+              <strong>TVA intracommunautaire :</strong> FR18 905015046
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-3">Directeur de publication</h2>
-            <p>
-              <Placeholder>Stéphane Pommier</Placeholder>
-            </p>
+            <p>Stéphane Pommier</p>
           </section>
 
           <section>
@@ -98,9 +85,9 @@ const MentionsLegales = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Crédits</h2>
             <p>
-              Photographies : <Placeholder>crédit photos Stéphane Pommier, CC BY 4.0</Placeholder>
+              Photographies : crédit photos Stéphane Pommier, CC BY 4.0
               <br />
-              Conception et développement : <Placeholder>Stéphane Pommier, François Bouyer</Placeholder>
+              Conception et développement : Stéphane Pommier, François Bouyer
             </p>
           </section>
 
