@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { z } from "zod";
+import * as z from "zod";
 import { authenticateUser, getUserById } from "../services/auth.service.js";
 import { COOKIE_NAME, cookieOptions, signToken } from "../lib/auth.js";
 import { authenticate } from "../middleware/authenticate.js";

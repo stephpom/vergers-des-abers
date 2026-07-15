@@ -7,7 +7,7 @@ const OG_PATH = path.resolve(import.meta.dirname, "../../public/og-image.jpg");
 
 describe("og-image (P5)", () => {
   it("public/og-image.jpg existe", async () => {
-    await expect(access(OG_PATH)).resolves.toBeUndefined();
+    await access(OG_PATH);
   });
 
   it("a les dimensions Open Graph 1200×630", async () => {

@@ -1,4 +1,4 @@
-import { useEditor, EditorContent } from "@tiptap/react";
+import { useEditor, EditorContent, type Editor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import { Button } from "@/components/ui/button";
@@ -14,14 +14,16 @@ import {
   Undo,
   Redo,
 } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, type RefObject } from "react";
 
 interface RichTextEditorProps {
   value: string;
   onChange: (html: string) => void;
+  /** Optionnel — permet aux tests d'appeler les commandes TipTap sans jsdom/ProseMirror. */
+  editorRef?: RefObject<Editor | null>;
 }
 
-export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
+export function RichTextEditor({ value, onChange, editorRef }: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -38,6 +40,12 @@ export function RichTextEditor({ value, onChange }: RichTextEditorProps) {
       },
     },
   });
+
+  useEffect(() => {
+    if (editorRef) {
+      editorRef.current = editor;
+    }
+  }, [editor, editorRef]);
 
   useEffect(() => {
     if (editor && value !== editor.getHTML()) {

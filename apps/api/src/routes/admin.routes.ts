@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { z } from "zod";
+import * as z from "zod";
 import { authenticate } from "../middleware/authenticate.js";
 import {
   createProduct,
@@ -10,7 +10,7 @@ import {
 } from "../services/product.service.js";
 import {
   addImageToProduct,
-  ImageError,
+  isImageError,
   removeImage,
   reorderImages,
 } from "../services/image.service.js";
@@ -98,7 +98,7 @@ export async function adminRoutes(app: FastifyInstance) {
       );
       return reply.code(201).send({ image });
     } catch (err) {
-      if (err instanceof ImageError) {
+      if (isImageError(err)) {
         return reply.code(err.statusCode).send({ error: err.message });
       }
       throw err;
@@ -114,7 +114,7 @@ export async function adminRoutes(app: FastifyInstance) {
       const images = await reorderImages(req.params.id, parsed.data.imageIds);
       return { images };
     } catch (err) {
-      if (err instanceof ImageError) {
+      if (isImageError(err)) {
         return reply.code(err.statusCode).send({ error: err.message });
       }
       throw err;
@@ -128,7 +128,7 @@ export async function adminRoutes(app: FastifyInstance) {
         await removeImage(req.params.imageId);
         return reply.code(204).send();
       } catch (err) {
-        if (err instanceof ImageError) {
+        if (isImageError(err)) {
           return reply.code(err.statusCode).send({ error: err.message });
         }
         throw err;
