@@ -1,5 +1,9 @@
-import "@testing-library/jest-dom/vitest";
-import { beforeAll, afterEach, afterAll } from "vitest";
+import { beforeAll, afterEach, afterAll, expect } from "vitest";
+import * as matchers from "@testing-library/jest-dom/matchers";
+
+// Enregistre explicitement les matchers jest-dom sur l'expect de CE vitest
+// (l'auto-wiring /vitest ne cible pas la bonne instance avec vitest 4).
+expect.extend(matchers);
 import { server } from "./mocks/server";
 
 beforeAll(() => server.listen({ onUnhandledRequest: "warn" }));

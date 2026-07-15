@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MemoryRouter, Routes, Route } from "react-router-dom";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { HelmetProvider } from "react-helmet-async";
 import { http, HttpResponse } from "msw";
 import { server } from "./mocks/server";
 import type { ApiUser } from "@/types/api";
@@ -38,26 +37,21 @@ export function renderWithProviders(
 
   function Wrapper() {
     return (
-      <HelmetProvider>
-        <QueryClientProvider client={queryClient}>
-          <TooltipProvider>
-            <MemoryRouter
-              initialEntries={initialEntries}
-              future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
-            >
-              <AuthProvider>
-                {routePath ? (
-                  <Routes>
-                    <Route path={routePath} element={ui} />
-                  </Routes>
-                ) : (
-                  ui
-                )}
-              </AuthProvider>
-            </MemoryRouter>
-          </TooltipProvider>
-        </QueryClientProvider>
-      </HelmetProvider>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <MemoryRouter initialEntries={initialEntries}>
+            <AuthProvider>
+              {routePath ? (
+                <Routes>
+                  <Route path={routePath} element={ui} />
+                </Routes>
+              ) : (
+                ui
+              )}
+            </AuthProvider>
+          </MemoryRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
     );
   }
 
