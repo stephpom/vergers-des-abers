@@ -20,6 +20,7 @@ import { imageUrl, type ApiProduct } from "@/types/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import AdminHeader from "@/components/admin/AdminHeader";
+import AdminSectionSwitcher from "@/components/admin/AdminSectionSwitcher";
 
 const AdminProducts = () => {
   const navigate = useNavigate();
@@ -63,14 +64,17 @@ const AdminProducts = () => {
       />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Produits</h2>
-          <Link to="/admin/produits/nouveau">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Nouveau produit
-            </Button>
-          </Link>
+        <div className="mb-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Produits</h2>
+            <Link to="/admin/produits/nouveau">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Nouveau produit
+              </Button>
+            </Link>
+          </div>
+          <AdminSectionSwitcher />
         </div>
 
         {isLoading ? (

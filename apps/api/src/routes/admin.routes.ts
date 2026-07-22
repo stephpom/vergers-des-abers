@@ -1,6 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import * as z from "zod";
 import { authenticate } from "../middleware/authenticate.js";
+import { prisma } from "../lib/prisma.js";
 import {
   createProduct,
   deleteProduct,
@@ -40,8 +41,95 @@ const reorderBody = z.object({
   imageIds: z.array(z.string().min(1)).min(1),
 });
 
+const optionalCoordinate = (min: number, max: number) =>
+  z.preprocess((value) => {
+    if (typeof value === "string") {
+      const trimmed = value.trim();
+      if (trimmed === "") return undefined;
+      return Number(trimmed);
+    }
+    return value;
+  }, z.number().min(min).max(max).optional());
+
+const createSalesPointBody = z.object({
+  name: z.string().min(1).max(200),
+  address: z.string().min(1).max(500),
+  description: z.string().max(20000).optional(),
+  latitude: optionalCoordinate(-90, 90),
+  longitude: optionalCoordinate(-180, 180),
+  published: z.boolean().optional(),
+});
+
+const updateSalesPointBody = z.object({
+  name: z.string().min(1).max(200).optional(),
+  address: z.string().min(1).max(500).optional(),
+  description: z.string().max(20000).optional(),
+  latitude: optionalCoordinate(-90, 90),
+  longitude: optionalCoordinate(-180, 180),
+  published: z.boolean().optional(),
+});
+
 export async function adminRoutes(app: FastifyInstance) {
   app.addHook("preHandler", authenticate);
+
+  app.get("/sales-points", async () => {
+    const salesPoints = await prisma.salesPoint.findMany({
+      orderBy: [{ createdAt: "desc" }],
+    });
+    return { salesPoints };
+  });
+
+  app.get<{ Params: { id: string } }>("/sales-points/:id", async (req, reply) => {
+    const salesPoint = await prisma.salesPoint.findUnique({ where: { id: req.params.id } });
+    if (!salesPoint) return reply.code(404).send({ error: "Not found" });
+    return { salesPoint };
+  });
+
+  app.post("/sales-points", async (req, reply) => {
+    const parsed = createSalesPointBody.safeParse(req.body);
+    if (!parsed.success) {
+      return reply.code(400).send({ error: "Invalid input", details: parsed.error.flatten() });
+    }
+
+    const salesPoint = await prisma.salesPoint.create({
+      data: {
+        ...parsed.data,
+        description: parsed.data.description ?? "",
+        latitude: parsed.data.latitude,
+        longitude: parsed.data.longitude,
+      },
+    });
+
+    return reply.code(201).send({ salesPoint });
+  });
+
+  app.patch<{ Params: { id: string } }>("/sales-points/:id", async (req, reply) => {
+    const parsed = updateSalesPointBody.safeParse(req.body);
+    if (!parsed.success) {
+      return reply.code(400).send({ error: "Invalid input", details: parsed.error.flatten() });
+    }
+
+    const existing = await prisma.salesPoint.findUnique({ where: { id: req.params.id } });
+    if (!existing) return reply.code(404).send({ error: "Not found" });
+
+    const salesPoint = await prisma.salesPoint.update({
+      where: { id: req.params.id },
+      data: {
+        ...parsed.data,
+        description: parsed.data.description ?? existing.description,
+      },
+    });
+
+    return { salesPoint };
+  });
+
+  app.delete<{ Params: { id: string } }>("/sales-points/:id", async (req, reply) => {
+    const existing = await prisma.salesPoint.findUnique({ where: { id: req.params.id } });
+    if (!existing) return reply.code(404).send({ error: "Not found" });
+
+    await prisma.salesPoint.delete({ where: { id: req.params.id } });
+    return reply.code(204).send();
+  });
 
   app.get("/products", async () => {
     const products = await listAllProducts();

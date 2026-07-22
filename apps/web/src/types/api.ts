@@ -21,6 +21,18 @@ export interface ApiProduct {
   images: ApiProductImage[];
 }
 
+export interface ApiSalesPoint {
+  id: string;
+  name: string;
+  address: string;
+  description: string;
+  latitude?: number | null;
+  longitude?: number | null;
+  published: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export function imageUrl(filename: string): string {
   return `/uploads/${filename}`;
 }

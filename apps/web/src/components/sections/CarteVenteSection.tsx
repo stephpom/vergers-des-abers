@@ -1,40 +1,164 @@
-import { Globe2, Store } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Globe2, MapPin, Store } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
+import markerIcon from "leaflet/dist/images/marker-icon.png";
+import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
-interface Place {
-  icon: LucideIcon;
+interface SalePoint {
+  id: string;
   name: string;
   address: string;
   description: string;
+  latitude?: number | null;
+  longitude?: number | null;
 }
 
-const PLACES: Place[] = [
-  {
-    icon: Store,
-    name: "Vergers des Abers",
-    address: "592 Lanvaon, 29880 Plouguerneau",
-    description: "Retrouvez nos jus frais directement à la ferme, dans le nord Finistère.",
-  },
-  {
-    icon: Store,
-    name: "L'Artichaut",
-    address: "22c rue de Lannilis, 29880 Plouguerneau",
-    description: "Magasin de producteurs sur Plouguerneau",
-  },
-  {
-    icon: Store,
-    name: "Épicerie de Lilia",
-    address: "16 Hent Treaz, 29880 Plouguerneau",
-    description: "L'épicerie de Lilia où découvrir notre gamme de jus artisanaux.",
-  },
-];
+const iconMap: Record<string, any> = {
+  store: Store,
+  map: MapPin,
+};
 
-const mapQuery = encodeURIComponent(
-  PLACES.map((place) => `${place.name} ${place.address}`).join(" | "),
-);
-const mapSrc = `https://maps.google.com/maps?q=${mapQuery}&hl=fr&z=10&output=embed`;
+const defaultCenter: [number, number] = [48.3, -4.5];
+
+const defaultIcon = L.icon({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
+
+function MapController({ center, zoom }: { center: [number, number]; zoom: number }) {
+  const map = useMap();
+
+  useEffect(() => {
+    map.flyTo(center, zoom, { duration: 1.2 });
+  }, [center, map, zoom]);
+
+  return null;
+}
 
 export const CarteVenteSection = () => {
+  const { data, isLoading } = useQuery({
+    queryKey: ["sales-points"],
+    queryFn: () => api<{ salesPoints: SalePoint[] }>("/api/sales-points"),
+    retry: false,
+  });
+
+  const places = data?.salesPoints ?? [];
+  const [activePlaceId, setActivePlaceId] = useState<string | null>(null);
+  const [coordinatesByPlaceId, setCoordinatesByPlaceId] = useState<
+    Record<string, [number, number]>
+  >({});
+  const [mapError, setMapError] = useState<string | null>(null);
+  const [isGeocoding, setIsGeocoding] = useState(false);
+
+  const selectedPlace = activePlaceId ? places.find((place) => place.id === activePlaceId) : null;
+  const selectedCoordinates = useMemo(() => {
+    if (!selectedPlace) {
+      return null;
+    }
+    return coordinatesByPlaceId[selectedPlace.id] ?? null;
+  }, [coordinatesByPlaceId, selectedPlace]);
+
+  const visiblePlaces = useMemo(
+    () => places.filter((place) => coordinatesByPlaceId[place.id]),
+    [coordinatesByPlaceId, places],
+  );
+
+  useEffect(() => {
+    if (places.length === 0) {
+      setCoordinatesByPlaceId({});
+      setMapError(null);
+      return;
+    }
+
+    const controller = new AbortController();
+    setIsGeocoding(true);
+    setMapError(null);
+
+    const prefilledCoordinates: Record<string, [number, number]> = {};
+    const geocodePlaces = places.filter(
+      (place) => place.latitude == null || place.longitude == null,
+    );
+
+    places.forEach((place) => {
+      if (place.latitude != null && place.longitude != null) {
+        prefilledCoordinates[place.id] = [place.latitude, place.longitude];
+      }
+    });
+
+    if (geocodePlaces.length === 0) {
+      setCoordinatesByPlaceId(prefilledCoordinates);
+      setIsGeocoding(false);
+      return;
+    }
+
+    Promise.all(
+      geocodePlaces.map(async (place) => {
+        const query = `${place.name} ${place.address}`.trim();
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`,
+          {
+            headers: { "Accept-Language": "fr" },
+            signal: controller.signal,
+          },
+        );
+
+        if (!response.ok) {
+          throw new Error("Geocoding failed");
+        }
+
+        const result = await response.json();
+        if (!Array.isArray(result) || result.length === 0) {
+          return [place.id, null] as const;
+        }
+
+        return [
+          place.id,
+          [Number(result[0].lat), Number(result[0].lon)] as [number, number],
+        ] as const;
+      }),
+    )
+      .then((entries) => {
+        const geocodedCoordinates = Object.fromEntries(
+          entries.filter(([, coordinates]) => coordinates !== null),
+        ) as Record<string, [number, number]>;
+
+        const nextCoordinates = {
+          ...prefilledCoordinates,
+          ...geocodedCoordinates,
+        };
+
+        setCoordinatesByPlaceId(nextCoordinates);
+        if (Object.keys(nextCoordinates).length === 0) {
+          setMapError("Impossible d'obtenir la position des points de vente.");
+        }
+      })
+      .catch((error) => {
+        if (error instanceof Error && error.name === "AbortError") {
+          return;
+        }
+        setMapError("Impossible de charger la carte OpenStreetMap.");
+      })
+      .finally(() => {
+        setIsGeocoding(false);
+      });
+
+    return () => controller.abort();
+  }, [places]);
+
+  const mapStatusMessage =
+    isLoading || isGeocoding ? "Chargement de la carte…" : mapError ? mapError : null;
+
   return (
     <section className="py-20 bg-slate-50">
       <div className="container mx-auto px-4">
@@ -47,37 +171,90 @@ export const CarteVenteSection = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-8 items-start">
-          <div className="overflow-hidden rounded-3xl border border-border/70 shadow-sm">
-            <iframe
-              title="Carte des points de vente Pom'Pom"
-              src={mapSrc}
-              className="w-full min-h-[420px] border-0"
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-            />
+          <div className="overflow-hidden rounded-3xl border border-border/70 shadow-sm bg-white">
+            <div className="relative min-h-[420px] w-full">
+              <MapContainer
+                center={selectedCoordinates ?? defaultCenter}
+                zoom={selectedCoordinates ? 13 : 8}
+                className="h-[420px] w-full"
+              >
+                <TileLayer
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                />
+                {selectedCoordinates ? (
+                  <MapController center={selectedCoordinates} zoom={13} />
+                ) : null}
+                {visiblePlaces.map((place) => {
+                  const position = coordinatesByPlaceId[place.id];
+                  if (!position) {
+                    return null;
+                  }
+
+                  return (
+                    <Marker key={place.id} position={position} icon={defaultIcon}>
+                      <Popup>
+                        <div className="space-y-1">
+                          <p className="font-semibold">{place.name}</p>
+                          <p className="text-sm text-muted-foreground">{place.address}</p>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
+                })}
+              </MapContainer>
+              {mapStatusMessage ? (
+                <div className="absolute inset-0 flex items-center justify-center bg-white/80 p-6 text-center text-sm text-muted-foreground">
+                  {mapStatusMessage}
+                </div>
+              ) : null}
+            </div>
           </div>
 
           <div className="space-y-6">
-            {PLACES.map((place) => {
-              const Icon = place.icon;
-              return (
-                <div
-                  key={place.name}
-                  className="rounded-3xl border border-border/70 bg-white p-6 shadow-sm"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                      <Icon className="w-6 h-6" />
+            {isLoading ? (
+              <div className="rounded-3xl border border-border/70 bg-white p-6 shadow-sm text-muted-foreground">
+                Chargement des points de vente…
+              </div>
+            ) : places.length === 0 ? (
+              <div className="rounded-3xl border border-border/70 bg-white p-6 shadow-sm text-muted-foreground">
+                Aucun point de vente n&apos;est actuellement disponible.
+              </div>
+            ) : (
+              places.map((place, index) => {
+                const Icon = iconMap[index % 2 === 0 ? "store" : "map"];
+                return (
+                  <div
+                    key={`${place.name}-${index}`}
+                    className={`rounded-3xl border p-6 shadow-sm ${
+                      place.id === activePlaceId
+                        ? "border-primary bg-primary/5"
+                        : "border-border/70 bg-white"
+                    }`}
+                  >
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <div>
+                        <h3 className="text-xl font-semibold">{place.name}</h3>
+                        <p className="text-sm text-muted-foreground">{place.address}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="text-xl font-semibold">{place.name}</h3>
-                      <p className="text-sm text-muted-foreground">{place.address}</p>
+                    <p className="text-muted-foreground leading-relaxed">{place.description}</p>
+                    <div className="mt-4 text-right">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setActivePlaceId(place.id)}
+                      >
+                        Afficher sur la carte
+                      </Button>
                     </div>
                   </div>
-                  <p className="text-muted-foreground leading-relaxed">{place.description}</p>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
             <div className="rounded-3xl border border-border/70 bg-primary/5 p-6">
               <div className="flex items-center gap-3 mb-3 text-primary">
                 <Globe2 className="w-5 h-5" />

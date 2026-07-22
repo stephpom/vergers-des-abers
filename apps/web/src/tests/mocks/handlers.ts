@@ -1,5 +1,5 @@
 import { http, HttpResponse } from "msw";
-import type { ApiProduct, ApiUser } from "@/types/api";
+import type { ApiProduct, ApiSalesPoint, ApiUser } from "@/types/api";
 
 export const mockUser: ApiUser = { id: "user-1", email: "admin@test.com" };
 
@@ -23,6 +23,20 @@ export const mockProducts: ApiProduct[] = [
     createdAt: "2024-01-02T00:00:00.000Z",
     updatedAt: "2024-01-02T00:00:00.000Z",
     images: [],
+  },
+];
+
+export const mockSalesPoints: ApiSalesPoint[] = [
+  {
+    id: "sale-1",
+    name: "Marché de Dinan",
+    address: "1 rue du Port",
+    description: "À côté de la mairie",
+    latitude: 48.4545,
+    longitude: -2.0418,
+    published: true,
+    createdAt: "2024-01-01T00:00:00.000Z",
+    updatedAt: "2024-01-01T00:00:00.000Z",
   },
 ];
 
@@ -93,6 +107,38 @@ export const defaultHandlers = [
     );
   }),
 
+  http.get("/api/admin/sales-points", () => {
+    return HttpResponse.json({ salesPoints: mockSalesPoints });
+  }),
+
+  http.post("/api/admin/sales-points", async ({ request }) => {
+    const body = (await request.json()) as Partial<ApiSalesPoint>;
+    const newSalesPoint: ApiSalesPoint = {
+      id: "sale-new",
+      name: body.name ?? "",
+      address: body.address ?? "",
+      description: body.description ?? "",
+      latitude: body.latitude ?? undefined,
+      longitude: body.longitude ?? undefined,
+      published: body.published ?? true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+    return HttpResponse.json({ salesPoint: newSalesPoint }, { status: 201 });
+  }),
+
+  http.patch("/api/admin/sales-points/:id", async ({ params, request }) => {
+    const body = (await request.json()) as Partial<ApiSalesPoint>;
+    const salesPoint = mockSalesPoints.find((point) => point.id === params.id);
+    if (!salesPoint) return HttpResponse.json({ error: "Not found" }, { status: 404 });
+    const updated = { ...salesPoint, ...body, updatedAt: new Date().toISOString() };
+    return HttpResponse.json({ salesPoint: updated });
+  }),
+
+  http.delete("/api/admin/sales-points/:id", () => {
+    return new HttpResponse(null, { status: 204 });
+  }),
+
   // Routes publiques
   http.get("/api/products", () => {
     return HttpResponse.json({ products: mockProducts });
@@ -102,5 +148,9 @@ export const defaultHandlers = [
     const product = mockProducts.find((p) => p.slug === params.slug);
     if (!product) return HttpResponse.json({ error: "Not found" }, { status: 404 });
     return HttpResponse.json({ product });
+  }),
+
+  http.get("/api/sales-points", () => {
+    return HttpResponse.json({ salesPoints: mockSalesPoints.filter((point) => point.published) });
   }),
 ];

@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { PrivateRoute } from "@/components/PrivateRoute";
 import { PageLoader } from "@/components/PageLoader";
@@ -15,8 +15,10 @@ const MentionsLegales = lazy(() => import("./pages/MentionsLegales"));
 const Confidentialite = lazy(() => import("./pages/Confidentialite"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 const AdminLogin = lazy(() => import("./pages/admin/Login"));
+const AdminHome = lazy(() => import("./pages/admin/Home"));
 const AdminProducts = lazy(() => import("./pages/admin/Products"));
 const AdminProductForm = lazy(() => import("./pages/admin/ProductForm"));
+const AdminSalesPoints = lazy(() => import("./pages/admin/SalesPoints"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,7 +45,14 @@ const App = () => (
               <Route path="/confidentialite" element={<Confidentialite />} />
 
               <Route path="/admin/login" element={<AdminLogin />} />
-              <Route path="/admin" element={<Navigate to="/admin/produits" replace />} />
+              <Route
+                path="/admin"
+                element={
+                  <PrivateRoute>
+                    <AdminHome />
+                  </PrivateRoute>
+                }
+              />
               <Route
                 path="/admin/produits"
                 element={
@@ -65,6 +74,14 @@ const App = () => (
                 element={
                   <PrivateRoute>
                     <AdminProductForm />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/points-de-vente"
+                element={
+                  <PrivateRoute>
+                    <AdminSalesPoints />
                   </PrivateRoute>
                 }
               />
