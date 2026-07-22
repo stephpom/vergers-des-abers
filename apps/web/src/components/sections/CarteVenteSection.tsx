@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Button } from "@/components/ui/button";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import markerIcon2x from "leaflet/dist/images/marker-icon-2x.png";
@@ -211,7 +210,7 @@ export const CarteVenteSection = () => {
             </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-4">
             {isLoading ? (
               <div className="rounded-3xl border border-border/70 bg-white p-6 shadow-sm text-muted-foreground">
                 Chargement des points de vente…
@@ -221,39 +220,38 @@ export const CarteVenteSection = () => {
                 Aucun point de vente n&apos;est actuellement disponible.
               </div>
             ) : (
-              places.map((place, index) => {
-                const Icon = iconMap[index % 2 === 0 ? "store" : "map"];
-                return (
-                  <div
-                    key={`${place.name}-${index}`}
-                    className={`rounded-3xl border p-6 shadow-sm ${
-                      place.id === activePlaceId
-                        ? "border-primary bg-primary/5"
-                        : "border-border/70 bg-white"
-                    }`}
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center">
-                        <Icon className="w-6 h-6" />
-                      </div>
-                      <div>
-                        <h3 className="text-xl font-semibold">{place.name}</h3>
-                        <p className="text-sm text-muted-foreground">{place.address}</p>
-                      </div>
-                    </div>
-                    <p className="text-muted-foreground leading-relaxed">{place.description}</p>
-                    <div className="mt-4 text-right">
-                      <Button
-                        size="sm"
-                        variant="outline"
+              <div className="max-h-[420px] overflow-y-auto pr-2">
+                <div className="space-y-3">
+                  {places.map((place, index) => {
+                    const Icon = iconMap[index % 2 === 0 ? "store" : "map"];
+                    return (
+                      <button
+                        key={`${place.name}-${index}`}
+                        type="button"
                         onClick={() => setActivePlaceId(place.id)}
+                        className={`w-full rounded-2xl border p-4 text-left shadow-sm transition-colors ${
+                          place.id === activePlaceId
+                            ? "border-primary bg-primary/5"
+                            : "border-border/70 bg-white hover:border-primary/50"
+                        }`}
                       >
-                        Afficher sur la carte
-                      </Button>
-                    </div>
-                  </div>
-                );
-              })
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 rounded-2xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                            <Icon className="w-5 h-5" />
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="text-base font-semibold">{place.name}</h3>
+                            <p className="text-sm text-muted-foreground mt-1">{place.address}</p>
+                            <p className="text-sm text-muted-foreground leading-relaxed mt-2 line-clamp-3">
+                              {place.description}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
             )}
             <div className="rounded-3xl border border-border/70 bg-primary/5 p-6">
               <div className="flex items-center gap-3 mb-3 text-primary">
