@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { imageUrl, type ApiProduct } from "@/types/api";
 import { stripHtml, truncate } from "@/lib/seo";
+import { PRODUCT_CATEGORY_LABELS } from "@/lib/product-category";
+import { PRODUCT_FORMAT_LABELS } from "@/lib/product-format";
 
 interface ProductCardProps {
   product: ApiProduct;
@@ -31,7 +33,22 @@ export const ProductCard = ({ product }: ProductCardProps) => {
           )}
         </div>
         <div className="p-6 flex flex-col flex-1">
+          <p className="text-xs font-medium uppercase tracking-wide text-primary mb-2">
+            {PRODUCT_CATEGORY_LABELS[product.category ?? "JUICE"]}
+          </p>
           <h3 className="text-xl font-semibold mb-2 line-clamp-2">{product.title}</h3>
+          {product.formats?.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-3">
+              {product.formats.map((format) => (
+                <span
+                  key={format}
+                  className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground"
+                >
+                  {PRODUCT_FORMAT_LABELS[format]}
+                </span>
+              ))}
+            </div>
+          )}
           {excerpt && (
             <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-1 line-clamp-3">
               {excerpt}

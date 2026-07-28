@@ -21,6 +21,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import AdminHeader from "@/components/admin/AdminHeader";
 import AdminSectionSwitcher from "@/components/admin/AdminSectionSwitcher";
+import { PRODUCT_CATEGORY_LABELS } from "@/lib/product-category";
+import { PRODUCT_FORMAT_LABELS } from "@/lib/product-format";
 
 const AdminProducts = () => {
   const navigate = useNavigate();
@@ -99,6 +101,7 @@ const AdminProducts = () => {
                   <tr>
                     <th className="text-left p-3 w-20">Image</th>
                     <th className="text-left p-3">Titre</th>
+                    <th className="text-left p-3 w-52">Catégorie</th>
                     <th className="text-left p-3 w-32">Statut</th>
                     <th className="text-right p-3 w-32">Actions</th>
                   </tr>
@@ -120,6 +123,14 @@ const AdminProducts = () => {
                       <td className="p-3">
                         <div className="font-medium">{p.title}</div>
                         <div className="text-xs text-muted-foreground">/{p.slug}</div>
+                      </td>
+                      <td className="p-3 text-sm text-muted-foreground">
+                        <div>{PRODUCT_CATEGORY_LABELS[p.category ?? "JUICE"]}</div>
+                        {p.formats?.length > 0 && (
+                          <div className="mt-1 text-xs">
+                            {p.formats.map((format) => PRODUCT_FORMAT_LABELS[format]).join(", ")}
+                          </div>
+                        )}
                       </td>
                       <td className="p-3">
                         {p.published ? (

@@ -13,6 +13,8 @@ import { adminRoutes } from "./routes/admin.routes.js";
 import { contactRoutes } from "./routes/contact.routes.js";
 import { sitemapRoutes } from "./routes/sitemap.routes.js";
 import { salesPointsRoutes } from "./routes/sales-points.routes.js";
+import { pressingRoutes } from "./routes/pressing.routes.js";
+import { pressingAdminRoutes } from "./routes/pressing.admin.routes.js";
 
 export async function buildApp() {
   const app = Fastify({
@@ -51,7 +53,9 @@ export async function buildApp() {
   await app.register(authRoutes, { prefix: "/api/auth" });
   await app.register(productsRoutes, { prefix: "/api/products" });
   await app.register(salesPointsRoutes, { prefix: "/api/sales-points" });
+  await app.register(pressingRoutes, { prefix: "/api/pressing" });
   await app.register(adminRoutes, { prefix: "/api/admin" });
+  await app.register(pressingAdminRoutes, { prefix: "/api/admin/pressing" });
   await app.register(contactRoutes, { prefix: "/api/contact" });
 
   return app;

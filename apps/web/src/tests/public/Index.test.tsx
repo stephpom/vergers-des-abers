@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import { server } from "@/tests/mocks/server";
 import { renderWithProviders } from "@/tests/utils";
@@ -109,6 +110,7 @@ describe("Page Index", () => {
     });
 
     it("rend 2 ProductCard quand 2 produits sont retournés", async () => {
+      const user = userEvent.setup();
       server.use(
         http.get("/api/products", () =>
           HttpResponse.json({
@@ -118,6 +120,8 @@ describe("Page Index", () => {
                 title: "Jus de Pomme",
                 slug: "jus-de-pomme",
                 description: "",
+                category: "JUICE",
+                formats: ["L_1"],
                 published: true,
                 createdAt: "",
                 updatedAt: "",
@@ -128,6 +132,8 @@ describe("Page Index", () => {
                 title: "Kéfir Citron",
                 slug: "kefir-citron",
                 description: "",
+                category: "KEFIR",
+                formats: ["CL_33"],
                 published: true,
                 createdAt: "",
                 updatedAt: "",
@@ -142,6 +148,11 @@ describe("Page Index", () => {
         expect(screen.getByText("Jus de Pomme")).toBeInTheDocument();
         expect(screen.getByText("Kéfir Citron")).toBeInTheDocument();
       });
+      await user.click(screen.getByRole("button", { name: "33 cl" }));
+      expect(screen.queryByText("Jus de Pomme")).not.toBeInTheDocument();
+      expect(screen.getByText("Kéfir Citron")).toBeInTheDocument();
+      await user.click(screen.getByRole("button", { name: "Tous" }));
+      expect(screen.getByText("Jus de Pomme")).toBeInTheDocument();
     });
 
     it("affiche un message d'erreur réseau si l'API est indisponible (500)", async () => {

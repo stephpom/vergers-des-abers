@@ -17,16 +17,30 @@ model User {
 }
 
 model Product {
-  id          String         @id @default(cuid())
+  id          String          @id @default(cuid())
   title       String
-  slug        String         @unique
-  description String         @default("")
-  published   Boolean        @default(false)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  slug        String          @unique
+  description String          @default("")
+  category    ProductCategory @default(JUICE)
+  formats     ProductFormat[] @default([])
+  published   Boolean         @default(false)
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
   images      ProductImage[]
 
   @@index([published])
+}
+
+enum ProductCategory {
+  JUICE
+  KEFIR
+  JAM_JELLY
+}
+
+enum ProductFormat {
+  CL_33
+  CL_75
+  L_1
 }
 
 model SalesPoint {
@@ -53,4 +67,39 @@ model ProductImage {
   createdAt DateTime @default(now())
 
   @@index([productId, position])
+}
+
+enum PressingRate {
+  WITH_BOTTLES
+  WITHOUT_BOTTLES
+}
+
+model PressingSlot {
+  id           String                @id @default(cuid())
+  startsAt     DateTime              @unique
+  capacityKg   Int                   @default(800)
+  reservations PressingReservation[]
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  @@index([startsAt])
+}
+
+model PressingReservation {
+  id         String       @id @default(cuid())
+  slotId     String       @unique
+  slot       PressingSlot @relation(fields: [slotId], references: [id], onDelete: Restrict)
+  firstName  String
+  lastName   String
+  email      String
+  phone      String
+  quantityKg Int
+  rate       PressingRate
+  createdAt  DateTime     @default(now())
+}
+
+model PressingSettings {
+  id        String   @id @default("main")
+  enabled   Boolean  @default(false)
+  updatedAt DateTime @updatedAt
 }

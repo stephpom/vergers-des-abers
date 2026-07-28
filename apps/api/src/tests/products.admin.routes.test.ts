@@ -72,15 +72,27 @@ describe("POST /api/admin/products", () => {
       {
         method: "POST",
         url: "/api/admin/products",
-        payload: { title: "Mon Nouveau Produit" },
+        payload: {
+          title: "Mon Nouveau Produit",
+          category: "KEFIR",
+          formats: ["CL_33", "CL_75"],
+        },
       },
       cookie,
     );
     expect(res.statusCode).toBe(201);
     const { product } = res.json<{
-      product: { id: string; slug: string; published: boolean };
+      product: {
+        id: string;
+        slug: string;
+        category: string;
+        formats: string[];
+        published: boolean;
+      };
     }>();
     expect(product.slug).toBe("mon-nouveau-produit");
+    expect(product.category).toBe("KEFIR");
+    expect(product.formats).toEqual(["CL_33", "CL_75"]);
     expect(product.published).toBe(false);
   });
 

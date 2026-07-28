@@ -28,6 +28,11 @@ const createBody = z.object({
   title: z.string().min(1).max(200),
   description: z.string().max(20000).optional(),
   slug: optionalNonEmpty(80),
+  category: z.enum(["JUICE", "KEFIR", "JAM_JELLY"]).optional(),
+  formats: z
+    .array(z.enum(["CL_33", "CL_75", "L_1"]))
+    .max(3)
+    .optional(),
   published: z.boolean().optional(),
 });
 
@@ -35,6 +40,11 @@ const updateBody = z.object({
   title: z.string().min(1).max(200).optional(),
   description: z.string().max(20000).optional(),
   slug: optionalNonEmpty(80),
+  category: z.enum(["JUICE", "KEFIR", "JAM_JELLY"]).optional(),
+  formats: z
+    .array(z.enum(["CL_33", "CL_75", "L_1"]))
+    .max(3)
+    .optional(),
   published: z.boolean().optional(),
 });
 

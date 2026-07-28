@@ -10,6 +10,8 @@ function makeProduct(overrides: Partial<ApiProduct> = {}): ApiProduct {
     title: "Jus de Pomme",
     slug: "jus-de-pomme",
     description: "<p>Description</p>",
+    category: "JUICE",
+    formats: ["L_1"],
     published: true,
     createdAt: "2024-01-01T00:00:00.000Z",
     updatedAt: "2024-01-01T00:00:00.000Z",

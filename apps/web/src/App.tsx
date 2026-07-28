@@ -19,6 +19,8 @@ const AdminHome = lazy(() => import("./pages/admin/Home"));
 const AdminProducts = lazy(() => import("./pages/admin/Products"));
 const AdminProductForm = lazy(() => import("./pages/admin/ProductForm"));
 const AdminSalesPoints = lazy(() => import("./pages/admin/SalesPoints"));
+const PressingReservation = lazy(() => import("./pages/PressingReservation"));
+const AdminPressingSlots = lazy(() => import("./pages/admin/PressingSlots"));
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -41,6 +43,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/produits/:slug" element={<ProductDetail />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/reservation-pressage" element={<PressingReservation />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/confidentialite" element={<Confidentialite />} />
 
@@ -82,6 +85,14 @@ const App = () => (
                 element={
                   <PrivateRoute>
                     <AdminSalesPoints />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/admin/creneaux-pressage"
+                element={
+                  <PrivateRoute>
+                    <AdminPressingSlots />
                   </PrivateRoute>
                 }
               />
