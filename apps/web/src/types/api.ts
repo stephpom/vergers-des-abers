@@ -33,6 +33,31 @@ export interface ApiSalesPoint {
   updatedAt: string;
 }
 
+export type PressingRate = "WITH_BOTTLES" | "WITHOUT_BOTTLES";
+
+export interface ApiPressingReservation {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  quantityKg: number;
+  rate: PressingRate;
+  createdAt: string;
+}
+
+export interface ApiPressingSlot {
+  id: string;
+  startsAt: string;
+  capacityKg: number;
+  reservations: ApiPressingReservation[];
+}
+
+export interface ApiAvailablePressingSlot {
+  id: string;
+  startsAt: string;
+  remainingCapacityKg: number;
+}
+
 export function imageUrl(filename: string): string {
   return `/uploads/${filename}`;
 }

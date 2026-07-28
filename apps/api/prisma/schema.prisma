@@ -54,3 +54,39 @@ model ProductImage {
 
   @@index([productId, position])
 }
+
+enum PressingRate {
+  WITH_BOTTLES
+  WITHOUT_BOTTLES
+}
+
+model PressingSlot {
+  id           String                @id @default(cuid())
+  startsAt     DateTime              @unique
+  capacityKg   Int                   @default(800)
+  reservations PressingReservation[]
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  @@index([startsAt])
+}
+
+model PressingReservation {
+  id         String       @id @default(cuid())
+  slotId     String
+  slot       PressingSlot @relation(fields: [slotId], references: [id], onDelete: Restrict)
+  firstName  String
+  lastName   String
+  phone      String
+  quantityKg Int
+  rate       PressingRate
+  createdAt  DateTime     @default(now())
+
+  @@index([slotId])
+}
+
+model PressingSettings {
+  id        String   @id @default("main")
+  enabled   Boolean  @default(false)
+  updatedAt DateTime @updatedAt
+}

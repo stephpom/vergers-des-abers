@@ -11,6 +11,11 @@ const sections = [
     label: "Points de vente",
     description: "Gérer les points de vente et leurs informations",
   },
+  {
+    to: "/admin/creneaux-pressage",
+    label: "Pressage",
+    description: "Gérer les créneaux et les réservations clients",
+  },
 ];
 
 interface AdminSectionSwitcherProps {
@@ -20,7 +25,7 @@ interface AdminSectionSwitcherProps {
 const AdminSectionSwitcher = ({ className = "" }: AdminSectionSwitcherProps) => {
   return (
     <nav
-      className={`grid gap-3 md:grid-cols-2 ${className}`.trim()}
+      className={`grid gap-3 md:grid-cols-3 ${className}`.trim()}
       aria-label="Sections d'administration"
     >
       {sections.map((section) => (

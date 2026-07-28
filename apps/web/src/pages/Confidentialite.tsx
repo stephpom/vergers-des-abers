@@ -14,7 +14,7 @@ const Confidentialite = () => (
     <main id="main-content" className="container mx-auto px-4 py-12">
       <article className="max-w-3xl mx-auto">
         <h1 className="text-4xl font-bold mb-2 text-foreground">Politique de confidentialité</h1>
-        <p className="text-sm text-muted-foreground mb-10">Dernière mise à jour : 01/07/2026</p>
+        <p className="text-sm text-muted-foreground mb-10">Dernière mise à jour : 28/07/2026</p>
 
         <div className="space-y-10 text-foreground leading-relaxed">
           <section>
@@ -41,14 +41,15 @@ const Confidentialite = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Données collectées</h2>
             <p>
-              Nous collectons uniquement les données que vous nous fournissez volontairement via
-              notre formulaire de contact :
+              Nous collectons uniquement les données que vous nous fournissez volontairement via nos
+              formulaires de contact et de réservation :
             </p>
             <ul className="list-disc list-inside mt-2 space-y-1">
               <li>Nom</li>
               <li>Adresse email</li>
               <li>Numéro de téléphone</li>
               <li>Contenu du message</li>
+              <li>Créneau de pressage, quantité de pommes et tarif choisis</li>
             </ul>
             <p className="mt-3">
               Aucune autre donnée n'est collectée (pas d'inscription, pas de compte client, pas de
@@ -59,34 +60,37 @@ const Confidentialite = () => (
           <section>
             <h2 className="text-2xl font-semibold mb-3">Finalité du traitement</h2>
             <p>
-              Les données collectées via le formulaire de contact sont utilisées exclusivement pour
-              répondre à votre demande. Elles ne font l'objet d'aucune prospection commerciale et ne
-              sont jamais cédées à des tiers.
+              Les données collectées sont utilisées exclusivement pour répondre à vos messages,
+              enregistrer votre créneau de pressage et vous contacter au sujet de votre réservation.
+              Elles ne font l'objet d'aucune prospection commerciale et ne sont jamais cédées à des
+              tiers.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-3">Base légale</h2>
             <p>
-              Le traitement de vos données repose sur votre consentement (article 6.1.a du RGPD),
-              matérialisé par l'envoi volontaire du formulaire de contact.
+              Le traitement des demandes de contact repose sur votre consentement (article 6.1.a du
+              RGPD). Le traitement des réservations repose sur l'exécution de mesures
+              précontractuelles prises à votre demande (article 6.1.b du RGPD).
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-3">Durée de conservation</h2>
             <p>
-              Les messages reçus via le formulaire de contact sont conservés pendant 3 ans à compter
-              du dernier échange, à des fins de suivi de la relation. Passé ce délai, ils sont
-              supprimés.
+              Les messages et réservations sont conservés pendant 3 ans à compter du dernier échange
+              ou de la réalisation du pressage, à des fins de suivi de la relation. Passé ce délai,
+              ils sont supprimés.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-semibold mb-3">Destinataires des données</h2>
             <p>
-              Vos données sont accessibles uniquement par Stéphane Pommier. Elles sont transmises à
-              notre prestataire d'envoi d'emails transactionnels <strong>Resend</strong> (
+              Vos données sont accessibles uniquement par Stéphane Pommier. Les données du
+              formulaire de contact sont transmises à notre prestataire d'envoi d'emails
+              transactionnels <strong>Resend</strong> (
               <a
                 href="https://resend.com/legal/privacy-policy"
                 className="text-primary hover:underline"
