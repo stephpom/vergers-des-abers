@@ -29,6 +29,20 @@ model Product {
   @@index([published])
 }
 
+model SalesPoint {
+  id          String   @id @default(cuid())
+  name        String
+  address     String
+  description String   @default("")
+  latitude    Float?
+  longitude   Float?
+  published   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([published])
+}
+
 model ProductImage {
   id        String   @id @default(cuid())
   productId String

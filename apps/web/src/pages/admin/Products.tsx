@@ -20,6 +20,7 @@ import { imageUrl, type ApiProduct } from "@/types/api";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import AdminHeader from "@/components/admin/AdminHeader";
+import AdminSectionSwitcher from "@/components/admin/AdminSectionSwitcher";
 
 const AdminProducts = () => {
   const navigate = useNavigate();
@@ -63,14 +64,17 @@ const AdminProducts = () => {
       />
 
       <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold">Produits</h2>
-          <Link to="/admin/produits/nouveau">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Nouveau produit
-            </Button>
-          </Link>
+        <div className="mb-6 flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold">Produits</h2>
+            <Link to="/admin/produits/nouveau">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Nouveau produit
+              </Button>
+            </Link>
+          </div>
+          <AdminSectionSwitcher />
         </div>
 
         {isLoading ? (
@@ -88,75 +92,78 @@ const AdminProducts = () => {
             </Link>
           </div>
         ) : (
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-muted/30 text-sm">
-                <tr>
-                  <th className="text-left p-3 w-20">Image</th>
-                  <th className="text-left p-3">Titre</th>
-                  <th className="text-left p-3 w-32">Statut</th>
-                  <th className="text-right p-3 w-32">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.products.map((p) => (
-                  <tr key={p.id} className="border-t hover:bg-muted/20">
-                    <td className="p-3">
-                      {p.images[0] ? (
-                        <img
-                          src={imageUrl(p.images[0].filename)}
-                          alt={p.title}
-                          className="w-12 h-12 object-cover rounded"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 bg-muted rounded" />
-                      )}
-                    </td>
-                    <td className="p-3">
-                      <div className="font-medium">{p.title}</div>
-                      <div className="text-xs text-muted-foreground">/{p.slug}</div>
-                    </td>
-                    <td className="p-3">
-                      {p.published ? (
-                        <Badge>Publié</Badge>
-                      ) : (
-                        <Badge variant="secondary">Brouillon</Badge>
-                      )}
-                    </td>
-                    <td className="p-3 text-right">
-                      <div className="inline-flex gap-2">
-                        <Link to={`/admin/produits/${p.id}`}>
-                          <Button size="sm" variant="ghost" aria-label="Modifier">
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button size="sm" variant="ghost" aria-label="Supprimer">
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Supprimer ce produit ?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                « {p.title} » et toutes ses images seront définitivement supprimés.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction onClick={() => deleteMutation.mutate(p.id)}>
-                                Supprimer
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </td>
+          <div className="border rounded-lg overflow-hidden h-[60vh] md:h-[70vh] flex flex-col">
+            <div className="flex-1 overflow-auto">
+              <table className="w-full min-w-full">
+                <thead className="bg-muted/30 text-sm sticky top-0 z-10">
+                  <tr>
+                    <th className="text-left p-3 w-20">Image</th>
+                    <th className="text-left p-3">Titre</th>
+                    <th className="text-left p-3 w-32">Statut</th>
+                    <th className="text-right p-3 w-32">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {data.products.map((p) => (
+                    <tr key={p.id} className="border-t hover:bg-muted/20">
+                      <td className="p-3">
+                        {p.images[0] ? (
+                          <img
+                            src={imageUrl(p.images[0].filename)}
+                            alt={p.title}
+                            className="w-12 h-12 object-cover rounded"
+                          />
+                        ) : (
+                          <div className="w-12 h-12 bg-muted rounded" />
+                        )}
+                      </td>
+                      <td className="p-3">
+                        <div className="font-medium">{p.title}</div>
+                        <div className="text-xs text-muted-foreground">/{p.slug}</div>
+                      </td>
+                      <td className="p-3">
+                        {p.published ? (
+                          <Badge>Publié</Badge>
+                        ) : (
+                          <Badge variant="secondary">Brouillon</Badge>
+                        )}
+                      </td>
+                      <td className="p-3 text-right">
+                        <div className="inline-flex gap-2">
+                          <Link to={`/admin/produits/${p.id}`}>
+                            <Button size="sm" variant="ghost" aria-label="Modifier">
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </Link>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button size="sm" variant="ghost" aria-label="Supprimer">
+                                <Trash2 className="h-4 w-4 text-destructive" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Supprimer ce produit ?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  « {p.title} » et toutes ses images seront définitivement
+                                  supprimés.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                                <AlertDialogAction onClick={() => deleteMutation.mutate(p.id)}>
+                                  Supprimer
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
       </main>

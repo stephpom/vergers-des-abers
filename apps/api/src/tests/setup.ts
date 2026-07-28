@@ -33,7 +33,7 @@ execSync("bunx prisma db push --accept-data-loss --skip-generate", {
 
 beforeEach(async () => {
   await prisma.$executeRawUnsafe(
-    `TRUNCATE TABLE "ProductImage", "Product", "User" RESTART IDENTITY CASCADE`,
+    `TRUNCATE TABLE "SalesPoint", "ProductImage", "Product", "User" RESTART IDENTITY CASCADE`,
   );
 });
 
