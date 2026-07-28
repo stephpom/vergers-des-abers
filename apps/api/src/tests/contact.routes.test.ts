@@ -5,9 +5,9 @@ import { buildTestApp } from "./helpers.js";
 const { mockSend } = vi.hoisted(() => ({ mockSend: vi.fn() }));
 
 vi.mock("resend", () => ({
-  Resend: vi.fn().mockImplementation(() => ({
-    emails: { send: mockSend },
-  })),
+  Resend: class {
+    emails = { send: mockSend };
+  },
 }));
 
 let app: FastifyInstance;
