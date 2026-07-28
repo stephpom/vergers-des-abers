@@ -1,7 +1,15 @@
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma.js";
 import { authedInject, buildTestApp, createTestUser, loginCookie } from "./helpers.js";
+
+const { mockSendPressingEmails } = vi.hoisted(() => ({
+  mockSendPressingEmails: vi.fn(),
+}));
+
+vi.mock("../services/email.service.js", () => ({
+  sendPressingReservationEmails: mockSendPressingEmails,
+}));
 
 let app: FastifyInstance;
 
@@ -11,6 +19,11 @@ beforeAll(async () => {
 
 afterAll(async () => {
   await app.close();
+});
+
+beforeEach(() => {
+  mockSendPressingEmails.mockReset();
+  mockSendPressingEmails.mockResolvedValue(undefined);
 });
 
 describe("réservations publiques de pressage", () => {
@@ -26,6 +39,7 @@ describe("réservations publiques de pressage", () => {
         slotId: "slot-inexistant",
         firstName: "Marie",
         lastName: "Ker",
+        email: "marie@example.com",
         phone: "0612345678",
         quantityKg: 300,
         rate: "WITHOUT_BOTTLES",
@@ -36,7 +50,7 @@ describe("réservations publiques de pressage", () => {
     expect(reservationResponse.statusCode).toBe(503);
   });
 
-  it("ne publie que les créneaux futurs ayant encore de la capacité", async () => {
+  it("ne republie pas un créneau dès qu'il possède une réservation", async () => {
     await prisma.pressingSettings.create({ data: { id: "main", enabled: true } });
     const slot = await prisma.pressingSlot.create({
       data: { startsAt: new Date(Date.now() + 86_400_000) },
@@ -46,6 +60,7 @@ describe("réservations publiques de pressage", () => {
         slotId: slot.id,
         firstName: "Jean",
         lastName: "Pomme",
+        email: "jean@example.com",
         phone: "0612345678",
         quantityKg: 320,
         rate: "WITH_BOTTLES",
@@ -55,12 +70,10 @@ describe("réservations publiques de pressage", () => {
     const response = await app.inject({ method: "GET", url: "/api/pressing/slots" });
 
     expect(response.statusCode).toBe(200);
-    expect(
-      response.json<{ slots: Array<{ id: string; remainingCapacityKg: number }> }>().slots,
-    ).toEqual([{ id: slot.id, startsAt: expect.any(String), remainingCapacityKg: 480 }]);
+    expect(response.json<{ slots: unknown[] }>().slots).toEqual([]);
   });
 
-  it("impose 300 kg minimum et ne dépasse pas les 800 kg du créneau", async () => {
+  it("impose 300 kg minimum et une seule réservation par créneau", async () => {
     await prisma.pressingSettings.create({ data: { id: "main", enabled: true } });
     const slot = await prisma.pressingSlot.create({
       data: { startsAt: new Date(Date.now() + 86_400_000) },
@@ -73,6 +86,7 @@ describe("réservations publiques de pressage", () => {
         slotId: slot.id,
         firstName: "Marie",
         lastName: "Ker",
+        email: "marie@example.com",
         phone: "0612345678",
         quantityKg: 500,
         rate: "WITHOUT_BOTTLES",
@@ -85,14 +99,23 @@ describe("réservations publiques de pressage", () => {
         slotId: slot.id,
         firstName: "Paul",
         lastName: "Abers",
+        email: "paul@example.com",
         phone: "0698765432",
-        quantityKg: 301,
+        quantityKg: 300,
         rate: "WITH_BOTTLES",
       },
     });
 
     expect(firstResponse.statusCode).toBe(201);
     expect(overCapacityResponse.statusCode).toBe(409);
+    expect(mockSendPressingEmails).toHaveBeenCalledOnce();
+    expect(mockSendPressingEmails).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: "marie@example.com",
+        quantityKg: 500,
+        startsAt: expect.any(Date),
+      }),
+    );
 
     const underMinimumResponse = await app.inject({
       method: "POST",
@@ -101,6 +124,7 @@ describe("réservations publiques de pressage", () => {
         slotId: slot.id,
         firstName: "Anne",
         lastName: "Abers",
+        email: "anne@example.com",
         phone: "0611223344",
         quantityKg: 299,
         rate: "WITH_BOTTLES",

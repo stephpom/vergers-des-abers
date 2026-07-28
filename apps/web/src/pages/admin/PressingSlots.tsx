@@ -211,7 +211,9 @@ const AdminPressingSlots = () => {
                         {formatDate(slot.startsAt)}
                       </h2>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        {reservedKg} kg réservés · {slot.capacityKg - reservedKg} kg disponibles
+                        {slot.reservations.length > 0
+                          ? `${reservedKg} kg réservés · créneau indisponible`
+                          : `${slot.capacityKg} kg maximum · créneau disponible`}
                       </p>
                     </div>
                     <Button
@@ -236,6 +238,7 @@ const AdminPressingSlots = () => {
                           <tr>
                             <th className="pb-3 font-medium">Client</th>
                             <th className="pb-3 font-medium">Téléphone</th>
+                            <th className="pb-3 font-medium">Email</th>
                             <th className="pb-3 font-medium">Quantité</th>
                             <th className="pb-3 font-medium">Tarif</th>
                             <th className="pb-3 text-right font-medium">Action</th>
@@ -250,6 +253,14 @@ const AdminPressingSlots = () => {
                               <td className="py-3">
                                 <a className="hover:text-primary" href={`tel:${reservation.phone}`}>
                                   {reservation.phone}
+                                </a>
+                              </td>
+                              <td className="py-3">
+                                <a
+                                  className="hover:text-primary"
+                                  href={`mailto:${reservation.email}`}
+                                >
+                                  {reservation.email}
                                 </a>
                               </td>
                               <td className="py-3">{reservation.quantityKg} kg</td>

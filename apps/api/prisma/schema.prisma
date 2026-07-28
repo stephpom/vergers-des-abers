@@ -73,16 +73,16 @@ model PressingSlot {
 
 model PressingReservation {
   id         String       @id @default(cuid())
-  slotId     String
+  slotId     String       @unique
   slot       PressingSlot @relation(fields: [slotId], references: [id], onDelete: Restrict)
   firstName  String
   lastName   String
+  email      String
   phone      String
   quantityKg Int
   rate       PressingRate
   createdAt  DateTime     @default(now())
 
-  @@index([slotId])
 }
 
 model PressingSettings {

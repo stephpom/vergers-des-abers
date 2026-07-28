@@ -2,11 +2,13 @@ import type { FastifyInstance } from "fastify";
 import { Prisma } from "@prisma/client";
 import * as z from "zod";
 import { prisma } from "../lib/prisma.js";
+import { sendPressingReservationEmails } from "../services/email.service.js";
 
 const reservationBody = z.object({
   slotId: z.string().min(1),
   firstName: z.string().trim().min(2).max(100),
   lastName: z.string().trim().min(2).max(100),
+  email: z.string().trim().email().max(255),
   phone: z
     .string()
     .trim()
@@ -32,7 +34,7 @@ export async function pressingRoutes(app: FastifyInstance) {
       where: { startsAt: { gt: new Date() } },
       orderBy: { startsAt: "asc" },
       include: {
-        reservations: { select: { quantityKg: true } },
+        reservations: { select: { id: true } },
       },
     });
 
@@ -41,11 +43,11 @@ export async function pressingRoutes(app: FastifyInstance) {
         .map(({ reservations, ...slot }) => ({
           id: slot.id,
           startsAt: slot.startsAt,
-          remainingCapacityKg:
-            slot.capacityKg -
-            reservations.reduce((total, reservation) => total + reservation.quantityKg, 0),
+          capacityKg: slot.capacityKg,
+          isReserved: reservations.length > 0,
         }))
-        .filter((slot) => slot.remainingCapacityKg >= 300),
+        .filter((slot) => !slot.isReserved)
+        .map(({ isReserved: _isReserved, ...slot }) => slot),
     };
   });
 
@@ -68,22 +70,19 @@ export async function pressingRoutes(app: FastifyInstance) {
           async (tx) => {
             const slot = await tx.pressingSlot.findUnique({
               where: { id: parsed.data.slotId },
-              include: { reservations: { select: { quantityKg: true } } },
+              include: { reservations: { select: { id: true } } },
             });
 
-            if (!slot || slot.startsAt <= new Date()) {
+            if (!slot || slot.startsAt <= new Date() || slot.reservations.length > 0) {
               return null;
             }
 
-            const reservedKg = slot.reservations.reduce(
-              (total, current) => total + current.quantityKg,
-              0,
-            );
-            if (reservedKg + parsed.data.quantityKg > slot.capacityKg) {
+            if (parsed.data.quantityKg > slot.capacityKg) {
               return null;
             }
 
-            return tx.pressingReservation.create({ data: parsed.data });
+            const reservation = await tx.pressingReservation.create({ data: parsed.data });
+            return { reservation, startsAt: slot.startsAt };
           },
           { isolationLevel: Prisma.TransactionIsolationLevel.Serializable },
         );
@@ -92,9 +91,24 @@ export async function pressingRoutes(app: FastifyInstance) {
           return reply.code(409).send({ error: "Slot unavailable" });
         }
 
-        return reply.code(201).send({ reservation: { id: reservation.id } });
+        try {
+          await sendPressingReservationEmails({
+            ...reservation.reservation,
+            startsAt: reservation.startsAt,
+          });
+        } catch (error) {
+          req.log.error(
+            { error, reservationId: reservation.reservation.id },
+            "Failed to send pressing reservation emails",
+          );
+        }
+
+        return reply.code(201).send({ reservation: { id: reservation.reservation.id } });
       } catch (error) {
-        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          (error.code === "P2002" || error.code === "P2034")
+        ) {
           return reply.code(409).send({ error: "Slot unavailable" });
         }
         throw error;

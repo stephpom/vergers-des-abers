@@ -18,6 +18,7 @@ import type { ApiAvailablePressingSlot, PressingRate } from "@/types/api";
 const schema = z.object({
   firstName: z.string().trim().min(2, "Prénom requis").max(100),
   lastName: z.string().trim().min(2, "Nom requis").max(100),
+  email: z.string().trim().email("Adresse email invalide").max(255),
   phone: z
     .string()
     .trim()
@@ -62,6 +63,7 @@ const PressingReservation = () => {
     defaultValues: {
       firstName: "",
       lastName: "",
+      email: "",
       phone: "",
       quantityKg: 300,
       rate: "WITH_BOTTLES",
@@ -236,6 +238,19 @@ const PressingReservation = () => {
                     </div>
 
                     <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        autoComplete="email"
+                        {...form.register("email")}
+                      />
+                      <p className="text-sm text-destructive">
+                        {form.formState.errors.email?.message}
+                      </p>
+                    </div>
+
+                    <div className="space-y-2">
                       <Label htmlFor="phone">Téléphone</Label>
                       <Input id="phone" type="tel" autoComplete="tel" {...form.register("phone")} />
                       <p className="text-sm text-destructive">
@@ -249,12 +264,12 @@ const PressingReservation = () => {
                         id="quantityKg"
                         type="number"
                         min={300}
-                        max={selectedSlot?.remainingCapacityKg ?? 800}
+                        max={selectedSlot?.capacityKg ?? 800}
                         {...form.register("quantityKg")}
                       />
                       {selectedSlot ? (
                         <p className="text-sm text-muted-foreground">
-                          Il reste {selectedSlot.remainingCapacityKg} kg sur ce créneau.
+                          Ce créneau accepte jusqu'à {selectedSlot.capacityKg} kg.
                         </p>
                       ) : null}
                       <p className="text-sm text-destructive">
@@ -272,7 +287,7 @@ const PressingReservation = () => {
                         <option value="">Choisissez une date et une heure</option>
                         {slots.map((slot) => (
                           <option key={slot.id} value={slot.id}>
-                            {formatSlot(slot.startsAt)} — {slot.remainingCapacityKg} kg disponibles
+                            {formatSlot(slot.startsAt)}
                           </option>
                         ))}
                       </select>

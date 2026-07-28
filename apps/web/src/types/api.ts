@@ -39,6 +39,7 @@ export interface ApiPressingReservation {
   id: string;
   firstName: string;
   lastName: string;
+  email: string;
   phone: string;
   quantityKg: number;
   rate: PressingRate;
@@ -55,7 +56,7 @@ export interface ApiPressingSlot {
 export interface ApiAvailablePressingSlot {
   id: string;
   startsAt: string;
-  remainingCapacityKg: number;
+  capacityKg: number;
 }
 
 export function imageUrl(filename: string): string {
