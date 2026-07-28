@@ -13,6 +13,8 @@ const mockProduct: ApiProduct = {
   title: "Pomme Existante",
   slug: "pomme-existante",
   description: "<p>Une belle pomme</p>",
+  category: "KEFIR",
+  formats: ["CL_33", "CL_75"],
   published: true,
   createdAt: "2024-01-01T00:00:00.000Z",
   updatedAt: "2024-01-01T00:00:00.000Z",
@@ -117,6 +119,9 @@ describe("Admin ProductForm — mode édition", () => {
       expect(screen.getByDisplayValue("Pomme Existante")).toBeInTheDocument();
     });
     expect(screen.getByDisplayValue("pomme-existante")).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Catégorie" })).toHaveTextContent(
+      "Boissons › Kéfir",
+    );
   });
 
   it("switch Publié toggle", async () => {
@@ -142,7 +147,9 @@ describe("Admin ProductForm — mode édition", () => {
       http.patch("/api/admin/products/abc", async ({ request }) => {
         patchCalled = true;
         patchBody = await request.json();
-        return HttpResponse.json({ product: mockProduct });
+        return HttpResponse.json({
+          product: { ...mockProduct, title: "Titre confirmé par le serveur" },
+        });
       }),
     );
     renderEdit();
@@ -152,6 +159,7 @@ describe("Admin ProductForm — mode édition", () => {
       expect(patchCalled).toBe(true);
       expect(patchBody).toMatchObject({ title: "Pomme Existante" });
     });
+    expect(screen.getByDisplayValue("Titre confirmé par le serveur")).toBeInTheDocument();
   });
 
   it("section images visible en mode édition", async () => {

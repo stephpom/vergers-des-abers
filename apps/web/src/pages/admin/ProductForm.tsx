@@ -1,5 +1,5 @@
 import { SEO } from "@/components/SEO";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -17,15 +17,29 @@ import ProductImagesSection from "@/components/admin/ProductImagesSection";
 import { api, ApiError } from "@/lib/api";
 import { type ApiProduct, type ApiProductImage } from "@/types/api";
 import { toast } from "sonner";
+import { PRODUCT_CATEGORY_OPTIONS } from "@/lib/product-category";
+import { PRODUCT_FORMAT_OPTIONS } from "@/lib/product-format";
+import type { ProductFormat } from "@/types/api";
 
 const schema = z.object({
   title: z.string().min(1, "Titre requis").max(200),
   slug: z.string().max(80).optional(),
   description: z.string().max(20000),
+  category: z.enum(["JUICE", "KEFIR", "JAM_JELLY"]),
+  formats: z.array(z.enum(["CL_33", "CL_75", "L_1"])),
   published: z.boolean(),
 });
 
 type FormValues = z.infer<typeof schema>;
+
+const productToFormValues = (product: ApiProduct): FormValues => ({
+  title: product.title,
+  slug: product.slug,
+  description: product.description,
+  category: product.category ?? "JUICE",
+  formats: product.formats ?? [],
+  published: product.published,
+});
 
 const AdminProductForm = () => {
   const { id } = useParams<{ id?: string }>();
@@ -33,6 +47,7 @@ const AdminProductForm = () => {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [uploading, setUploading] = useState(false);
+  const loadedProductId = useRef<string | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "product", id],
@@ -48,21 +63,21 @@ const AdminProductForm = () => {
       title: "",
       slug: "",
       description: "",
+      category: "JUICE",
+      formats: [],
       published: false,
     },
   });
 
   useEffect(() => {
     if (data?.product) {
-      form.reset({
-        title: data.product.title,
-        slug: data.product.slug,
-        description: data.product.description,
-        published: data.product.published,
-      });
+      const productChanged = loadedProductId.current !== data.product.id;
+      if (productChanged || !form.formState.isDirty) {
+        form.reset(productToFormValues(data.product));
+        loadedProductId.current = data.product.id;
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data?.product?.id]);
+  }, [data?.product, form, form.formState.isDirty]);
 
   const saveMutation = useMutation({
     mutationFn: async (values: FormValues) => {
@@ -77,7 +92,15 @@ const AdminProductForm = () => {
         body: values,
       });
     },
+    onMutate: async () => {
+      if (isEdit) {
+        await qc.cancelQueries({ queryKey: ["admin", "product", id] });
+      }
+    },
     onSuccess: (result) => {
+      loadedProductId.current = result.product.id;
+      qc.setQueryData<{ product: ApiProduct }>(["admin", "product", result.product.id], result);
+      form.reset(productToFormValues(result.product));
       qc.invalidateQueries({ queryKey: ["admin", "products"] });
       qc.invalidateQueries({ queryKey: ["products"] });
       toast.success(isEdit ? "Produit mis à jour" : "Produit créé");
@@ -172,6 +195,17 @@ const AdminProductForm = () => {
     onError: () => toast.error("Erreur lors de la suppression"),
   });
 
+  const category = form.watch("category");
+  const formats = form.watch("formats");
+
+  const toggleFormat = (format: ProductFormat, checked: boolean) => {
+    form.setValue(
+      "formats",
+      checked ? [...formats, format] : formats.filter((value) => value !== format),
+      { shouldDirty: true },
+    );
+  };
+
   if (isEdit && isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -213,6 +247,49 @@ const AdminProductForm = () => {
               <strong>{form.watch("slug") || "auto-genere"}</strong>
             </p>
           </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="category">Catégorie</Label>
+            <select
+              id="category"
+              {...form.register("category", {
+                onChange: (event) => {
+                  if (event.target.value === "JAM_JELLY") {
+                    form.setValue("formats", [], { shouldDirty: true });
+                  }
+                },
+              })}
+              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {PRODUCT_CATEGORY_OPTIONS.map((category) => (
+                <option key={category.value} value={category.value}>
+                  {category.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {category !== "JAM_JELLY" && (
+            <fieldset className="space-y-3">
+              <legend className="text-sm font-medium">Formats disponibles</legend>
+              <p className="text-xs text-muted-foreground">
+                Plusieurs formats peuvent être sélectionnés.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                {PRODUCT_FORMAT_OPTIONS.map((format) => (
+                  <label key={format.value} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={formats.includes(format.value)}
+                      onChange={(event) => toggleFormat(format.value, event.target.checked)}
+                      className="h-4 w-4 rounded border-input accent-primary"
+                    />
+                    {format.label}
+                  </label>
+                ))}
+              </div>
+            </fieldset>
+          )}
 
           <div className="space-y-2">
             <Label>Description</Label>

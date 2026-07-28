@@ -10,11 +10,16 @@ export interface ApiProductImage {
   position: number;
 }
 
+export type ProductCategory = "JUICE" | "KEFIR" | "JAM_JELLY";
+export type ProductFormat = "CL_33" | "CL_75" | "L_1";
+
 export interface ApiProduct {
   id: string;
   title: string;
   slug: string;
   description: string;
+  category: ProductCategory;
+  formats: ProductFormat[];
   published: boolean;
   createdAt: string;
   updatedAt: string;

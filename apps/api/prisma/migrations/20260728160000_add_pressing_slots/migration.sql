@@ -18,7 +18,6 @@ CREATE TABLE "PressingReservation" (
     "slotId" TEXT NOT NULL,
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
-    "email" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "quantityKg" INTEGER NOT NULL,
     "rate" "PressingRate" NOT NULL,
@@ -34,7 +33,7 @@ CREATE UNIQUE INDEX "PressingSlot_startsAt_key" ON "PressingSlot"("startsAt");
 CREATE INDEX "PressingSlot_startsAt_idx" ON "PressingSlot"("startsAt");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "PressingReservation_slotId_key" ON "PressingReservation"("slotId");
+CREATE INDEX "PressingReservation_slotId_idx" ON "PressingReservation"("slotId");
 
 -- AddForeignKey
 ALTER TABLE "PressingReservation" ADD CONSTRAINT "PressingReservation_slotId_fkey"

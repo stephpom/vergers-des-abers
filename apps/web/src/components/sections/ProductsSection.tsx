@@ -3,6 +3,9 @@ import { ProductCard } from "@/components/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import logo from "@/assets/logo.svg";
 import type { ApiProduct } from "@/types/api";
+import { useState } from "react";
+import { PRODUCT_FORMAT_OPTIONS } from "@/lib/product-format";
+import type { ProductFormat } from "@/types/api";
 
 interface ProductsSectionProps {
   products: ApiProduct[];
@@ -10,7 +13,26 @@ interface ProductsSectionProps {
   isError?: boolean;
 }
 
+const productGroups = [
+  {
+    title: "Boissons",
+    categories: [
+      { value: "JUICE", title: "Jus de fruits" },
+      { value: "KEFIR", title: "Kéfir" },
+    ],
+  },
+  {
+    title: "Confitures et gelées",
+    categories: [{ value: "JAM_JELLY", title: null }],
+  },
+] as const;
+
 export const ProductsSection = ({ products, isLoading, isError }: ProductsSectionProps) => {
+  const [selectedFormat, setSelectedFormat] = useState<ProductFormat | null>(null);
+  const filteredProducts = selectedFormat
+    ? products.filter((product) => product.formats?.includes(selectedFormat))
+    : products;
+
   return (
     <section id="products" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
@@ -52,10 +74,65 @@ export const ProductsSection = ({ products, isLoading, isError }: ProductsSectio
             </button>
           </div>
         ) : products.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          <div className="space-y-12">
+            <div
+              className="flex flex-wrap items-center justify-center gap-2"
+              aria-label="Filtrer les produits par format"
+            >
+              <span className="mr-2 text-sm font-medium text-muted-foreground">Format :</span>
+              <ButtonFilter
+                active={selectedFormat === null}
+                onClick={() => setSelectedFormat(null)}
+                label="Tous"
+              />
+              {PRODUCT_FORMAT_OPTIONS.map((format) => (
+                <ButtonFilter
+                  key={format.value}
+                  active={selectedFormat === format.value}
+                  onClick={() => setSelectedFormat(format.value)}
+                  label={format.label}
+                />
+              ))}
+            </div>
+            {productGroups.map((group) => {
+              const categories = group.categories
+                .map((category) => ({
+                  ...category,
+                  products: filteredProducts.filter(
+                    (product) => (product.category ?? "JUICE") === category.value,
+                  ),
+                }))
+                .filter((category) => category.products.length > 0);
+
+              if (categories.length === 0) return null;
+
+              return (
+                <div key={group.title}>
+                  <h3 className="text-2xl font-bold mb-6">{group.title}</h3>
+                  <div className="space-y-8">
+                    {categories.map((category) => (
+                      <div key={category.value}>
+                        {category.title && (
+                          <h4 className="text-lg font-semibold mb-4 text-muted-foreground">
+                            {category.title}
+                          </h4>
+                        )}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                          {category.products.map((product) => (
+                            <ProductCard key={product.id} product={product} />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+            {filteredProducts.length === 0 && (
+              <p className="py-10 text-center text-muted-foreground">
+                Aucun produit n'est disponible dans ce format.
+              </p>
+            )}
           </div>
         ) : (
           <div className="text-center py-20">
@@ -76,3 +153,24 @@ export const ProductsSection = ({ products, isLoading, isError }: ProductsSectio
     </section>
   );
 };
+
+interface ButtonFilterProps {
+  active: boolean;
+  label: string;
+  onClick: () => void;
+}
+
+const ButtonFilter = ({ active, label, onClick }: ButtonFilterProps) => (
+  <button
+    type="button"
+    aria-pressed={active}
+    onClick={onClick}
+    className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+      active
+        ? "border-primary bg-primary text-primary-foreground"
+        : "border-border bg-background hover:bg-muted"
+    }`}
+  >
+    {label}
+  </button>
+);

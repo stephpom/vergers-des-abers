@@ -1,4 +1,5 @@
 import sanitizeHtml from "sanitize-html";
+import type { ProductCategory, ProductFormat } from "@prisma/client";
 import { prisma } from "../lib/prisma.js";
 import { slugify } from "../lib/slug.js";
 
@@ -89,6 +90,8 @@ export interface CreateProductInput {
   title: string;
   description?: string;
   slug?: string;
+  category?: ProductCategory;
+  formats?: ProductFormat[];
   published?: boolean;
 }
 
@@ -99,6 +102,8 @@ export async function createProduct(input: CreateProductInput) {
       title: input.title,
       slug,
       description: sanitizeDescription(input.description ?? ""),
+      category: input.category ?? "JUICE",
+      formats: input.category === "JAM_JELLY" ? [] : (input.formats ?? []),
       published: input.published ?? false,
     },
     include: { images: true },
@@ -109,6 +114,8 @@ export interface UpdateProductInput {
   title?: string;
   description?: string;
   slug?: string;
+  category?: ProductCategory;
+  formats?: ProductFormat[];
   published?: boolean;
 }
 
@@ -116,6 +123,11 @@ export async function updateProduct(id: string, input: UpdateProductInput) {
   const data: Record<string, unknown> = {};
   if (input.title !== undefined) data.title = input.title;
   if (input.description !== undefined) data.description = sanitizeDescription(input.description);
+  if (input.category !== undefined) {
+    data.category = input.category;
+    if (input.category === "JAM_JELLY") data.formats = [];
+  }
+  if (input.formats !== undefined && input.category !== "JAM_JELLY") data.formats = input.formats;
   if (input.published !== undefined) data.published = input.published;
   if (input.slug !== undefined) {
     data.slug = await uniqueSlug(input.slug, id);

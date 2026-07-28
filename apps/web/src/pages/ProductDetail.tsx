@@ -9,6 +9,7 @@ import { PublicFooter } from "@/components/PublicFooter";
 import { SEO } from "@/components/SEO";
 import { api } from "@/lib/api";
 import { imageUrl, type ApiProduct } from "@/types/api";
+import { PRODUCT_FORMAT_LABELS } from "@/lib/product-format";
 import { absoluteUrl, stripHtml, truncate } from "@/lib/seo";
 
 const ProductDetail = () => {
@@ -140,6 +141,18 @@ const ProductDetail = () => {
 
           <div className="space-y-6">
             <h1 className="text-3xl md:text-4xl font-bold">{product.title}</h1>
+            {product.formats?.length > 0 && (
+              <div className="flex flex-wrap gap-2" aria-label="Formats disponibles">
+                {product.formats.map((format) => (
+                  <span
+                    key={format}
+                    className="rounded-full bg-muted px-3 py-1.5 text-sm font-medium"
+                  >
+                    {PRODUCT_FORMAT_LABELS[format]}
+                  </span>
+                ))}
+              </div>
+            )}
             <Card>
               <CardContent className="p-6">
                 {product.description ? (
