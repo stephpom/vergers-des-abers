@@ -1,4 +1,4 @@
-import { Globe2, MapPin, Store } from "lucide-react";
+import { Globe2, MapPin, Store, type LucideIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { useQuery } from "@tanstack/react-query";
@@ -18,7 +18,7 @@ interface SalePoint {
   longitude?: number | null;
 }
 
-const iconMap: Record<string, any> = {
+const iconMap: Record<string, LucideIcon> = {
   store: Store,
   map: MapPin,
 };
@@ -52,13 +52,17 @@ export const CarteVenteSection = () => {
     retry: false,
   });
 
-  const places = data?.salesPoints ?? [];
+  const places = useMemo(() => data?.salesPoints ?? [], [data?.salesPoints]);
   const [activePlaceId, setActivePlaceId] = useState<string | null>(null);
-  const [coordinatesByPlaceId, setCoordinatesByPlaceId] = useState<
-    Record<string, [number, number]>
-  >({});
-  const [mapError, setMapError] = useState<string | null>(null);
-  const [isGeocoding, setIsGeocoding] = useState(false);
+  const coordinatesByPlaceId = useMemo(
+    () =>
+      Object.fromEntries(
+        places
+          .filter((place) => place.latitude != null && place.longitude != null)
+          .map((place) => [place.id, [place.latitude!, place.longitude!]]),
+      ) as Record<string, [number, number]>,
+    [places],
+  );
 
   const selectedPlace = activePlaceId ? places.find((place) => place.id === activePlaceId) : null;
   const selectedCoordinates = useMemo(() => {
@@ -73,90 +77,11 @@ export const CarteVenteSection = () => {
     [coordinatesByPlaceId, places],
   );
 
-  useEffect(() => {
-    if (places.length === 0) {
-      setCoordinatesByPlaceId({});
-      setMapError(null);
-      return;
-    }
-
-    const controller = new AbortController();
-    setIsGeocoding(true);
-    setMapError(null);
-
-    const prefilledCoordinates: Record<string, [number, number]> = {};
-    const geocodePlaces = places.filter(
-      (place) => place.latitude == null || place.longitude == null,
-    );
-
-    places.forEach((place) => {
-      if (place.latitude != null && place.longitude != null) {
-        prefilledCoordinates[place.id] = [place.latitude, place.longitude];
-      }
-    });
-
-    if (geocodePlaces.length === 0) {
-      setCoordinatesByPlaceId(prefilledCoordinates);
-      setIsGeocoding(false);
-      return;
-    }
-
-    Promise.all(
-      geocodePlaces.map(async (place) => {
-        const query = `${place.name} ${place.address}`.trim();
-        const response = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=${encodeURIComponent(query)}`,
-          {
-            headers: { "Accept-Language": "fr" },
-            signal: controller.signal,
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error("Geocoding failed");
-        }
-
-        const result = await response.json();
-        if (!Array.isArray(result) || result.length === 0) {
-          return [place.id, null] as const;
-        }
-
-        return [
-          place.id,
-          [Number(result[0].lat), Number(result[0].lon)] as [number, number],
-        ] as const;
-      }),
-    )
-      .then((entries) => {
-        const geocodedCoordinates = Object.fromEntries(
-          entries.filter(([, coordinates]) => coordinates !== null),
-        ) as Record<string, [number, number]>;
-
-        const nextCoordinates = {
-          ...prefilledCoordinates,
-          ...geocodedCoordinates,
-        };
-
-        setCoordinatesByPlaceId(nextCoordinates);
-        if (Object.keys(nextCoordinates).length === 0) {
-          setMapError("Impossible d'obtenir la position des points de vente.");
-        }
-      })
-      .catch((error) => {
-        if (error instanceof Error && error.name === "AbortError") {
-          return;
-        }
-        setMapError("Impossible de charger la carte OpenStreetMap.");
-      })
-      .finally(() => {
-        setIsGeocoding(false);
-      });
-
-    return () => controller.abort();
-  }, [places]);
-
-  const mapStatusMessage =
-    isLoading || isGeocoding ? "Chargement de la carte…" : mapError ? mapError : null;
+  const mapStatusMessage = isLoading
+    ? "Chargement de la carte…"
+    : places.length > 0 && visiblePlaces.length === 0
+      ? "Aucun point de vente ne dispose de coordonnées."
+      : null;
 
   return (
     <section className="py-20 bg-slate-50">

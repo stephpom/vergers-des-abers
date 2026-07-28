@@ -15,6 +15,7 @@ import {
   removeImage,
   reorderImages,
 } from "../services/image.service.js";
+import { geocodeSalesPoint } from "../services/geocoding.service.js";
 
 /** Transforme les chaînes vides du form en `undefined` avant validation. */
 const optionalNonEmpty = (max: number) =>
@@ -91,12 +92,25 @@ export async function adminRoutes(app: FastifyInstance) {
       return reply.code(400).send({ error: "Invalid input", details: parsed.error.flatten() });
     }
 
+    let coordinates =
+      parsed.data.latitude != null && parsed.data.longitude != null
+        ? { latitude: parsed.data.latitude, longitude: parsed.data.longitude }
+        : null;
+
+    if (!coordinates) {
+      try {
+        coordinates = await geocodeSalesPoint(parsed.data.name, parsed.data.address);
+      } catch (error) {
+        req.log.warn({ error }, "Unable to geocode sales point");
+      }
+    }
+
     const salesPoint = await prisma.salesPoint.create({
       data: {
         ...parsed.data,
         description: parsed.data.description ?? "",
-        latitude: parsed.data.latitude,
-        longitude: parsed.data.longitude,
+        latitude: coordinates?.latitude,
+        longitude: coordinates?.longitude,
       },
     });
 
@@ -112,11 +126,36 @@ export async function adminRoutes(app: FastifyInstance) {
     const existing = await prisma.salesPoint.findUnique({ where: { id: req.params.id } });
     if (!existing) return reply.code(404).send({ error: "Not found" });
 
+    const locationChanged =
+      (parsed.data.name != null && parsed.data.name !== existing.name) ||
+      (parsed.data.address != null && parsed.data.address !== existing.address);
+    const hasExplicitCoordinates = parsed.data.latitude != null && parsed.data.longitude != null;
+    let coordinates = hasExplicitCoordinates
+      ? { latitude: parsed.data.latitude!, longitude: parsed.data.longitude! }
+      : null;
+
+    if (!coordinates && locationChanged) {
+      try {
+        coordinates = await geocodeSalesPoint(
+          parsed.data.name ?? existing.name,
+          parsed.data.address ?? existing.address,
+        );
+      } catch (error) {
+        req.log.warn({ error }, "Unable to geocode sales point");
+      }
+    }
+
     const salesPoint = await prisma.salesPoint.update({
       where: { id: req.params.id },
       data: {
         ...parsed.data,
         description: parsed.data.description ?? existing.description,
+        ...(locationChanged
+          ? {
+              latitude: coordinates?.latitude ?? null,
+              longitude: coordinates?.longitude ?? null,
+            }
+          : {}),
       },
     });
 

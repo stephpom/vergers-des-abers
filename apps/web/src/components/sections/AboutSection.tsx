@@ -10,9 +10,11 @@ export const AboutSection = () => {
               <h2 className="text-3xl md:text-4xl font-bold mb-6">Nos Vergers des Abers</h2>
               <p className="text-lg text-muted-foreground leading-relaxed mb-6">
                 Pom'Pom, c'est avant tout une histoire de passion pour la pomme et le terroir
-                breton. Nos vergers, situés sur l'Aber Wrac'h, l'Aber Benoit et l'Aber Ildut, produisent <strong className="text-foreground">des pommes de qualité, pressées à
-                froid</strong> pour préserver toutes les saveurs et vitamines naturelles. Chaque bouteille
-                reflète l'authenticité de notre région et le savoir-faire artisanal.
+                breton. Nos vergers, situés sur l'Aber Wrac'h, l'Aber Benoit et l'Aber Ildut,
+                produisent{" "}
+                <strong className="text-foreground">des pommes de qualité, pressées à froid</strong>{" "}
+                pour préserver toutes les saveurs et vitamines naturelles. Chaque bouteille reflète
+                l'authenticité de notre région et le savoir-faire artisanal.
               </p>
               <p className="text-lg text-muted-foreground leading-relaxed">
                 Nous produisons également du{" "}

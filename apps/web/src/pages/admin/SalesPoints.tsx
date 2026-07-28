@@ -30,22 +30,10 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import type { ApiSalesPoint } from "@/types/api";
 
-const optionalCoordinate = (min: number, max: number) =>
-  z.preprocess((value) => {
-    if (typeof value === "string") {
-      const trimmed = value.trim();
-      if (trimmed === "") return undefined;
-      return Number(trimmed);
-    }
-    return value;
-  }, z.number().min(min).max(max).optional());
-
 const schema = z.object({
   name: z.string().min(1, "Nom requis").max(200),
   address: z.string().min(1, "Adresse requise").max(500),
   description: z.string().max(20000),
-  latitude: optionalCoordinate(-90, 90),
-  longitude: optionalCoordinate(-180, 180),
   published: z.boolean(),
 });
 
@@ -68,8 +56,6 @@ const AdminSalesPoints = () => {
       name: "",
       address: "",
       description: "",
-      latitude: undefined,
-      longitude: undefined,
       published: true,
     },
   });
@@ -80,8 +66,6 @@ const AdminSalesPoints = () => {
         name: "",
         address: "",
         description: "",
-        latitude: undefined,
-        longitude: undefined,
         published: true,
       });
     }
@@ -93,8 +77,6 @@ const AdminSalesPoints = () => {
       name: "",
       address: "",
       description: "",
-      latitude: undefined,
-      longitude: undefined,
       published: true,
     });
   };
@@ -143,8 +125,6 @@ const AdminSalesPoints = () => {
       name: salesPoint.name,
       address: salesPoint.address,
       description: salesPoint.description,
-      latitude: salesPoint.latitude ?? undefined,
-      longitude: salesPoint.longitude ?? undefined,
       published: salesPoint.published,
     });
   };
@@ -209,27 +189,6 @@ const AdminSalesPoints = () => {
                     {form.formState.errors.address.message}
                   </p>
                 )}
-              </div>
-
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="latitude">Latitude (optionnel)</Label>
-                  <Input id="latitude" type="number" step="any" {...form.register("latitude")} />
-                  {form.formState.errors.latitude && (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.latitude.message}
-                    </p>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="longitude">Longitude (optionnel)</Label>
-                  <Input id="longitude" type="number" step="any" {...form.register("longitude")} />
-                  {form.formState.errors.longitude && (
-                    <p className="text-sm text-destructive">
-                      {form.formState.errors.longitude.message}
-                    </p>
-                  )}
-                </div>
               </div>
 
               <div className="space-y-2">

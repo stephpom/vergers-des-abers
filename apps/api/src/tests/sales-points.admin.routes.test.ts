@@ -55,6 +55,8 @@ describe("POST /api/admin/sales-points", () => {
           name: "Point du centre",
           address: "Place du centre",
           description: "Sur la place",
+          latitude: 48.4545,
+          longitude: -2.0418,
           published: true,
         },
       },
@@ -73,7 +75,13 @@ describe("POST /api/admin/sales-points", () => {
 describe("PATCH /api/admin/sales-points/:id", () => {
   it("met à jour un point de vente", async () => {
     const created = await prisma.salesPoint.create({
-      data: { name: "Ancien nom", address: "Ancienne adresse", published: false },
+      data: {
+        name: "Ancien nom",
+        address: "Ancienne adresse",
+        latitude: 48.4545,
+        longitude: -2.0418,
+        published: false,
+      },
     });
 
     const res = await authedInject(
@@ -81,7 +89,12 @@ describe("PATCH /api/admin/sales-points/:id", () => {
       {
         method: "PATCH",
         url: `/api/admin/sales-points/${created.id}`,
-        payload: { name: "Nouveau nom", published: true },
+        payload: {
+          name: "Nouveau nom",
+          latitude: 48.4545,
+          longitude: -2.0418,
+          published: true,
+        },
       },
       cookie,
     );
