@@ -25,6 +25,22 @@ describe("Page Index", () => {
       expect(labels.length).toBeGreaterThan(0);
     });
 
+    it("propose le certificat Agriculture Biologique au téléchargement", () => {
+      renderIndex();
+      const certificateLink = screen.getByRole("link", {
+        name: /télécharger notre certificat bio/i,
+      });
+
+      expect(certificateLink).toHaveAttribute(
+        "href",
+        "/documents/certificat-agriculture-biologique-europe.pdf",
+      );
+      expect(certificateLink).toHaveAttribute(
+        "download",
+        "certificat-agriculture-biologique-europe.pdf",
+      );
+    });
+
     it("affiche le bouton Contact avec lien vers /contact", async () => {
       renderIndex();
       const link = screen.getByRole("link", { name: /contact/i });
