@@ -11,6 +11,7 @@ import { PageLoader } from "@/components/PageLoader";
 const Index = lazy(() => import("./pages/Index"));
 const ProductDetail = lazy(() => import("./pages/ProductDetail"));
 const Contact = lazy(() => import("./pages/Contact"));
+const NotreHistoire = lazy(() => import("./pages/NotreHistoire"));
 const MentionsLegales = lazy(() => import("./pages/MentionsLegales"));
 const Confidentialite = lazy(() => import("./pages/Confidentialite"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -43,6 +44,7 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/produits/:slug" element={<ProductDetail />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/notre-histoire" element={<NotreHistoire />} />
               <Route path="/reservation-pressage" element={<PressingReservation />} />
               <Route path="/mentions-legales" element={<MentionsLegales />} />
               <Route path="/confidentialite" element={<Confidentialite />} />

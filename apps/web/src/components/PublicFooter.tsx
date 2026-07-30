@@ -15,6 +15,12 @@ export const PublicFooter = () => (
         <p className="text-muted-foreground mb-4">Jus de pomme artisanal 100% naturel</p>
         <nav className="flex justify-center gap-6 text-sm text-muted-foreground mb-4">
           <Link
+            to="/notre-histoire"
+            className="rounded-sm hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            Notre histoire
+          </Link>
+          <Link
             to="/mentions-legales"
             className="rounded-sm hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
           >

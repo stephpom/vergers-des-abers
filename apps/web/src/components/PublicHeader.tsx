@@ -39,6 +39,12 @@ export const PublicHeader = () => {
             </div>
           </Link>
           <div className="flex items-center gap-2">
+            <Link
+              to="/notre-histoire"
+              className="hidden rounded-md px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:inline-flex"
+            >
+              Notre histoire
+            </Link>
             {data?.enabled ? (
               <Link to="/reservation-pressage">
                 <Button size="sm">
