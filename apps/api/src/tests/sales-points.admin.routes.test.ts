@@ -70,6 +70,24 @@ describe("POST /api/admin/sales-points", () => {
     expect(salesPoint.name).toBe("Point du centre");
     expect(salesPoint.published).toBe(true);
   });
+
+  it("refuse une coordonnée isolée", async () => {
+    const res = await authedInject(
+      app,
+      {
+        method: "POST",
+        url: "/api/admin/sales-points",
+        payload: {
+          name: "Point incomplet",
+          address: "Place du centre",
+          latitude: 48.4545,
+        },
+      },
+      cookie,
+    );
+
+    expect(res.statusCode).toBe(400);
+  });
 });
 
 describe("PATCH /api/admin/sales-points/:id", () => {

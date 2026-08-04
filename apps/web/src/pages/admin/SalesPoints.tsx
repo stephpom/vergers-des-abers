@@ -30,12 +30,33 @@ import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
 import type { ApiSalesPoint } from "@/types/api";
 
-const schema = z.object({
-  name: z.string().min(1, "Nom requis").max(200),
-  address: z.string().min(1, "Adresse requise").max(500),
-  description: z.string().max(20000),
-  published: z.boolean(),
-});
+const schema = z
+  .object({
+    name: z.string().min(1, "Nom requis").max(200),
+    address: z.string().min(1, "Adresse requise").max(500),
+    description: z.string().max(20000),
+    latitude: z
+      .string()
+      .refine(
+        (value) =>
+          value.trim() === "" ||
+          (!Number.isNaN(Number(value)) && Number(value) >= -90 && Number(value) <= 90),
+        "Latitude comprise entre -90 et 90",
+      ),
+    longitude: z
+      .string()
+      .refine(
+        (value) =>
+          value.trim() === "" ||
+          (!Number.isNaN(Number(value)) && Number(value) >= -180 && Number(value) <= 180),
+        "Longitude comprise entre -180 et 180",
+      ),
+    published: z.boolean(),
+  })
+  .refine((values) => (values.latitude.trim() === "") === (values.longitude.trim() === ""), {
+    message: "Renseignez la latitude et la longitude ensemble",
+    path: ["longitude"],
+  });
 
 type FormValues = z.infer<typeof schema>;
 
@@ -56,6 +77,8 @@ const AdminSalesPoints = () => {
       name: "",
       address: "",
       description: "",
+      latitude: "",
+      longitude: "",
       published: true,
     },
   });
@@ -66,6 +89,8 @@ const AdminSalesPoints = () => {
         name: "",
         address: "",
         description: "",
+        latitude: "",
+        longitude: "",
         published: true,
       });
     }
@@ -77,6 +102,8 @@ const AdminSalesPoints = () => {
       name: "",
       address: "",
       description: "",
+      latitude: "",
+      longitude: "",
       published: true,
     });
   };
@@ -95,10 +122,16 @@ const AdminSalesPoints = () => {
         body: values,
       });
     },
-    onSuccess: () => {
+    onSuccess: ({ salesPoint }) => {
       qc.invalidateQueries({ queryKey: ["admin", "sales-points"] });
       qc.invalidateQueries({ queryKey: ["sales-points"] });
-      toast.success(editingId ? "Point de vente mis à jour" : "Point de vente créé");
+      if (salesPoint.latitude == null || salesPoint.longitude == null) {
+        toast.warning(
+          "Point enregistré, mais l’adresse n’a pas pu être géolocalisée. Renseignez ses coordonnées manuellement.",
+        );
+      } else {
+        toast.success(editingId ? "Point de vente mis à jour" : "Point de vente créé");
+      }
       resetForm();
     },
     onError: () => toast.error("Erreur lors de la sauvegarde"),
@@ -125,6 +158,8 @@ const AdminSalesPoints = () => {
       name: salesPoint.name,
       address: salesPoint.address,
       description: salesPoint.description,
+      latitude: salesPoint.latitude?.toString() ?? "",
+      longitude: salesPoint.longitude?.toString() ?? "",
       published: salesPoint.published,
     });
   };
@@ -205,6 +240,45 @@ const AdminSalesPoints = () => {
                 )}
               </div>
 
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-2">
+                  <Label htmlFor="latitude">Latitude</Label>
+                  <Input
+                    id="latitude"
+                    type="number"
+                    step="any"
+                    inputMode="decimal"
+                    placeholder="48.4545"
+                    {...form.register("latitude")}
+                  />
+                  {form.formState.errors.latitude && (
+                    <p className="text-sm text-destructive">
+                      {form.formState.errors.latitude.message}
+                    </p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="longitude">Longitude</Label>
+                  <Input
+                    id="longitude"
+                    type="number"
+                    step="any"
+                    inputMode="decimal"
+                    placeholder="-2.0418"
+                    {...form.register("longitude")}
+                  />
+                  {form.formState.errors.longitude && (
+                    <p className="text-sm text-destructive">
+                      {form.formState.errors.longitude.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Facultatif : si les deux champs sont vides, les coordonnées sont calculées à partir
+                de l’adresse lors de l’enregistrement.
+              </p>
+
               <div className="flex items-center gap-3">
                 <Switch
                   id="published"
@@ -244,6 +318,7 @@ const AdminSalesPoints = () => {
                   <tr>
                     <th className="text-left p-3">Nom</th>
                     <th className="text-left p-3">Adresse</th>
+                    <th className="text-left p-3 w-40">Coordonnées</th>
                     <th className="text-left p-3 w-32">Statut</th>
                     <th className="text-right p-3 w-32">Actions</th>
                   </tr>
@@ -258,6 +333,15 @@ const AdminSalesPoints = () => {
                         </div>
                       </td>
                       <td className="p-3 text-sm text-muted-foreground">{salesPoint.address}</td>
+                      <td className="p-3 text-xs text-muted-foreground">
+                        {salesPoint.latitude != null && salesPoint.longitude != null ? (
+                          <span>
+                            {salesPoint.latitude}, {salesPoint.longitude}
+                          </span>
+                        ) : (
+                          <Badge variant="destructive">À renseigner</Badge>
+                        )}
+                      </td>
                       <td className="p-3">
                         {salesPoint.published ? (
                           <Badge>Publié</Badge>
