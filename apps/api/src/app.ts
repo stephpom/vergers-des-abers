@@ -27,6 +27,9 @@ export async function buildApp() {
   });
 
   await app.register(helmet, {
+    // Les fichiers /uploads sont chargés depuis api.vergersdesabers.fr par le
+    // site vergersdesabers.fr. Ils doivent donc être intégrables cross-origin.
+    crossOriginResourcePolicy: { policy: "cross-origin" },
     contentSecurityPolicy:
       config.NODE_ENV === "production"
         ? { directives: { defaultSrc: ["'none'"], frameAncestors: ["'none'"] } }
