@@ -62,23 +62,36 @@ const optionalCoordinate = (min: number, max: number) =>
     return value;
   }, z.number().min(min).max(max).optional());
 
-const createSalesPointBody = z.object({
-  name: z.string().min(1).max(200),
-  address: z.string().min(1).max(500),
-  description: z.string().max(20000).optional(),
-  latitude: optionalCoordinate(-90, 90),
-  longitude: optionalCoordinate(-180, 180),
-  published: z.boolean().optional(),
-});
+const coordinatesTogether = <T extends { latitude?: number; longitude?: number }>(values: T) =>
+  (values.latitude == null) === (values.longitude == null);
 
-const updateSalesPointBody = z.object({
-  name: z.string().min(1).max(200).optional(),
-  address: z.string().min(1).max(500).optional(),
-  description: z.string().max(20000).optional(),
-  latitude: optionalCoordinate(-90, 90),
-  longitude: optionalCoordinate(-180, 180),
-  published: z.boolean().optional(),
-});
+const createSalesPointBody = z
+  .object({
+    name: z.string().min(1).max(200),
+    address: z.string().min(1).max(500),
+    description: z.string().max(20000).optional(),
+    latitude: optionalCoordinate(-90, 90),
+    longitude: optionalCoordinate(-180, 180),
+    published: z.boolean().optional(),
+  })
+  .refine(coordinatesTogether, {
+    message: "Latitude and longitude must be provided together",
+    path: ["longitude"],
+  });
+
+const updateSalesPointBody = z
+  .object({
+    name: z.string().min(1).max(200).optional(),
+    address: z.string().min(1).max(500).optional(),
+    description: z.string().max(20000).optional(),
+    latitude: optionalCoordinate(-90, 90),
+    longitude: optionalCoordinate(-180, 180),
+    published: z.boolean().optional(),
+  })
+  .refine(coordinatesTogether, {
+    message: "Latitude and longitude must be provided together",
+    path: ["longitude"],
+  });
 
 export async function adminRoutes(app: FastifyInstance) {
   app.addHook("preHandler", authenticate);
