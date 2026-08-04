@@ -99,6 +99,13 @@ describe("POST /api/admin/products/:id/images", () => {
 
     const filePath = path.resolve(process.env["UPLOAD_DIR"] ?? "./uploads-test", image.filename);
     expect(existsSync(filePath)).toBe(true);
+
+    const imageResponse = await app.inject({
+      method: "GET",
+      url: `/uploads/${image.filename}`,
+    });
+    expect(imageResponse.statusCode).toBe(200);
+    expect(imageResponse.headers["cross-origin-resource-policy"]).toBe("cross-origin");
   });
 
   it("incrémente la position pour la 2e image", async () => {
