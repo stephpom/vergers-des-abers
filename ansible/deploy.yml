@@ -50,6 +50,17 @@
         dest: "{{ app_dir }}/.env"
         mode: "0600"
 
+    - name: Mettre à jour la configuration Caddy
+      become: true
+      ansible.builtin.template:
+        src: templates/Caddyfile.j2
+        dest: /etc/caddy/Caddyfile
+        owner: root
+        group: root
+        mode: "0644"
+        validate: caddy validate --config %s
+      notify: Recharger Caddy
+
     - name: Build + restart docker compose (rolling)
       ansible.builtin.command:
         cmd: docker compose -f docker-compose.prod.yml up -d --build
@@ -70,3 +81,10 @@
       retries: "{{ health_check_retries }}"
       delay: "{{ health_check_delay }}"
       until: health.status == 200
+
+  handlers:
+    - name: Recharger Caddy
+      become: true
+      ansible.builtin.service:
+        name: caddy
+        state: reloaded

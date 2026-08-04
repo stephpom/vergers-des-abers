@@ -2,7 +2,15 @@
 # Source : ansible/templates/Caddyfile.j2
 
 {{ domain }}, www.{{ domain }} {
-    reverse_proxy 127.0.0.1:5173
+    # Les images ajoutées depuis l'administration sont stockées et servies
+    # par l'API, tout en restant accessibles sous /uploads sur le site public.
+    handle /uploads/* {
+        reverse_proxy 127.0.0.1:3001
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:5173
+    }
 
     # Headers de sécurité ajoutés au niveau du reverse proxy
     # (le nginx interne au container web pose aussi X-Frame-Options, etc.)
