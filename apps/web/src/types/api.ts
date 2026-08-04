@@ -65,5 +65,6 @@ export interface ApiAvailablePressingSlot {
 }
 
 export function imageUrl(filename: string): string {
-  return `/uploads/${filename}`;
+  const apiBase = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
+  return `${apiBase}/uploads/${filename}`;
 }
