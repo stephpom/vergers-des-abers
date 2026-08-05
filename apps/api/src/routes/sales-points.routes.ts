@@ -1,6 +1,7 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import type { FastifyInstance } from "fastify";
 import { prisma } from "../lib/prisma.js";
+import { sortSalesPointsByCityAndName } from "../services/sales-point.service.js";
 
 export async function salesPointsRoutes(app: FastifyInstance) {
   app.get("/", async () => {
@@ -18,7 +19,7 @@ export async function salesPointsRoutes(app: FastifyInstance) {
         },
       });
 
-      return { salesPoints };
+      return { salesPoints: sortSalesPointsByCityAndName(salesPoints) };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError && error.code === "P2021") {
         return { salesPoints: [] };

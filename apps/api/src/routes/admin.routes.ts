@@ -16,6 +16,7 @@ import {
   reorderImages,
 } from "../services/image.service.js";
 import { geocodeSalesPoint } from "../services/geocoding.service.js";
+import { sortSalesPointsByCityAndName } from "../services/sales-point.service.js";
 
 /** Transforme les chaînes vides du form en `undefined` avant validation. */
 const optionalNonEmpty = (max: number) =>
@@ -98,9 +99,9 @@ export async function adminRoutes(app: FastifyInstance) {
 
   app.get("/sales-points", async () => {
     const salesPoints = await prisma.salesPoint.findMany({
-      orderBy: [{ createdAt: "desc" }],
+      orderBy: [{ address: "asc" }, { name: "asc" }],
     });
-    return { salesPoints };
+    return { salesPoints: sortSalesPointsByCityAndName(salesPoints) };
   });
 
   app.get<{ Params: { id: string } }>("/sales-points/:id", async (req, reply) => {
