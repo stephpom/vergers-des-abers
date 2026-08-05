@@ -40,13 +40,13 @@ describe("<SEO>", () => {
     renderSEO({ image: "/og-image.jpg" });
     await waitFor(() => {
       const canonical = document.querySelector('link[rel="canonical"]');
-      expect(canonical?.getAttribute("href")).toMatch(/^https:\/\/pompom\.fr/);
+      expect(canonical?.getAttribute("href")).toBe("https://vergersdesabers.fr/");
 
       const ogUrl = document.querySelector('meta[property="og:url"]');
-      expect(ogUrl?.getAttribute("content")).toMatch(/^https:\/\/pompom\.fr/);
+      expect(ogUrl?.getAttribute("content")).toBe("https://vergersdesabers.fr/");
 
       const ogImage = document.querySelector('meta[property="og:image"]');
-      expect(ogImage?.getAttribute("content")).toMatch(/^https:\/\/pompom\.fr/);
+      expect(ogImage?.getAttribute("content")).toBe("https://vergersdesabers.fr/og-image.jpg");
     });
   });
 
