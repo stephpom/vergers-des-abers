@@ -15,7 +15,7 @@ const schema = z.object({
   PUBLIC_SITE_URL: z.string().url().default("http://localhost:5173"),
   RESEND_API_KEY: z.preprocess((v) => (v === "" ? undefined : v), z.string().min(1).optional()),
   CONTACT_EMAIL_TO: z.string().email().default("pom-pom@mailo.com"),
-  CONTACT_EMAIL_FROM: z.string().email().default("contact@pompom.fr"),
+  CONTACT_EMAIL_FROM: z.string().email().default("contact@vergersdesabers.fr"),
 });
 
 const parsed = schema.safeParse(process.env);

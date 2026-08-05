@@ -2,7 +2,15 @@
 # Source : ansible/templates/Caddyfile.j2
 
 {{ domain }}, www.{{ domain }} {
-    reverse_proxy 127.0.0.1:5173
+    # Le sitemap dynamique est généré par l'API, mais reste exposé sur le
+    # domaine principal indiqué dans robots.txt.
+    handle /sitemap.xml {
+        reverse_proxy 127.0.0.1:3001
+    }
+
+    handle {
+        reverse_proxy 127.0.0.1:5173
+    }
 
     # Headers de sécurité ajoutés au niveau du reverse proxy
     # (le nginx interne au container web pose aussi X-Frame-Options, etc.)

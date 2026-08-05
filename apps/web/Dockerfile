@@ -24,7 +24,9 @@ CMD ["bun", "run", "dev", "--", "--host", "0.0.0.0"]
 # ----- build -----
 FROM base AS build
 ARG VITE_API_URL
+ARG VITE_PUBLIC_SITE_URL
 ENV VITE_API_URL=${VITE_API_URL}
+ENV VITE_PUBLIC_SITE_URL=${VITE_PUBLIC_SITE_URL}
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
 COPY apps/web ./apps/web

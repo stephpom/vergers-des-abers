@@ -13,7 +13,7 @@ function renderSEO(props: React.ComponentProps<typeof SEO> = {}) {
 
 describe("<SEO>", () => {
   beforeEach(() => {
-    vi.stubEnv("VITE_PUBLIC_SITE_URL", "https://pompom.fr");
+    vi.stubEnv("VITE_PUBLIC_SITE_URL", "https://vergersdesabers.fr");
   });
 
   afterEach(() => {

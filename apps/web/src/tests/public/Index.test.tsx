@@ -189,5 +189,13 @@ describe("Page Index", () => {
       expect(footer).not.toBeNull();
       expect(within(footer!).getByText(new RegExp(year))).toBeInTheDocument();
     });
+
+    it("contient un lien vers la page Facebook", () => {
+      renderIndex();
+      expect(screen.getByRole("link", { name: "Facebook" })).toHaveAttribute(
+        "href",
+        "https://www.facebook.com/JusPommesPlouguerneau/",
+      );
+    });
   });
 });
