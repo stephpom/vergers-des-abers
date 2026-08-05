@@ -2,4 +2,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://pompom.fr/sitemap.xml
+Sitemap: https://vergersdesabers.fr/sitemap.xml

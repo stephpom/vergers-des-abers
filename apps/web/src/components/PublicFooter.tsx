@@ -13,7 +13,7 @@ export const PublicFooter = () => (
           </div>
         </div>
         <p className="text-muted-foreground mb-4">Jus de pomme artisanal 100% naturel</p>
-        <nav className="flex justify-center gap-6 text-sm text-muted-foreground mb-4">
+        <nav className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground mb-4">
           <Link
             to="/notre-histoire"
             className="rounded-sm hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -32,6 +32,14 @@ export const PublicFooter = () => (
           >
             Politique de confidentialité
           </Link>
+          <a
+            href="https://www.facebook.com/JusPommesPlouguerneau/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-sm hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+          >
+            Facebook
+          </a>
         </nav>
         <p className="text-sm text-muted-foreground">
           © {new Date().getFullYear()} Pom'Pom - Vergers des Abers. Tous droits réservés.
