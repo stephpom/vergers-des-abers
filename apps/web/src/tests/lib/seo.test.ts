@@ -33,7 +33,7 @@ describe("lib/seo", () => {
 
   describe("absoluteUrl", () => {
     beforeEach(() => {
-      vi.stubEnv("VITE_PUBLIC_SITE_URL", "https://pompom.fr");
+      vi.stubEnv("VITE_PUBLIC_SITE_URL", "https://vergersdesabers.fr");
     });
 
     afterEach(() => {
@@ -41,12 +41,14 @@ describe("lib/seo", () => {
     });
 
     it("préfixe avec VITE_PUBLIC_SITE_URL", () => {
-      expect(absoluteUrl("/produits/jus-de-pomme")).toBe("https://pompom.fr/produits/jus-de-pomme");
+      expect(absoluteUrl("/produits/jus-de-pomme")).toBe(
+        "https://vergersdesabers.fr/produits/jus-de-pomme",
+      );
     });
 
     it("gère slash final dans la base", () => {
-      vi.stubEnv("VITE_PUBLIC_SITE_URL", "https://pompom.fr/");
-      expect(absoluteUrl("/contact")).toBe("https://pompom.fr/contact");
+      vi.stubEnv("VITE_PUBLIC_SITE_URL", "https://vergersdesabers.fr/");
+      expect(absoluteUrl("/contact")).toBe("https://vergersdesabers.fr/contact");
     });
   });
 });
