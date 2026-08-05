@@ -1,6 +1,13 @@
 import { Link } from "react-router-dom";
 import { ProductCard } from "@/components/ProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import logo from "@/assets/logo.svg";
 import type { ApiProduct } from "@/types/api";
 import { useState } from "react";
@@ -13,18 +20,10 @@ interface ProductsSectionProps {
   isError?: boolean;
 }
 
-const productGroups = [
-  {
-    title: "Boissons",
-    categories: [
-      { value: "JUICE", title: "Jus de fruits" },
-      { value: "KEFIR", title: "Kéfir" },
-    ],
-  },
-  {
-    title: "Confitures et gelées",
-    categories: [{ value: "JAM_JELLY", title: null }],
-  },
+const productRows = [
+  { value: "JUICE", title: "Boissons" },
+  { value: "KEFIR", title: "Kéfirs" },
+  { value: "JAM_JELLY", title: "Confitures et gelées" },
 ] as const;
 
 export const ProductsSection = ({ products, isLoading, isError }: ProductsSectionProps) => {
@@ -94,38 +93,35 @@ export const ProductsSection = ({ products, isLoading, isError }: ProductsSectio
                 />
               ))}
             </div>
-            {productGroups.map((group) => {
-              const categories = group.categories
-                .map((category) => ({
-                  ...category,
-                  products: filteredProducts.filter(
-                    (product) => (product.category ?? "JUICE") === category.value,
-                  ),
-                }))
-                .filter((category) => category.products.length > 0);
+            {productRows.map((row) => {
+              const rowProducts = filteredProducts.filter(
+                (product) => (product.category ?? "JUICE") === row.value,
+              );
 
-              if (categories.length === 0) return null;
+              if (rowProducts.length === 0) return null;
+
+              const headingId = `products-${row.value.toLowerCase()}`;
 
               return (
-                <div key={group.title}>
-                  <h3 className="text-2xl font-bold mb-6">{group.title}</h3>
-                  <div className="space-y-8">
-                    {categories.map((category) => (
-                      <div key={category.value}>
-                        {category.title && (
-                          <h4 className="text-lg font-semibold mb-4 text-muted-foreground">
-                            {category.title}
-                          </h4>
-                        )}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                          {category.products.map((product) => (
-                            <ProductCard key={product.id} product={product} />
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+                <section key={row.value} aria-labelledby={headingId}>
+                  <h3 id={headingId} className="mb-6 text-2xl font-bold">
+                    {row.title}
+                  </h3>
+                  <Carousel opts={{ align: "start" }} aria-labelledby={headingId}>
+                    <CarouselContent className="items-stretch">
+                      {rowProducts.map((product) => (
+                        <CarouselItem
+                          key={product.id}
+                          className="basis-[88%] sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                        >
+                          <ProductCard product={product} />
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious className="-top-12 left-auto right-12 translate-y-0" />
+                    <CarouselNext className="-top-12 right-0 translate-y-0" />
+                  </Carousel>
+                </section>
               );
             })}
             {filteredProducts.length === 0 && (
