@@ -11,6 +11,7 @@ git_branch: main
 # Peut aussi être overridé via la variable d'env DEPLOY_HOST côté CI.
 domain: vergersdesabers.fr
 api_subdomain: api
+dolibarr_subdomain: gestion
 
 # Chemin de la deploy key SSH GitHub côté VPS (déposée par setup.yml).
 github_deploy_key_dest: "/home/{{ app_user }}/.ssh/github_deploy_key"
