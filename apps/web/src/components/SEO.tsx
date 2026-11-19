@@ -10,9 +10,9 @@ interface SEOProps {
   children?: React.ReactNode;
 }
 
-const SITE_NAME = "Pom'Pom — Vergers des Abers";
+const SITE_NAME = "Pom'Pom — Jus de Pomme Bio";
 const DEFAULT_DESCRIPTION =
-  "Jus de pomme artisanal 100% naturel des Vergers des Abers à Plouguerneau. Pressé à froid, sans additifs ni conservateurs.";
+  "Jus de pomme artisanal 100% bio des Vergers des Abers à Plouguerneau. Pressé à froid, sans additifs ni conservateurs.";
 
 export function SEO({
   title,
